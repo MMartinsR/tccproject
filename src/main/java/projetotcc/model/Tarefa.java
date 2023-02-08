@@ -11,9 +11,9 @@ public class Tarefa implements Serializable, Base{
 	private Long id;
 	private String nome;
 	private String descricao;
-	private String peso;
+	private int peso;
 	private Date dataEntrega;
-	private String status;
+	private int status;
 	
 	
 	public Long getId() {
@@ -40,11 +40,11 @@ public class Tarefa implements Serializable, Base{
 		this.descricao = descricao;
 	}
 
-	public String getPeso() {
+	public int getPeso() {
 		return peso;
 	}
 
-	public void setPeso(String peso) {
+	public void setPeso(int peso) {
 		this.peso = peso;
 	}
 
@@ -56,11 +56,11 @@ public class Tarefa implements Serializable, Base{
 		this.dataEntrega = dataEntrega;
 	}
 
-	public String getStatus() {
+	public int getStatus() {
 		return status;
 	}
 
-	public void setStatus(String status) {
+	public void setStatus(int status) {
 		this.status = status;
 	}
 
