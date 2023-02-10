@@ -1,0 +1,120 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+	<title>Pagina 1</title>
+	
+</h:head>
+
+<f:metadata>
+	<f:viewAction action="#{projetoMB.init()}"/>
+</f:metadata>
+
+<h:body>
+	<h:form id="form-dashboard">
+		<h:panelGroup id="panel-group-dashboard" 
+					  layout="block"
+			style="width: 1000px; height: 750px; margin: 50px auto 20px auto; border-radius: 20px; border-style: solid; border-width: 2px; border-color: #bdc4ca; box-shadow: 2px 6px 10px #bdc4ca;">
+			<h:outputLabel id="title-dashboard" 
+						   value="Dashboard"
+				style="font-size: 30px; background-color: #008cff; color: white; padding: 10px 35px 8px 10px; margin: 5px; border-radius: 10px; font-family: Arial, sans-serif;" />
+
+			<div id="div-greet-dashboard"
+				style="text-align: center; margin-top: 50px;">
+				<h:outputLabel id="label-greet-dashboard"
+							   value="Seja bem-vindo(a) nome-usuario!"
+					style="font-size: 20px; font-weight: bold; font-family: Arial, sans-serif;" />
+			</div>
+
+			<div id="div-datatable-container-dashboard" style="margin: 150px 0px 0px 50px; width: 400px; display: inline-block;">
+				<h:form id="form-datatable-dashboard">
+					<p:growl id="messages" 
+							 showDetail="true">
+						<p:autoUpdate/>
+					</p:growl>
+					
+					<p:toolbar id="toolbar-datatable-dashboard">
+						<p:toolbarGroup id="toolbarGroup-datatable-dashboard">
+							<p:commandButton id="commandButton-criarNovoProjeto-dashboard" 
+											 value="Criar Novo Projeto" 
+											 icon="pi pi-plus"
+											 actionListener="#{projetoMB.abrirNovo()}"
+											 update=":novo-projeto-dialog:gerencia-conteudo-projeto"
+											 oncomplete="PF('gerenciaNovoProjetoDialog').show()">
+								<p:resetInput target=":novo-projeto-dialog:gerencia-conteudo-projeto"/>
+							</p:commandButton>
+						</p:toolbarGroup>
+					</p:toolbar>
+					
+					<p:dataTable id="datatable-meusProjetos-dashboard" 
+								 widgetVar="datatableMeusProjetosDashboard" 
+								 var="meusProjetos"
+								 lazy="false">
+						
+						<p:column headerText="Meus Projetos" style="font-weight: bold">
+							<h:outputText value="#{projetoMB.projetos}"/>
+						</p:column>
+						
+						<p:column style="width:3rem;text-align: center">
+                			<p:commandButton icon="pi pi-folder-open" 
+                                			 title="Abrir Projeto">
+<!--                     			<f:setPropertyActionListener value="#{projeto}" -->
+<!--                                                  target="#{dtSelectionView.selectedProduct}"/> -->
+                			</p:commandButton>
+            			</p:column>
+						
+					</p:dataTable>
+				</h:form>
+			</div>
+
+
+		</h:panelGroup>
+	</h:form>
+	
+	<h:form id="novo-projeto-dialog">
+		<p:dialog header="Detalhes do Projeto" 
+				  showEffect="fade"
+				  modal="true"
+				  widgetVar="gerenciaNovoProjetoDialog" 
+				  responsive="true">
+				  
+			<p:outputPanel id="gerencia-conteudo-projeto" class="ui-fluid">
+				<p:outputPanel>
+					 <div class="field">
+                        <p:outputLabel for="nome">Nome: </p:outputLabel>
+                        <p:inputText id="nome" value="#{projetoMB.projetoSelecionado.nome}" required="true" />
+                    </div>
+                    
+                    <div class="field">
+                        <p:outputLabel for="descricao">Descrição: </p:outputLabel>
+                        <p:inputTextarea id="descricao" value="#{projetoMB.projetoSelecionado.descricao}" />
+                    </div>
+                    
+                    <div class="field">
+                        <p:outputLabel>Data de Criação: </p:outputLabel>
+                        <p:outputLabel id="data_criacao">#{projetoMB.dataCriada}</p:outputLabel>
+                    </div>
+                    
+                    <div class="field">
+                        <p:outputLabel>Criado por: </p:outputLabel>
+                        <p:outputLabel id="criador_por" value="#{projetoMB.projetoSelecionado.criador}">Matt</p:outputLabel>
+                    </div>
+				</p:outputPanel>
+			</p:outputPanel>
+			
+			<f:facet name="footer">
+                <p:commandButton value="Save" icon="pi pi-check" actionListener="#{projetoMB.salvarProjeto()}"
+                    update="gerencia-conteudo-projeto" process="gerencia-conteudo-projeto @this" />
+                <p:commandButton value="Cancel" icon="pi pi-times" onclick="PF('gerenciaNovoProjetoDialog').hide()"
+                    class="ui-button-secondary" type="button" />
+            </f:facet>		
+		</p:dialog>
+	</h:form>
+
+
+</h:body>
+</html>
