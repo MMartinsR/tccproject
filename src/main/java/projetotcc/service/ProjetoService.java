@@ -21,9 +21,10 @@ public class ProjetoService implements Serializable {
 		
 		
 		// TODO - Validações
+		if (projeto != null) {
+			projetoDao.salvarAtualizar(projeto);
+		}		
 		
-		
-		projetoDao.salvarAtualizar(projeto);
 	}
 	
 	

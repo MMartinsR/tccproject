@@ -8,7 +8,7 @@ public class Usuario implements Serializable, Base {
 	
 	private Long id;
 	private String email;
-	private String nomeExibicao;
+	private String nomeExibicao = "Matt";
 	private String senha;
 	
 	
