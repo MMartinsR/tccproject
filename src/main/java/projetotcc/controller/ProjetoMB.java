@@ -26,17 +26,22 @@ public class ProjetoMB implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Inject
-	private Projeto projetoSelecionado = new Projeto();
+	private Projeto projetoSelecionadoProprio = new Projeto();
+	
+	@Inject
+	private Projeto projetoSelecionadoParticipado = new Projeto();
 	
 	@Inject
 	private ProjetoService projetoService;
 		
 	private List<Projeto> projetos = new ArrayList<>();
+	private List<Projeto> projetosParticipados = new ArrayList<>();
+	private List<Projeto> projetosProprios = new ArrayList<>();
 	
 	private String dataCriada;
 	
 	private Usuario usuario = new Usuario();
-	private boolean atualizando;
+	private boolean participando = false;
 	private String mensagemBotaoExcluir = "Excluir";
 	private boolean existeProjetoSelecionado;
 	
@@ -46,11 +51,13 @@ public class ProjetoMB implements Serializable {
 		System.out.println("entrou no init!");
 		atualizaProjetos();
 		gerarData();
+		filtraProjetos();
 	}
 	
 	
 	public void abrirNovo() {
-		this.projetoSelecionado = new Projeto();
+		this.projetoSelecionadoProprio = new Projeto();
+		setParticipando(false);
 	}
 	
 	private void gerarData() {
@@ -64,17 +71,17 @@ public class ProjetoMB implements Serializable {
 		
 		try {
 			
-			if (projetoSelecionado.getId() == null) {			
+			if (projetoSelecionadoProprio.getId() == null) {			
 				
-				projetoSelecionado.setDataCriacao(new Date());
-				projetoSelecionado.setCriador(usuario.getNomeExibicao());
+				projetoSelecionadoProprio.setDataCriacao(new Date());
+				projetoSelecionadoProprio.setCriador(usuario.getNomeExibicao());
 				
-				projetoService.salvar(projetoSelecionado);
+				projetoService.salvar(projetoSelecionadoProprio);
 				Message.info("Projeto salvo com sucesso!");
 				
 			} else {
 				
-				projetoService.salvar(projetoSelecionado);
+				projetoService.salvar(projetoSelecionadoProprio);
 				Message.info("Projeto atualizado com sucesso!");
 			}
 			atualizaProjetos();
@@ -93,7 +100,7 @@ public class ProjetoMB implements Serializable {
 	public void removerProjeto() {
 		
 		try {
-			projetoService.remover(projetoSelecionado);
+			projetoService.remover(projetoSelecionadoProprio);
 			
 			atualizaProjetos();
 			
@@ -114,28 +121,66 @@ public class ProjetoMB implements Serializable {
 		this.projetos = projetoService.listarTodos();
 	}
 	
+	public void filtraProjetos() {
+		
+		for (Projeto p : projetos) {
+			if (!p.getCriador().equalsIgnoreCase(usuario.getNomeExibicao())) {
+				projetosParticipados.add(p);
+			} else {
+				projetosProprios.add(p);
+			}
+		}
+
+	}
+	
+	public void participarProjeto() {
+		participando = true;
+	}
+	
+	public void participar() {
+		
+	}
+	
 	public void linhaSelecionada(SelectEvent<Projeto> event) {
 		setMensagemBotaoExcluir("1 projeto selecionado");
-		Message.info("Projeto " + event.getObject().getId() + " foi selecionado!");
+		Message.info("Projeto " + event.getObject().getNome() + " foi selecionado!");
 		setExisteProjetoSelecionado(true);
 	}
 	
 	public void linhaDeselecionada(UnselectEvent<Projeto> event) {
 		setMensagemBotaoExcluir("Excluir");
-		Message.info("Projeto " + event.getObject().getId() + " foi deselecionado!");
+		Message.info("Projeto " + event.getObject().getNome() + " foi deselecionado!");
 		setExisteProjetoSelecionado(false);
 	}	
 
-	public Projeto getProjetoSelecionado() {
-		return projetoSelecionado;
+	public Projeto getProjetoSelecionadoProprio() {
+		return projetoSelecionadoProprio;
 	}
 
-	public void setProjetoSelecionado(Projeto projetoSelecionado) {
-		this.projetoSelecionado = projetoSelecionado;
+	public void setProjetoSelecionadoProprio(Projeto projetoSelecionadoProprio) {
+		this.projetoSelecionadoProprio = projetoSelecionadoProprio;
 	}
+
+	public Projeto getProjetoSelecionadoParticipado() {
+		return projetoSelecionadoParticipado;
+	}
+
+
+	public void setProjetoSelecionadoParticipado(Projeto projetoSelecionadoParticipado) {
+		this.projetoSelecionadoParticipado = projetoSelecionadoParticipado;
+	}
+
 
 	public List<Projeto> getProjetos() {
 		return projetos;
+	}
+
+	public List<Projeto> getprojetosParticipados() {
+		return projetosParticipados;
+	}
+	
+	public List<Projeto> getProjetosProprios() {
+		return projetosProprios;
 	}
 
 	public String getDataCriada() {
@@ -146,12 +191,12 @@ public class ProjetoMB implements Serializable {
 		this.dataCriada = dataCriada;
 	}
 
-	public boolean isAtualizando() {
-		return atualizando;
+	public boolean isParticipando() {
+		return participando;
 	}
 
-	public void setAtualizando(boolean atualizando) {
-		this.atualizando = atualizando;
+	public void setParticipando(boolean participando) {
+		this.participando = participando;
 	}
 
 	public String getMensagemBotaoExcluir() {

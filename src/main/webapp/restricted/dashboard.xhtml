@@ -6,7 +6,8 @@
 	xmlns:p="http://primefaces.org/ui">
 
 <h:head>
-	<title>Pagina 1</title>
+	<title>Dashboard</title>
+	<h:link rel="icon" type="image/x-icon" href="/img/favicon.ico"/>
 	
 </h:head>
 
@@ -16,8 +17,7 @@
 
 <h:body>
 	<h:form id="f-dashboard">	
-		<p:growl id="messages" 
-				 showDetail="true">
+		<p:growl id="messages">
 			<p:autoUpdate/>
 		</p:growl>
 		
@@ -35,32 +35,32 @@
 					style="font-size: 20px; font-weight: bold; font-family: Arial, sans-serif;" />
 			</div>
 					
-					<p:dataTable id="dt-meusProjetos-dashboard" 
+						<p:dataTable id="dt-meusProjetos-dashboard" 
 								 widgetVar="datatableMeusProjetosDashboard" 
 								 var="meusProjetos"
-								 value="#{projetoMB.projetos}"
+								 value="#{projetoMB.projetosProprios}"
 								 lazy="false"
 								 reflow="true"
 								 paginator="true"
 								 paginatorPosition="bottom"
 								 rows="3"
 								 rowKey="#{meusProjetos.id}"
-								 selection="#{projetoMB.projetoSelecionado}"
+								 selection="#{projetoMB.projetoSelecionadoProprio}"
 								 selectionMode="single" 
-								 style="margin: 150px 0px 0px 50px; width: 400px; display: inline-block;">
+								 styleClass="ui-grid-col-6"
+								 style="width: 400px; margin-left: 50px; margin-top: 100px">
 								 
 						<f:facet name="header">
-							<span style="font-weight: bold">PROJETOS</span>
 							<span>
 								<p:commandButton id="cb-criarNovoProjeto-dashboard"											  
 												 icon="pi pi-plus"
 												 value="Novo"
 												 actionListener="#{projetoMB.abrirNovo()}"
-												 update=":f-novo-projeto-dialog:gerencia-conteudo-projeto"
-												 oncomplete="PF('gerenciaNovoProjetoDialog').show()"
+												 update=":f-dashboard-dialog:gerencia-conteudo-projeto"
+												 oncomplete="PF('gerenciaProjetoDashboard').show()"
 												 alt="Criar Novo Projeto"
 												 title="Novo Projeto">
-									<p:resetInput target=":f-novo-projeto-dialog:gerencia-conteudo-projeto"/>
+									<p:resetInput target=":f-dashboard-dialog:gerencia-conteudo-projeto"/>
 								</p:commandButton>							
 							</span>
 							<span>
@@ -94,31 +94,84 @@
 <!--                     			<f:setPropertyActionListener value="#{projeto}" -->
 <!--                                                  target="#{dtSelectionView.selectedProduct}"/> -->
                 			</p:commandButton>
-            			</p:column>						
+            			</p:column>					
 					</p:dataTable>
+					
+					<p:dataTable id="dt-projetosParticipo-dashboard" 
+								 widgetVar="datatableProjetosParticipoDashboard" 
+								 var="projetosParticipo"
+								 value="#{projetoMB.projetosParticipados}"
+								 lazy="false"
+								 reflow="true"
+								 paginator="true"
+								 paginatorPosition="bottom"
+								 rows="3"
+								 rowKey="#{projetosParticipo.id}"
+								 selection="#{projetoMB.projetoSelecionadoParticipado}"
+								 selectionMode="single" 
+								 styleClass="ui-grid-col-6"
+								 style="width: 400px; margin-left: 90px; margin-top: 100px">
+								 
+						<f:facet name="header">
+							<span>
+								<p:commandButton id="cb-participarProjeto-dashboard"											  
+												 icon="pi pi-users"
+												 value="Participar"
+												 update=":f-dashboard-dialog:gerencia-conteudo-projeto"
+												 actionListener="#{projetoMB.participarProjeto()}"
+												 oncomplete="PF('gerenciaProjetoParticiparDashboard').show()"
+												 alt="Participar em Projeto"
+												 title="Participar">
+									<p:resetInput target=":f-dashboard-dialog:gerencia-participar-projeto"/>
+								</p:commandButton>							
+							</span>
+							
+						</f:facet>
+						
+						<p:ajax event="rowSelect" 
+								listener="#{projetoMB.linhaSelecionada}"
+								update=" f-dashboard:messages" />
+            			<p:ajax event="rowUnselect" 
+            					listener="#{projetoMB.linhaDeselecionada}"
+            					update=" f-dashboard:messages" />
+						
+						<p:column headerText="Participo em">
+							<h:outputText value="#{projetosParticipo.nome}" 
+										  title="Para limpar a seleção: CTRL + Clicar"/>
+						</p:column>
+						
+						<p:column style="width:3rem;text-align: center">
+                			<p:commandButton icon="pi pi-folder-open" 
+                                			 title="Abrir Projeto">
+<!--                     			<f:setPropertyActionListener value="#{projeto}" -->
+<!--                                                  target="#{dtSelectionView.selectedProduct}"/> -->
+                			</p:commandButton>
+            			</p:column>					
+						</p:dataTable>
+					
 		</h:panelGroup>
 	</h:form>
 	
-	<h:form id="f-novo-projeto-dialog">
+	<h:form id="f-dashboard-dialog">
 		<p:dialog header="Detalhes" 
 				  showEffect="fade"
 				  modal="true"
-				  widgetVar="gerenciaNovoProjetoDialog" 
+				  widgetVar="gerenciaProjetoDashboard" 
 				  responsive="true">
 				  
-			<p:outputPanel id="gerencia-conteudo-projeto" class="ui-fluid">
+			<p:outputPanel id="gerencia-conteudo-projeto" 
+						   class="ui-fluid">
 				<p:outputPanel>
 					 <div class="field">
                         <p:outputLabel for="nome">Nome: </p:outputLabel>
                         <p:inputText id="nome" 
-                        			 value="#{projetoMB.projetoSelecionado.nome}" 
-                        			 required="true"
-                        			 disabled="#{projetoMB.atualizando}" />
+                        			 value="#{projetoMB.projetoSelecionadoProprio.nome}" 
+                        			 required="true" />
                     </div>
                     
                     <div class="field">
                         <p:outputLabel for="descricao">Descrição: </p:outputLabel>
-                        <p:inputTextarea id="descricao" value="#{projetoMB.projetoSelecionado.descricao}" />
+                        <p:inputTextarea id="descricao" value="#{projetoMB.projetoSelecionadoProprio.descricao}" />
                     </div>
                     
                     <div class="field">
@@ -128,7 +181,7 @@
                     
                     <div class="field">
                         <p:outputLabel>Criado por: </p:outputLabel>
-                        <p:outputLabel id="criador_por" value="#{projetoMB.projetoSelecionado.criador}">Matt</p:outputLabel>
+                        <p:outputLabel id="criador_por" value="#{projetoMB.projetoSelecionadoProprio.criador}">Matt</p:outputLabel>
                     </div>
 				</p:outputPanel>
 			</p:outputPanel>
@@ -141,11 +194,46 @@
                     			 process="gerencia-conteudo-projeto @this" />
                 <p:commandButton value="Cancelar" 
                 				 icon="pi pi-times" 
-                				 onclick="PF('gerenciaNovoProjetoDialog').hide()"
+                				 onclick="PF('gerenciaProjetoDashboard').hide()"
                     			 class="ui-button-secondary" 
                     			 type="button" />
             </f:facet>		
 		</p:dialog>
+		
+		<p:dialog header="Participar de um projeto" 
+				  showEffect="fade"
+				  modal="true"
+				  widgetVar="gerenciaProjetoParticiparDashboard" 
+				  responsive="true">
+				  
+			<p:outputPanel id="gerencia-participar-projeto" 
+						   class="ui-fluid">
+				<p:outputPanel>
+					 <div class="field">
+                        <p:outputLabel for="nome_projeto">Nome do projeto: </p:outputLabel>
+                        <p:inputText id="nome_projeto" 
+                        			 value="Nome do Projeto" 
+                        			 required="true" />
+                    </div>
+                    
+				</p:outputPanel>
+			</p:outputPanel>
+			
+			<f:facet name="footer">
+                <p:commandButton value="Salvar" 
+                				 icon="pi pi-check" 
+                				 actionListener="#{projetoMB.participar()}"
+                    			 update="gerencia-participar-projeto" 
+                    			 process="gerencia-participar-projeto @this" />
+                <p:commandButton value="Cancelar" 
+                				 icon="pi pi-times" 
+                				 onclick="PF('gerenciaProjetoParticiparDashboard').hide()"
+                    			 class="ui-button-secondary" 
+                    			 type="button" />
+            </f:facet>		
+		</p:dialog>
+		
+
 		
 		<p:confirmDialog id="excluir-projeto-dialog"
 					     widgetVar="excluirProjetoDialog" 
