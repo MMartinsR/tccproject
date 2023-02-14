@@ -6,12 +6,13 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import javax.faces.context.FacesContext;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.primefaces.PrimeFaces;
+import org.primefaces.event.SelectEvent;
+import org.primefaces.event.UnselectEvent;
 
 import projetotcc.model.Projeto;
 import projetotcc.model.Usuario;
@@ -25,7 +26,7 @@ public class ProjetoMB implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Inject
-	private Projeto projetoSelecionado;
+	private Projeto projetoSelecionado = new Projeto();
 	
 	@Inject
 	private ProjetoService projetoService;
@@ -36,6 +37,8 @@ public class ProjetoMB implements Serializable {
 	
 	private Usuario usuario = new Usuario();
 	private boolean atualizando;
+	private String mensagemBotaoExcluir = "Excluir";
+	private boolean existeProjetoSelecionado;
 	
 	
 
@@ -87,10 +90,41 @@ public class ProjetoMB implements Serializable {
 		
 	}
 	
+	public void removerProjeto() {
+		
+		try {
+			projetoService.remover(projetoSelecionado);
+			
+			atualizaProjetos();
+			
+			Message.info("Projeto excluído com sucesso");
+			setMensagemBotaoExcluir("Excluir");
+			setExisteProjetoSelecionado(false);
+			
+			PrimeFaces.current().ajax().update("f-dashboard:messages", 
+					"f-dashboard:dt-meusProjetos-dashboard");
+			
+		} catch (Exception e) {
+			Message.erro(e.getMessage());
+		}
+		
+	}
+	
 	private void atualizaProjetos() {
 		this.projetos = projetoService.listarTodos();
 	}
 	
+	public void linhaSelecionada(SelectEvent<Projeto> event) {
+		setMensagemBotaoExcluir("1 projeto selecionado");
+		Message.info("Projeto " + event.getObject().getId() + " foi selecionado!");
+		setExisteProjetoSelecionado(true);
+	}
+	
+	public void linhaDeselecionada(UnselectEvent<Projeto> event) {
+		setMensagemBotaoExcluir("Excluir");
+		Message.info("Projeto " + event.getObject().getId() + " foi deselecionado!");
+		setExisteProjetoSelecionado(false);
+	}	
 
 	public Projeto getProjetoSelecionado() {
 		return projetoSelecionado;
@@ -119,6 +153,24 @@ public class ProjetoMB implements Serializable {
 	public void setAtualizando(boolean atualizando) {
 		this.atualizando = atualizando;
 	}
+
+	public String getMensagemBotaoExcluir() {
+		return mensagemBotaoExcluir;
+	}
+
+	public void setMensagemBotaoExcluir(String mensagemBotaoExcluir) {
+		this.mensagemBotaoExcluir = mensagemBotaoExcluir;
+	}
+
+	public boolean isExisteProjetoSelecionado() {
+		return existeProjetoSelecionado;
+	}
+
+	public void setExisteProjetoSelecionado(boolean existeProjetoSelecionado) {
+		this.existeProjetoSelecionado = existeProjetoSelecionado;
+	}
+	
+	
 
 
 	
