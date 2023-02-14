@@ -57,7 +57,7 @@
 												 value="Novo"
 												 actionListener="#{projetoMB.abrirNovo()}"
 												 update=":f-dashboard-dialog:gerencia-conteudo-projeto"
-												 oncomplete="PF('gerenciaProjetoDashboard').show()"
+												 oncomplete="PF('gerenciaProjetoDashboardDialog').show()"
 												 alt="Criar Novo Projeto"
 												 title="Novo Projeto">
 									<p:resetInput target=":f-dashboard-dialog:gerencia-conteudo-projeto"/>
@@ -88,11 +88,21 @@
 										  title="Para limpar a seleção: CTRL + Clicar"/>
 						</p:column>
 						
-						<p:column style="width:3rem;text-align: center">
+						<p:column style="width:6rem;text-align: center">
                 			<p:commandButton icon="pi pi-folder-open" 
                                 			 title="Abrir Projeto">
 <!--                     			<f:setPropertyActionListener value="#{projeto}" -->
 <!--                                                  target="#{dtSelectionView.selectedProduct}"/> -->
+                			</p:commandButton>
+                			<p:commandButton icon="pi pi-file-edit" 
+                							 update=":f-dashboard-dialog:gerencia-conteudo-projeto"
+                							 oncomplete="PF('gerenciaProjetoDashboardDialog').show()"
+                							 process="@this"
+                                			 title="Editar Projeto"
+                                			 style="margin-left: 5px">
+                    			<f:setPropertyActionListener value="#{meusProjetos}"
+                                                 target="#{projetoMB.projetoSelecionadoProprio}"/>
+                                <p:resetInput target=":f-dashboard-dialog:gerencia-conteudo-projeto"/>
                 			</p:commandButton>
             			</p:column>					
 					</p:dataTable>
@@ -156,7 +166,7 @@
 		<p:dialog header="Detalhes" 
 				  showEffect="fade"
 				  modal="true"
-				  widgetVar="gerenciaProjetoDashboard" 
+				  widgetVar="gerenciaProjetoDashboardDialog" 
 				  responsive="true">
 				  
 			<p:outputPanel id="gerencia-conteudo-projeto" 
@@ -176,7 +186,9 @@
                     
                     <div class="field">
                         <p:outputLabel>Data de Criação: </p:outputLabel>
-                        <p:outputLabel id="data_criacao">#{projetoMB.dataCriada}</p:outputLabel>
+                        <p:outputLabel id="data_criacao" value="#{projetoMB.projetoSelecionadoProprio.dataCriacao}" >
+                        	<f:convertDateTime pattern="dd/MM/yyyy" timeZone="GMT-3"/>
+                        </p:outputLabel>
                     </div>
                     
                     <div class="field">
@@ -194,13 +206,13 @@
                     			 process="gerencia-conteudo-projeto @this" />
                 <p:commandButton value="Cancelar" 
                 				 icon="pi pi-times" 
-                				 onclick="PF('gerenciaProjetoDashboard').hide()"
+                				 onclick="PF('gerenciaProjetoDashboardDialog').hide()"
                     			 class="ui-button-secondary" 
                     			 type="button" />
             </f:facet>		
 		</p:dialog>
 		
-		<p:dialog header="Participar de um projeto" 
+		<p:dialog header="Pedido de Participação" 
 				  showEffect="fade"
 				  modal="true"
 				  widgetVar="gerenciaProjetoParticiparDashboard" 

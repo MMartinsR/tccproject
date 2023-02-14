@@ -50,13 +50,13 @@ public class ProjetoMB implements Serializable {
 	public void init() {
 		System.out.println("entrou no init!");
 		atualizaProjetos();
-		gerarData();
 		filtraProjetos();
 	}
 	
 	
 	public void abrirNovo() {
 		this.projetoSelecionadoProprio = new Projeto();
+		projetoSelecionadoProprio.setDataCriacao(new Date());
 		setParticipando(false);
 	}
 	
@@ -73,7 +73,6 @@ public class ProjetoMB implements Serializable {
 			
 			if (projetoSelecionadoProprio.getId() == null) {			
 				
-				projetoSelecionadoProprio.setDataCriacao(new Date());
 				projetoSelecionadoProprio.setCriador(usuario.getNomeExibicao());
 				
 				projetoService.salvar(projetoSelecionadoProprio);
@@ -85,7 +84,7 @@ public class ProjetoMB implements Serializable {
 				Message.info("Projeto atualizado com sucesso!");
 			}
 			atualizaProjetos();
-			PrimeFaces.current().executeScript("PF('gerenciaNovoProjetoDialog').hide()");
+			PrimeFaces.current().executeScript("PF('gerenciaProjetoDashboardDialog').hide()");
 			PrimeFaces.current().ajax().update("f-dashboard:messages", 
 					"f-dashboard:dt-meusProjetos-dashboard");
 			
