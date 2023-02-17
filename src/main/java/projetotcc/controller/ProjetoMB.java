@@ -60,13 +60,6 @@ public class ProjetoMB implements Serializable {
 		setParticipando(false);
 	}
 	
-	private void gerarData() {
-		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-		Date data = new Date();
-		
-		setDataCriada(sdf.format(data));
-	}
-	
 	public void salvarProjeto() {
 		
 		try {
@@ -80,7 +73,7 @@ public class ProjetoMB implements Serializable {
 				
 			} else {
 				
-				projetoService.salvar(projetoSelecionadoProprio);
+				projetoService.atualizar(projetoSelecionadoProprio);
 				Message.info("Projeto atualizado com sucesso!");
 			}
 			atualizaProjetos();

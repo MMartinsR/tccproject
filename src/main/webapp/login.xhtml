@@ -55,9 +55,12 @@
 				<p:commandButton value="Entrar"
 								 action="#{usuarioLogadoMB.fazerLogin()}"
 								 title="Logar no sistema"/> <br/>
-					
-				<p:commandLink value="Esqueceu a senha?" 
-							   oncomplete="PF('resetarSenhaDialog').show()"/>
+								 
+				<h:form id="f-resetarSenha">
+					<p:commandLink value="Esqueceu a senha?" 
+							   oncomplete="PF('resetarSenhaDialog').show()"
+							   update="f-reset-dialog:conteudo-resetar-senha-dialog"/>
+				</h:form>
 				
 				<p:divider style="background-color: #ddeeff; height: 2px"/>
 				
@@ -127,7 +130,9 @@
 								 process="conteudo-login-dialog @this"/>
 			</f:facet>
 		</p:dialog>
-		
+	</h:form>
+	
+	<h:form id="f-reset-dialog">	
 		<p:dialog id="dialog-resetar-senha" 
 				  header="Resetar Senha"
                   widgetVar="resetarSenhaDialog" 
@@ -136,27 +141,41 @@
                   resizable="false"
                   hideEffect="fade">
                   
-        	
-            <p:panelGrid columns="1">
-                   <p:inputText value="#{usuarioLogadoMB.usuarioCadastrado.email}"
-                   				required="true" 
-                   				size="60"
-                         		requiredMessage="O email é obrigatório"
-                         		id="emailRecuperaSenha" />
-                   <p:watermark value="Digite seu email"
-                   				for="emailRecuperaSenha" />
-            </p:panelGrid>
-                   <p:commandButton value="Confirmar"
-                   					icon="ui-icon-circle-check"
-                         			actionListener="#{usuarioLogadoMB.solicitarNovaSenha()}"
-                         			oncomplete="if (!args.validationFailed)
-                         			{resetarSenhaDialog.hide()}" />
-                   <p:commandButton value="Cancelar"
-                   					type="button" 
+            <p:outputPanel id="conteudo-resetar-senha-dialog" 
+						   class="ui-fluid">
+				<p:outputPanel>
+					<div class="field">
+						<p:outputLabel id="label-email-resetar-senha"
+								   for="email-resetar-senha">E-mail:</p:outputLabel>
+						<p:inputText id="email-resetar-senha" 
+							 	 value="#{usuarioLogadoMB.usuarioResetar.email}"
+							     required="true"
+							     requiredMessage="O email é obrigatório"
+							     size="25"
+							     autocomplete="true" />
+					</div>
+					<div class="field">	 
+						<p:outputLabel id="label-senha-resetar"
+									   for="senha-resetar">Nova senha:</p:outputLabel>
+						<p:password id="senha-resetar" 
+								    value="#{usuarioLogadoMB.usuarioResetar.senha}"
+								    required="true"
+								    requiredMessage="A nova senha é obrigatória"
+								    size="25" />
+					</div>				
+				</p:outputPanel>		 
+			</p:outputPanel>
+         	<p:commandButton value="Confirmar"
+                  					icon="ui-icon-circle-check"
+                        			actionListener="#{usuarioLogadoMB.solicitarNovaSenha()}"
+                        			oncomplete="if (!args.validationFailed)
+                        			{resetarSenhaDialog.hide()}" />
+            <p:commandButton value="Cancelar"
+                  					type="button" 
                    					icon="ui-icon-circle-close"
                          			onclick="resetarSenhaDialog.hide()" />
 
-              </p:dialog>	
+        </p:dialog>	
 	</h:form>
 
 </h:body> 

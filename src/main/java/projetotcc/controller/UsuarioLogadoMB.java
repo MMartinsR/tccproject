@@ -3,17 +3,22 @@ package projetotcc.controller;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 
 import javax.enterprise.context.SessionScoped;
 import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.mail.Authenticator;
+import javax.mail.PasswordAuthentication;
+import javax.mail.Session;
 
 import org.primefaces.PrimeFaces;
 
 import projetotcc.dao.UsuarioDAO;
 import projetotcc.model.Usuario;
 import projetotcc.service.UsuarioService;
+import projetotcc.utility.EmailUtil;
 import projetotcc.utility.Message;
 
 @Named
@@ -29,12 +34,19 @@ public class UsuarioLogadoMB implements Serializable{
 	private Usuario usuarioCadastrar = new Usuario();
 	
 	@Inject
+	private Usuario usuarioResetar = new Usuario();
+	
+	@Inject
 	private UsuarioService usuarioService;
 	
 	@Inject
 	private UsuarioDAO usuarioDAO;
 	
 	private List<Usuario> usuarios = new ArrayList<>();
+	
+	// Envio de email
+	final String deEmail = "mrtcc2023@gmail.com"; // gmail valido 
+	final String appSenha = "vqodekhdgrfootys"; // senha app do gmail
 	
 	
 	public void init() {
@@ -119,14 +131,61 @@ public class UsuarioLogadoMB implements Serializable{
 	}
 	
 	public void solicitarNovaSenha() {
-		try {			
+		
+		try {
 			
-			Message.info("Nova senha " + usuarioService.gerarNovaSenha(this.usuarioCadastrado.getEmail()));
+			String email = this.usuarioResetar.getEmail().toLowerCase().trim();
+			String novaSenha = this.usuarioResetar.getSenha();
+					
+			usuarioService.gerarNovaSenha(email, novaSenha);
+			
+			Message.info("Nova senha alterada com sucesso!" );
+			
+			enviarEmailRedefinicaoSenha(email, novaSenha);			
 			
 		} catch (Exception e) {
 			Message.erro(e.getMessage());
 			FacesContext.getCurrentInstance().validationFailed();
 		}
+	}
+	
+	private void enviarEmailRedefinicaoSenha(String email, String novaSenha) {		
+		
+		System.out.println("Inicio de envio de email SSL");
+		
+		Properties props = System.getProperties();
+		props.put("mail.smtp.host", "smtp.gmail.com");  // SMTP host
+		props.put("mail.socketFactory.port", "465");  // SSL Port
+		props.put("mail.smtp.socketFactory.class", 
+				"javax.net.ssl.SSLSocketFactory");  // SSL Factory Class
+		props.put("mail.smtp.auth", "true");  // Permite autenticação SMTP
+		props.put("mail.smtp.port", "465");  // SMTP Port
+		
+		Authenticator auth = new Authenticator() {
+			
+			//override do método getPasswordAuthentication
+			protected PasswordAuthentication getPasswordAuthentication() {
+				 return new PasswordAuthentication(deEmail, appSenha);
+			}
+		};
+		
+		Session sessao = Session.getInstance(props, auth);
+		
+		System.out.println("Sessao criada");
+		
+		EmailUtil.enviarEmail(sessao, email, "Redefinição de Credenciais", corpoEmail(novaSenha));	
+		
+	}
+	
+	private String corpoEmail(String senha) {
+		
+		String corpoEmail = "Olá! " + "\n\n";
+		
+		corpoEmail += "Segue abaixo a nova credencial solicitada!!" + "\n\n";
+		
+		corpoEmail += "Nova senha: " + senha;
+		
+		return corpoEmail;		
 	}
 	
 
@@ -144,6 +203,14 @@ public class UsuarioLogadoMB implements Serializable{
 
 	public void setUsuarioCadastrar(Usuario usuarioCadastrar) {
 		this.usuarioCadastrar = usuarioCadastrar;
+	}
+
+	public Usuario getUsuarioResetar() {
+		return usuarioResetar;
+	}
+
+	public void setUsuarioResetar(Usuario usuarioResetar) {
+		this.usuarioResetar = usuarioResetar;
 	}
 
 	public List<Usuario> getUsuarios() {

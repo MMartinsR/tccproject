@@ -21,7 +21,7 @@ public class DAO<T extends Base> implements Serializable {
 	}
 	
 	
-	public void salvarAtualizar(T obj) {
+	public void salvar(T obj) {
 		
 		try {
 			
@@ -29,7 +29,21 @@ public class DAO<T extends Base> implements Serializable {
 			
 			if (obj.getId() == null) {
 				manager.persist(obj);
-			} else {
+			} 
+			
+			manager.getTransaction().commit();
+			
+		} catch (Exception e) {
+			manager.getTransaction().rollback();
+		}
+	}
+	
+	public void atualizar(T obj) {
+		try {
+			
+			manager.getTransaction().begin();
+			
+			if (obj.getId() != null) {
 				manager.merge(obj);
 			}
 			
