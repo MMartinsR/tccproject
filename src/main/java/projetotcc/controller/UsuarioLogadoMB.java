@@ -27,6 +27,7 @@ public class UsuarioLogadoMB implements Serializable{
 
 	private static final long serialVersionUID = 1L;
 	
+	// é possivel realizar as ações usando apenas um objeto usuario
 	@Inject
 	private Usuario usuarioCadastrado = new Usuario();
 	
@@ -141,7 +142,9 @@ public class UsuarioLogadoMB implements Serializable{
 			
 			Message.info("Nova senha alterada com sucesso!" );
 			
-			enviarEmailRedefinicaoSenha(email, novaSenha);			
+			enviarEmailRedefinicaoSenha(email, novaSenha);
+			
+			PrimeFaces.current().executeScript("PF('resetarSenhaDialog').hide();");
 			
 		} catch (Exception e) {
 			Message.erro(e.getMessage());
