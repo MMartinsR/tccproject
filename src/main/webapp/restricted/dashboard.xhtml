@@ -26,12 +26,16 @@
 			style="width: 1000px; height: 750px; margin: 50px auto 20px auto; border-radius: 20px; border-style: solid; border-width: 2px; border-color: #bdc4ca; box-shadow: 2px 6px 10px #bdc4ca;">
 			<h:outputLabel id="title-dashboard" 
 						   value="Dashboard"
-				style="font-size: 30px; background-color: #008cff; color: white; padding: 10px 35px 8px 10px; margin: 5px; border-radius: 10px; font-family: Arial, sans-serif;" />
+				style="font-size: 30px; background-color: #008cff; color: white; padding: 15px 35px 5px 10px; margin: 15px 5px 5px 5px; border-radius: 10px; font-family: Arial, sans-serif;" />
 
+			<p:commandButton action="#{usuarioLogadoMB.fazerLogout()}" 
+							 icon="pi pi-sign-out"
+							 title="Logout"
+							 style="margin-left: 740px; margin-top: 10px" />
 			<div id="div-greet-dashboard"
-				style="text-align: center; margin-top: 50px;">
+				style="text-align: center; margin-top: 40px;">
 				<h:outputLabel id="label-greet-dashboard"
-							   value="Seja bem-vindo(a) nome-usuario!"
+							   value="Seja bem-vindo(a) #{usuarioLogadoMB.retornaUsuario().nomeExibicao}"
 					style="font-size: 20px; font-weight: bold; font-family: Arial, sans-serif;" />
 			</div>
 					
@@ -193,7 +197,7 @@
                     
                     <div class="field">
                         <p:outputLabel>Criado por: </p:outputLabel>
-                        <p:outputLabel id="criador_por" value="#{projetoMB.projetoSelecionadoProprio.criador}">Matt</p:outputLabel>
+                        <p:outputLabel id="criador_por" value="#{projetoMB.projetoSelecionadoProprio.criador}"/>
                     </div>
 				</p:outputPanel>
 			</p:outputPanel>
