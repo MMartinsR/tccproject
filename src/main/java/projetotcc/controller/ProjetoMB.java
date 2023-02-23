@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.faces.context.FacesContext;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -49,14 +50,17 @@ public class ProjetoMB implements Serializable {
 
 	public void init() {
 		System.out.println("entrou no init!");
+		this.usuario = (Usuario) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("usuarioLogado");
 		atualizaProjetos();
 		filtraProjetos();
+		
 	}
 	
 	
 	public void abrirNovo() {
 		this.projetoSelecionadoProprio = new Projeto();
 		projetoSelecionadoProprio.setDataCriacao(new Date());
+		projetoSelecionadoProprio.setCriador(usuario.getNomeExibicao());
 		setParticipando(false);
 	}
 	
@@ -144,6 +148,7 @@ public class ProjetoMB implements Serializable {
 		Message.info("Projeto " + event.getObject().getNome() + " foi deselecionado!");
 		setExisteProjetoSelecionado(false);
 	}	
+
 
 	public Projeto getProjetoSelecionadoProprio() {
 		return projetoSelecionadoProprio;
