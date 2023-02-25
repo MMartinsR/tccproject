@@ -1,10 +1,13 @@
 package projetotcc.controller;
 
 import java.io.Serializable;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 import javax.faces.context.FacesContext;
 import javax.faces.view.ViewScoped;
@@ -15,6 +18,7 @@ import org.primefaces.PrimeFaces;
 import org.primefaces.event.SelectEvent;
 import org.primefaces.event.UnselectEvent;
 
+import projetotcc.dao.ProjetoDAO;
 import projetotcc.model.Projeto;
 import projetotcc.model.Usuario;
 import projetotcc.service.ProjetoService;
@@ -34,8 +38,7 @@ public class ProjetoMB implements Serializable {
 	
 	@Inject
 	private ProjetoService projetoService;
-		
-	private List<Projeto> projetos = new ArrayList<>();
+	
 	private List<Projeto> projetosParticipados = new ArrayList<>();
 	private List<Projeto> projetosProprios = new ArrayList<>();
 	
@@ -51,8 +54,8 @@ public class ProjetoMB implements Serializable {
 	public void init() {
 		System.out.println("entrou no init!");
 		this.usuario = (Usuario) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("usuarioLogado");
-		atualizaProjetos();
-		filtraProjetos();
+		carregaProjetosProprios();
+		filtraProjetosParticipados();
 		
 	}
 	
@@ -68,9 +71,9 @@ public class ProjetoMB implements Serializable {
 		
 		try {
 			
-			if (projetoSelecionadoProprio.getId() == null) {			
-				
-				projetoSelecionadoProprio.setCriador(usuario.getNomeExibicao());
+			if (projetoSelecionadoProprio.getId() == null) {				
+
+				projetoSelecionadoProprio.getUsuarios().add(this.usuario);
 				
 				projetoService.salvar(projetoSelecionadoProprio);
 				Message.info("Projeto salvo com sucesso!");
@@ -80,13 +83,14 @@ public class ProjetoMB implements Serializable {
 				projetoService.atualizar(projetoSelecionadoProprio);
 				Message.info("Projeto atualizado com sucesso!");
 			}
-			atualizaProjetos();
+			
+			carregaProjetosProprios();
+			filtraProjetosParticipados();
+			
 			PrimeFaces.current().executeScript("PF('gerenciaProjetoDashboardDialog').hide()");
 			PrimeFaces.current().ajax().update("f-dashboard:messages", 
 					"f-dashboard:dt-meusProjetos-dashboard");
-			
-			
-			
+
 		} catch (Exception e) {
 			Message.erro(e.getMessage());
 		}
@@ -97,12 +101,13 @@ public class ProjetoMB implements Serializable {
 		
 		try {
 			projetoService.remover(projetoSelecionadoProprio);
-			
-			atualizaProjetos();
-			
+
 			Message.info("Projeto excluído com sucesso");
 			setMensagemBotaoExcluir("Excluir");
 			setExisteProjetoSelecionado(false);
+			
+			carregaProjetosProprios();
+			filtraProjetosParticipados();
 			
 			PrimeFaces.current().ajax().update("f-dashboard:messages", 
 					"f-dashboard:dt-meusProjetos-dashboard");
@@ -113,19 +118,26 @@ public class ProjetoMB implements Serializable {
 		
 	}
 	
-	private void atualizaProjetos() {
-		this.projetos = projetoService.listarTodos();
+	private void carregaProjetosProprios() {
+		this.projetosProprios = projetoService.buscarPorCriador(usuario.getNomeExibicao());
+
+
 	}
 	
-	public void filtraProjetos() {
+	public void filtraProjetosParticipados() {
 		
-		for (Projeto p : projetos) {
-			if (!p.getCriador().equalsIgnoreCase(usuario.getNomeExibicao())) {
-				projetosParticipados.add(p);
-			} else {
-				projetosProprios.add(p);
-			}
-		}
+		//List<Projeto> listaProjetos = projetoService.listarTodos();
+		
+		//this.projetosParticipados = listaProjetos.stream().filter(p -> p.getCriador() != this.usuario.getNomeExibicao()).collect(Collectors.toList());
+
+//		
+//		for (Projeto p : projetos) {
+//			if (!p.getCriador().equalsIgnoreCase(usuario.getNomeExibicao())) {
+//				projetosParticipados.add(p);
+//			} else {
+//				projetosProprios.add(p);
+//			}
+//		}
 
 	}
 	
@@ -162,14 +174,8 @@ public class ProjetoMB implements Serializable {
 		return projetoSelecionadoParticipado;
 	}
 
-
 	public void setProjetoSelecionadoParticipado(Projeto projetoSelecionadoParticipado) {
 		this.projetoSelecionadoParticipado = projetoSelecionadoParticipado;
-	}
-
-
-	public List<Projeto> getProjetos() {
-		return projetos;
 	}
 
 	public List<Projeto> getprojetosParticipados() {
