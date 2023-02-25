@@ -40,9 +40,6 @@ public class UsuarioLogadoMB implements Serializable{
 	@Inject
 	private UsuarioService usuarioService;
 	
-	@Inject
-	private UsuarioDAO usuarioDAO;
-	
 	private List<Usuario> usuarios = new ArrayList<>();
 	
 	// Envio de email
@@ -87,7 +84,7 @@ public class UsuarioLogadoMB implements Serializable{
 				return "";
 			}
 					
-			Usuario usuario = (Usuario) getUsuarioDAO().findByNamedQuery(user.getId()).get(0);
+			Usuario usuario = usuarioService.buscarPorId(user.getId()).get(0);
 	           System.out.println("Login efetuado com sucesso");
 	           SessionContext.getInstance().setAttribute("usuarioLogado", usuario);
 	           return "/restricted/dashboard.xhtml?faces-redirect=true";
@@ -224,10 +221,6 @@ public class UsuarioLogadoMB implements Serializable{
 		this.usuarios = usuarios;
 	}
 
-	public UsuarioDAO getUsuarioDAO() {
-		return usuarioDAO;
-	}
-	
 	
 	
 	

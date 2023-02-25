@@ -259,11 +259,17 @@
 						 header="Confirm"
 						 severity="warn">
 						 
-			 <p:commandButton value="Sim" icon="pi pi-check" actionListener="#{projetoMB.removerProjeto()}"
-                process="@this" update="f-dashboard"
-                oncomplete="PF('excluirProjetoDialog').hide()" />
-            <p:commandButton value="Não" type="button" styleClass="ui-button-secondary" icon="pi pi-times"
-                onclick="PF('excluirProjetoDialog').hide()" />		
+			 <p:commandButton value="Sim" 
+			 				  icon="pi pi-check" 
+			 				  actionListener="#{projetoMB.removerProjeto()}"
+                			  process="@this" 
+                			  update="f-dashboard"
+                			  oncomplete="PF('excluirProjetoDialog').hide()" />
+            <p:commandButton value="Não" 
+            				 type="button" 
+            				 styleClass="ui-button-secondary" 
+            				 icon="pi pi-times"
+                			 onclick="PF('excluirProjetoDialog').hide()" />		
 		</p:confirmDialog>
 	</h:form>
 
