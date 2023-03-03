@@ -61,6 +61,10 @@ public class ProjetoService implements Serializable {
 		return projetoDAO.findByNamedQuery(criador);
 	}
 	
+	public Projeto buscarPorId(Long id) {
+		return projetoDao.buscarPorId(Projeto.class, id);
+	}
+	
 	
 	
 	

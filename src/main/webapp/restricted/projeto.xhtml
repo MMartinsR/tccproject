@@ -7,10 +7,22 @@
 
 <h:head>
 	<title>Projeto</title>
+	
+	<style>
+	    .ui-panel, div.ui-state-hover {
+	        margin: 10px;
+	        width: 220px;
+	    }
+	
+	    .ui-dashboard-column {
+	        width: 250px;
+    }
+</style>
 </h:head>
 
 <f:metadata>
 	<f:viewAction action="#{projetoMB.init()}"/>
+	<f:viewParam name="projetoId" value="#{projetoMB.projetoId}"></f:viewParam>
 </f:metadata>
 
 <h:body>
@@ -20,10 +32,50 @@
 		</p:growl>
 
 		<h:panelGroup id="pg-projeto" layout="block"
-			style="width: 1000px; height: 750px; margin: 50px auto 20px auto; border-radius: 20px; border-style: solid; border-width: 2px; border-color: #bdc4ca; box-shadow: 2px 6px 10px #bdc4ca;">
+			style="width: 1000px; min-height: 750px; margin: 50px auto 20px auto; border-radius: 20px; border-style: solid; border-width: 2px; border-color: #bdc4ca; box-shadow: 2px 6px 10px #bdc4ca;">
 			<h:outputLabel id="title-dashboard" value="#{projetoMB.projeto.nome}"
 				style="font-size: 30px; background-color: #008cff; color: white; padding: 15px 35px 5px 10px; margin: 15px 5px 5px 5px; border-radius: 10px; font-family: Arial, sans-serif;" />
+			
+			<h:outputLabel id="subtitle-descricao" 
+						   value="#{projetoMB.projeto.descricao}"
+						   style="display: block; margin: 20px; font-size: 25px" />
+						   
+			<div id="fs-tarefas">
+				<h:form id="f-tarefa">
+					<p:fieldset legend="Tarefas"
+								style="margin: 20px; min-height: 600px">
 
+							<p:commandButton id="cb-criarNovaLista-projeto"
+											 icon="pi pi-plus"
+											 title="Nova lista"
+											 actionListener="#{projetoMB.novaLista()}"
+											 update="db-lista"/>      
+						
+						<p:dashboard id="db-lista" 
+									 model="#{projetoMB.modelo}"
+									 style="margin: 20px">
+				            <p:ajax event="reorder" 
+				            		listener="#{projetoMB.reordenacao()}" 
+				            		update=":f-projeto:messages"/>
+				         
+				        <p:repeat var="l" value="#{projetoMB.listaColunas}">				        	
+				        	<p:panel id="#{l.addWidget(projetoMB.nomeLista)}" header="Lista">
+<!-- 				                 <p:card id="card1" style="width: 180px; margin-bottom: 2em"> -->
+<!-- 								    <f:facet name="title"> -->
+<!-- 								        Card 1 -->
+<!-- 								    </f:facet>								 -->
+<!-- 								    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. erferendis esse, cupiditate neque quas!</p> -->
+							
+<!-- 								</p:card> -->
+				            </p:panel>				        	
+				        </p:repeat>
+				
+				        </p:dashboard>
+				
+				        <div style="clear:both"/>			            
+			        </p:fieldset>
+				</h:form>
+			</div>
 		</h:panelGroup>
 	</h:form>
 </h:body>

@@ -25,5 +25,11 @@ public class Message {
 		FacesContext.getCurrentInstance().addMessage(null, message);
 
 	}
+	
+	public static void info(String msg, String detail) {
+		
+		FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, msg, detail);
+		FacesContext.getCurrentInstance().addMessage(null, message);
+	}
 
 }

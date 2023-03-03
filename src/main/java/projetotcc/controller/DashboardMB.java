@@ -127,8 +127,11 @@ public class DashboardMB implements Serializable {
 			Flash flash = FacesContext.getCurrentInstance().getExternalContext().getFlash();
 			flash.put("projetoSelecionadoProprio", projetoSelecionadoProprio);
 			
+			String url = "/restricted/projeto.xhtml";
+			url += "?projetoId=" + projetoSelecionadoProprio.getId();
+			
 			String contextPath = FacesContext.getCurrentInstance().getExternalContext().getRequestContextPath();
-			FacesContext.getCurrentInstance().getExternalContext().redirect(contextPath + "/restricted/projeto.xhtml");
+			FacesContext.getCurrentInstance().getExternalContext().redirect(contextPath + url);
 			
 		} catch (Exception e) {
 			Message.erro("Ocorreu um problema ao redirecionar");

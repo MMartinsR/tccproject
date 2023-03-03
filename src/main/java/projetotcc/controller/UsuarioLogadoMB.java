@@ -15,7 +15,6 @@ import javax.mail.Session;
 
 import org.primefaces.PrimeFaces;
 
-import projetotcc.dao.UsuarioDAO;
 import projetotcc.model.Usuario;
 import projetotcc.service.UsuarioService;
 import projetotcc.utility.EmailUtil;
@@ -27,15 +26,9 @@ public class UsuarioLogadoMB implements Serializable{
 
 	private static final long serialVersionUID = 1L;
 	
-	// é possivel realizar as ações usando apenas um objeto usuario
-	@Inject
-	private Usuario usuarioCadastrado = new Usuario();
-	
-	@Inject
-	private Usuario usuarioCadastrar = new Usuario();
-	
-	@Inject
-	private Usuario usuarioResetar = new Usuario();
+
+	@Inject 
+	private Usuario usuario = new Usuario();
 	
 	@Inject
 	private UsuarioService usuarioService;
@@ -67,16 +60,16 @@ public class UsuarioLogadoMB implements Serializable{
 				
 				Usuario usuario = retornaUsuario();
 				
-				if (usuario.getEmail().equals(usuarioCadastrado.getEmail()) 
-						&& usuario.getNomeExibicao().equals(usuarioCadastrado.getNomeExibicao())) {
+				if (usuario.getEmail().equals(usuario.getEmail()) 
+						&& usuario.getNomeExibicao().equals(usuario.getNomeExibicao())) {
 					return "/restricted/dashboard.xhtml?faces-redirect=true";
 				}
 				
 				fazerLogout();				
 			}
 			
-			System.out.println("Tentando logar com usuário " + usuarioCadastrado.getEmail());
-			Usuario user = usuarioService.usuarioPodeLogar(usuarioCadastrado.getEmail(), usuarioCadastrado.getSenha());
+			System.out.println("Tentando logar com usuário " + usuario.getEmail());
+			Usuario user = usuarioService.usuarioPodeLogar(usuario.getEmail(), usuario.getSenha());
 			
 			if (user == null) {
 				Message.erro("Login ou senha errada, tente novamente!");
@@ -107,17 +100,17 @@ public class UsuarioLogadoMB implements Serializable{
 	}
 	
 	public void novoUsuario() {
-		this.usuarioCadastrar = new Usuario();
+		this.usuario = new Usuario();
 	}
 	
 	public void cadastrarUsuario() {
 		
 		try {
 			
-			this.usuarioCadastrar.setEmail(this.usuarioCadastrar.getEmail().toLowerCase().trim());			
-			this.usuarioCadastrar.setSenha(usuarioService.converteStringParaMd5(this.usuarioCadastrar.getSenha()));
+			this.usuario.setEmail(this.usuario.getEmail().toLowerCase().trim());			
+			this.usuario.setSenha(usuarioService.converteStringParaMd5(this.usuario.getSenha()));
 			
-			usuarioService.salvar(usuarioCadastrar);
+			usuarioService.salvar(usuario);
 			Message.info("Novo usuário cadastrado!");
 			
 			PrimeFaces.current().executeScript("PF('novoCadastroDialog').hide();");
@@ -132,8 +125,8 @@ public class UsuarioLogadoMB implements Serializable{
 		
 		try {
 			
-			String email = this.usuarioResetar.getEmail().toLowerCase().trim();
-			String novaSenha = this.usuarioResetar.getSenha();
+			String email = this.usuario.getEmail().toLowerCase().trim();
+			String novaSenha = this.usuario.getSenha();
 					
 			usuarioService.gerarNovaSenha(email, novaSenha);
 			
@@ -189,28 +182,12 @@ public class UsuarioLogadoMB implements Serializable{
 	}
 	
 
-	public Usuario getUsuarioCadastrado() {
-		return usuarioCadastrado;
+	public Usuario getUsuario() {
+		return usuario;
 	}
 
-	public void setUsuarioCadastrado(Usuario usuarioCadastrado) {
-		this.usuarioCadastrado = usuarioCadastrado;
-	}
-
-	public Usuario getUsuarioCadastrar() {
-		return usuarioCadastrar;
-	}
-
-	public void setUsuarioCadastrar(Usuario usuarioCadastrar) {
-		this.usuarioCadastrar = usuarioCadastrar;
-	}
-
-	public Usuario getUsuarioResetar() {
-		return usuarioResetar;
-	}
-
-	public void setUsuarioResetar(Usuario usuarioResetar) {
-		this.usuarioResetar = usuarioResetar;
+	public void setUsuario(Usuario usuario) {
+		this.usuario = usuario;
 	}
 
 	public List<Usuario> getUsuarios() {

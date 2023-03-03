@@ -15,6 +15,7 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -46,6 +47,10 @@ public class Projeto implements Serializable, Base {
 	joinColumns = @JoinColumn(name = "projeto_id"),
 	inverseJoinColumns = @JoinColumn(name = "usuario_id"))
 	private List<Usuario> usuarios = new ArrayList<>();
+	
+	@OneToMany(mappedBy = "projeto")
+	private List<Tarefa> tarefas = new ArrayList<Tarefa>();
+	
 	
 	
 	public Long getId() {
