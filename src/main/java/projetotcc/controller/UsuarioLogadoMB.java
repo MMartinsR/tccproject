@@ -58,10 +58,10 @@ public class UsuarioLogadoMB implements Serializable{
 			
 			if (retornaUsuario() != null) {
 				
-				Usuario usuario = retornaUsuario();
+				Usuario usuarioEncontrado = retornaUsuario();
 				
-				if (usuario.getEmail().equals(usuario.getEmail()) 
-						&& usuario.getNomeExibicao().equals(usuario.getNomeExibicao())) {
+				if (usuarioEncontrado.getEmail().equals(usuario.getEmail()) 
+						&& usuarioEncontrado.getNomeExibicao().equals(usuario.getNomeExibicao())) {
 					return "/restricted/dashboard.xhtml?faces-redirect=true";
 				}
 				
@@ -69,17 +69,17 @@ public class UsuarioLogadoMB implements Serializable{
 			}
 			
 			System.out.println("Tentando logar com usuário " + usuario.getEmail());
-			Usuario user = usuarioService.usuarioPodeLogar(usuario.getEmail(), usuario.getSenha());
+			Usuario usuarioPermitido = usuarioService.usuarioPodeLogar(usuario.getEmail(), usuario.getSenha());
 			
-			if (user == null) {
+			if (usuarioPermitido == null) {
 				Message.erro("Login ou senha errada, tente novamente!");
 				FacesContext.getCurrentInstance().validationFailed();
 				return "";
 			}
 					
-			Usuario usuario = usuarioService.buscarPorId(user.getId()).get(0);
+			Usuario usuarioPodeLogar = usuarioService.buscarPorId(usuarioPermitido.getId()).get(0);
 	           System.out.println("Login efetuado com sucesso");
-	           SessionContext.getInstance().setAttribute("usuarioLogado", usuario);
+	           SessionContext.getInstance().setAttribute("usuarioLogado", usuarioPodeLogar);
 	           return "/restricted/dashboard.xhtml?faces-redirect=true";
 			
 		} catch (Exception e) {

@@ -57,7 +57,6 @@ public class UsuarioService implements Serializable {
 	}
 	
 	public List<Usuario> buscarPorId(Long id){
-		
 		return usuarioDAO.findByNamedQuery(id);
 	}
 
