@@ -56,11 +56,16 @@ public class UsuarioService implements Serializable {
 		return usuarioDao.buscarTodos(Usuario.class);
 	}
 	
+	public List<Usuario> buscarPorId(Long id){
+		return usuarioDAO.findByNamedQuery(id);
+	}
+
+	
 	// Verifica se o usuário existe ou se pode logar
 	public Usuario usuarioPodeLogar(String email, String senha) {
 		try {			
 			email = email.toLowerCase().trim();
-			System.out.println("Verificando login do usuário" + email);
+			System.out.println("Verificando login do usuário " + email);
 			List<Usuario> retorno = usuarioDAO.findByNamedQuery(email, converteStringParaMd5(senha));
 			
 			if (retorno.size() == 1) {

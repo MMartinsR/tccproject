@@ -12,11 +12,9 @@ public class UsuarioDAO implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 	
-	private static EntityManager manager = ConnectionFactory.getEntityManager();
-	
 	public List<Usuario> findByNamedQuery(String email, String senha) {
 		
-		//manager.getEntityManagerFactory().getCache().evict(Usuario.class);
+		EntityManager manager = ConnectionFactory.getEntityManager();
 		
 		Query query = manager.createNamedQuery("Usuario.findByEmailSenha");
 		query.setParameter("email", email);
@@ -29,6 +27,8 @@ public class UsuarioDAO implements Serializable {
 	
 	public List<Usuario> findByNamedQuery(Long id) {
 		
+		EntityManager manager = ConnectionFactory.getEntityManager();
+		
 		Query query = manager.createNamedQuery("Usuario.findById");
 		query.setParameter("id", id);
 
@@ -38,6 +38,8 @@ public class UsuarioDAO implements Serializable {
 	}
 	
 	public Usuario findByEmail(String email) {
+		
+		EntityManager manager = ConnectionFactory.getEntityManager();
 		
 		Query query = manager.createNamedQuery("Usuario.findByEmail");
 		query.setParameter("email", email);

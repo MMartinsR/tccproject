@@ -1,19 +1,32 @@
 package projetotcc.model;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 @Entity
 @Table(name = "tb_projeto")
+@NamedQueries(value = {
+		@NamedQuery(name = "Projeto.findByCriador",
+				query = "SELECT p FROM Projeto p "
+				+ "WHERE p.criador = :criador")
+})
 public class Projeto implements Serializable, Base {
 
 	private static final long serialVersionUID = 1L;
@@ -28,6 +41,16 @@ public class Projeto implements Serializable, Base {
 	private Date dataCriacao;
 	@Column(nullable = false)
 	private String criador;
+	
+	@ManyToMany
+	@JoinTable(name = "tb_projeto_usuario",
+	joinColumns = @JoinColumn(name = "projeto_id"),
+	inverseJoinColumns = @JoinColumn(name = "usuario_id"))
+	private List<Usuario> usuarios = new ArrayList<>();
+	
+	@OneToMany(mappedBy = "projeto")
+	private List<Tarefa> tarefas = new ArrayList<Tarefa>();
+	
 	
 	
 	public Long getId() {
@@ -69,8 +92,23 @@ public class Projeto implements Serializable, Base {
 	public void setCriador(String criador) {
 		this.criador = criador;
 	}
-
 	
+	public List<Usuario> getUsuarios() {
+		return usuarios;
+	}
+
+	public void setUsuarios(List<Usuario> usuarios) {
+		this.usuarios = usuarios;
+	}
+
+	public List<Tarefa> getTarefas() {
+		return tarefas;
+	}
+
+	public void setTarefas(List<Tarefa> tarefas) {
+		this.tarefas = tarefas;
+	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;

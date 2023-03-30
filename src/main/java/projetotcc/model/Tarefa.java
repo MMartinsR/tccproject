@@ -1,19 +1,56 @@
 package projetotcc.model;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+
+import projetotcc.enums.PesoEnum;
+import projetotcc.enums.StatusEnum;
+
+@Entity
+@Table(name = "tb_tarefa")
 public class Tarefa implements Serializable, Base{
 
 	private static final long serialVersionUID = 1L;
 	
-	
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
+	@Column(nullable = false)
 	private String nome;
 	private String descricao;
-	private int peso;
+	@Enumerated(EnumType.ORDINAL)
+	private PesoEnum peso;
+	@Temporal(TemporalType.DATE)
 	private Date dataEntrega;
-	private int status;
+	@Enumerated(EnumType.ORDINAL)
+	private StatusEnum status;
+	
+	@ManyToOne
+	@JoinColumn(name = "projeto_id")
+	private Projeto projeto;
+	
+	@ManyToMany
+	@JoinTable(name = "tb_tarefa_tag",
+	joinColumns = @JoinColumn(name = "tarefa_id"),
+	inverseJoinColumns = @JoinColumn(name = "tag_id"))
+	private List<Tag> tags = new ArrayList<>();
 	
 	
 	public Long getId() {
@@ -40,11 +77,11 @@ public class Tarefa implements Serializable, Base{
 		this.descricao = descricao;
 	}
 
-	public int getPeso() {
+	public PesoEnum getPeso() {
 		return peso;
 	}
 
-	public void setPeso(int peso) {
+	public void setPeso(PesoEnum peso) {
 		this.peso = peso;
 	}
 
@@ -56,15 +93,30 @@ public class Tarefa implements Serializable, Base{
 		this.dataEntrega = dataEntrega;
 	}
 
-	public int getStatus() {
+	public StatusEnum getStatus() {
 		return status;
 	}
 
-	public void setStatus(int status) {
+	public void setStatus(StatusEnum status) {
 		this.status = status;
 	}
-
 	
+	public Projeto getProjeto() {
+		return projeto;
+	}
+
+	public void setProjeto(Projeto projeto) {
+		this.projeto = projeto;
+	}
+
+	public List<Tag> getTags() {
+		return tags;
+	}
+
+	public void setTags(List<Tag> tags) {
+		this.tags = tags;
+	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;

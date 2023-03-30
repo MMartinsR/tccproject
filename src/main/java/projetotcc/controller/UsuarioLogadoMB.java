@@ -15,7 +15,6 @@ import javax.mail.Session;
 
 import org.primefaces.PrimeFaces;
 
-import projetotcc.dao.UsuarioDAO;
 import projetotcc.model.Usuario;
 import projetotcc.service.UsuarioService;
 import projetotcc.utility.EmailUtil;
@@ -27,21 +26,12 @@ public class UsuarioLogadoMB implements Serializable{
 
 	private static final long serialVersionUID = 1L;
 	
-	// é possivel realizar as ações usando apenas um objeto usuario
-	@Inject
-	private Usuario usuarioCadastrado = new Usuario();
-	
-	@Inject
-	private Usuario usuarioCadastrar = new Usuario();
-	
-	@Inject
-	private Usuario usuarioResetar = new Usuario();
+
+	@Inject 
+	private Usuario usuario = new Usuario();
 	
 	@Inject
 	private UsuarioService usuarioService;
-	
-	@Inject
-	private UsuarioDAO usuarioDAO;
 	
 	private List<Usuario> usuarios = new ArrayList<>();
 	
@@ -51,7 +41,7 @@ public class UsuarioLogadoMB implements Serializable{
 	
 	
 	public void init() {
-		System.out.println("entrou no init login");
+		System.out.println("Carregando Login");
 	}
 	
 	/**
@@ -68,29 +58,32 @@ public class UsuarioLogadoMB implements Serializable{
 			
 			if (retornaUsuario() != null) {
 				
-				Usuario usuario = retornaUsuario();
+				Usuario usuarioEncontrado = retornaUsuario();
 				
-				if (usuario.getEmail().equals(usuarioCadastrado.getEmail()) 
-						&& usuario.getNomeExibicao().equals(usuarioCadastrado.getNomeExibicao())) {
+				if (usuarioEncontrado.getEmail().equals(usuario.getEmail()) 
+						&& usuarioEncontrado.getNomeExibicao().equals(usuario.getNomeExibicao())) {
+					
 					return "/restricted/dashboard.xhtml?faces-redirect=true";
 				}
 				
 				fazerLogout();				
 			}
 			
-			System.out.println("Tentando logar com usuário " + usuarioCadastrado.getEmail());
-			Usuario user = usuarioService.usuarioPodeLogar(usuarioCadastrado.getEmail(), usuarioCadastrado.getSenha());
+			System.out.println("Tentando logar com usuário " + usuario.getEmail());
+			Usuario usuarioPermitido = usuarioService.usuarioPodeLogar(usuario.getEmail(), usuario.getSenha());
 			
-			if (user == null) {
+			if (usuarioPermitido == null) {
 				Message.erro("Login ou senha errada, tente novamente!");
 				FacesContext.getCurrentInstance().validationFailed();
 				return "";
 			}
 					
-			Usuario usuario = (Usuario) getUsuarioDAO().findByNamedQuery(user.getId()).get(0);
+			Usuario usuarioPodeLogar = usuarioService.buscarPorId(usuarioPermitido.getId()).get(0);
 	           System.out.println("Login efetuado com sucesso");
-	           SessionContext.getInstance().setAttribute("usuarioLogado", usuario);
-	           return "/restricted/dashboard.xhtml?faces-redirect=true";
+	           SessionContext.getInstance().setAttribute("usuarioLogado", usuarioPodeLogar);
+	           
+	           String url = "/restricted/dashboard.xhtml?faces-redirect=true";
+	           return url;
 			
 		} catch (Exception e) {
 			Message.erro(e.getMessage());
@@ -110,20 +103,21 @@ public class UsuarioLogadoMB implements Serializable{
 	}
 	
 	public void novoUsuario() {
-		this.usuarioCadastrar = new Usuario();
+		this.usuario = new Usuario();
 	}
 	
 	public void cadastrarUsuario() {
 		
 		try {
 			
-			this.usuarioCadastrar.setEmail(this.usuarioCadastrar.getEmail().toLowerCase().trim());			
-			this.usuarioCadastrar.setSenha(usuarioService.converteStringParaMd5(this.usuarioCadastrar.getSenha()));
+			this.usuario.setEmail(this.usuario.getEmail().toLowerCase().trim());			
+			this.usuario.setSenha(usuarioService.converteStringParaMd5(this.usuario.getSenha()));
 			
-			usuarioService.salvar(usuarioCadastrar);
+			usuarioService.salvar(usuario);
 			Message.info("Novo usuário cadastrado!");
 			
 			PrimeFaces.current().executeScript("PF('novoCadastroDialog').hide();");
+			PrimeFaces.current().ajax().update("f-login");
 			
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -135,8 +129,8 @@ public class UsuarioLogadoMB implements Serializable{
 		
 		try {
 			
-			String email = this.usuarioResetar.getEmail().toLowerCase().trim();
-			String novaSenha = this.usuarioResetar.getSenha();
+			String email = this.usuario.getEmail().toLowerCase().trim();
+			String novaSenha = this.usuario.getSenha();
 					
 			usuarioService.gerarNovaSenha(email, novaSenha);
 			
@@ -192,28 +186,12 @@ public class UsuarioLogadoMB implements Serializable{
 	}
 	
 
-	public Usuario getUsuarioCadastrado() {
-		return usuarioCadastrado;
+	public Usuario getUsuario() {
+		return usuario;
 	}
 
-	public void setUsuarioCadastrado(Usuario usuarioCadastrado) {
-		this.usuarioCadastrado = usuarioCadastrado;
-	}
-
-	public Usuario getUsuarioCadastrar() {
-		return usuarioCadastrar;
-	}
-
-	public void setUsuarioCadastrar(Usuario usuarioCadastrar) {
-		this.usuarioCadastrar = usuarioCadastrar;
-	}
-
-	public Usuario getUsuarioResetar() {
-		return usuarioResetar;
-	}
-
-	public void setUsuarioResetar(Usuario usuarioResetar) {
-		this.usuarioResetar = usuarioResetar;
+	public void setUsuario(Usuario usuario) {
+		this.usuario = usuario;
 	}
 
 	public List<Usuario> getUsuarios() {
@@ -224,10 +202,6 @@ public class UsuarioLogadoMB implements Serializable{
 		this.usuarios = usuarios;
 	}
 
-	public UsuarioDAO getUsuarioDAO() {
-		return usuarioDAO;
-	}
-	
 	
 	
 	

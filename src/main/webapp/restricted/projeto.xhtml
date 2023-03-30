@@ -1,0 +1,270 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+
+<h:head>
+	<title>Projeto</title>
+</h:head>
+
+<f:metadata>
+	<f:viewAction action="#{projetoMB.init()}"/>
+	<f:viewParam name="projetoId" value="#{projetoMB.projetoId}"></f:viewParam>
+</f:metadata>
+
+<h:body>
+	<h:form id="f-projeto">
+		<p:growl id="messages">
+			<p:autoUpdate />
+		</p:growl>
+
+		<h:panelGroup id="pg-projeto" layout="block"
+			style="width: 1000px; min-height: 750px; margin: 50px auto 20px auto; border-radius: 20px; border-style: solid; border-width: 2px; border-color: #bdc4ca; box-shadow: 2px 6px 10px #bdc4ca;">
+			<h:outputLabel id="title-dashboard" value="#{projetoMB.projeto.nome}"
+				style="font-size: 30px; background-color: #008cff; color: white; padding: 15px 35px 5px 10px; margin: 15px 5px 5px 5px; border-radius: 10px; font-family: Arial, sans-serif;" />
+			
+			<h:outputLabel id="subtitle-descricao" 
+						   value="#{projetoMB.projeto.descricao}"
+						   style="display: block; margin: 20px; font-size: 25px" />
+						   
+					<p:fieldset legend="Tarefas"
+								style="margin: 20px; min-height: 600px">
+					
+						<p:dataTable id="dt-tarefas-projeto"
+									 widgetVar="datatableTarefasProjeto"
+									 var="tarefa"
+									 value="#{projetoMB.tarefas}"
+									 lazy="false"
+									 reflow="true"
+									 paginator="true"
+									 paginatorPosition="bottom"
+									 rows="6"
+									 rowKey="#{tarefas.id}"
+									 style="margin: 20px 20px 0px 20px;">
+									 
+							<f:facet name="header">
+								<span>
+									<p:commandButton id="cb-criarNovaTarefa-projeto"											  
+													 icon="pi pi-plus"
+													 value="Novo"
+													 actionListener="#{projetoMB.criarNova()}"
+													 update=":f-projetoTarefa-dialog:gerencia-criarTarefa-projeto"
+													 oncomplete="PF('gerenciaCriarTarefaDialog').show()"
+													 alt="Criar Nova Tarefa"
+													 title="Nova Tarefa">
+										<p:resetInput target=":f-projetoTarefa-dialog:gerencia-criarTarefa-projeto"/>
+									</p:commandButton>							
+								</span>
+								<span>
+									<p:commandButton id="cb-excluirTarefa-projeto"											  
+													 icon="pi pi-trash"
+													 value="#{projetoMB.mensagemBotaoExcluir}"
+													 oncomplete="PF('excluirTarefaDialog').show()"
+													 disabled="#{!dashboardMB.existeProjetoSelecionado}"
+													 update="@this"												 
+													 alt="Excluir Projeto"
+													 title="Excluir Projeto">
+									</p:commandButton>							
+								</span>
+							</f:facet>
+							
+							<p:column headerText="Tarefa">
+								<h:outputText value="#{tarefa.nome}" />							
+							</p:column>
+							
+							<p:column headerText="Descrição">
+								<h:outputText value="#{tarefa.descricao}" />							
+							</p:column>
+							
+							<p:column headerText="Data de Entrega">
+								<h:outputText value="#{tarefa.dataEntrega}" >
+									<f:convertDateTime pattern="dd/MM/yyyy" timeZone="GMT-3"/>
+								</h:outputText>							
+							</p:column>
+							
+							<p:column headerText="Peso">
+								<h:outputText value="#{tarefa.peso.nomePeso}" />							
+							</p:column>
+							
+							<p:column headerText="Status">
+								<h:outputText value="#{tarefa.status.status}" />							
+							</p:column>
+							
+							<p:column headerText="Tags">
+							
+								<ui:repeat var="tag" value="#{tarefa.tags}">
+									<h:outputText value="#{tag.nome}" /><br/> 
+								</ui:repeat>
+							</p:column>
+							
+							<p:column width="35px">
+								<p:commandButton icon="pi pi-file-edit" 
+                							 update=":f-projetoTarefa-dialog:gerencia-criarTarefa-projeto"
+                							 oncomplete="PF('gerenciaCriarTarefaDialog').show()"
+                							 process="@this"
+                                			 title="Editar Tarefa">
+	                    			<f:setPropertyActionListener value="#{tarefa}"
+	                                                 target="#{projetoMB.tarefa}"/>
+	                                <p:resetInput target=":f-projetoTarefa-dialog:gerencia-criarTarefa-projeto"/>
+                				</p:commandButton>
+							</p:column>						
+						</p:dataTable>
+			    	</p:fieldset>
+		</h:panelGroup>
+	</h:form>
+	
+	<h:form id="f-projetoTarefa-dialog">
+
+		<p:dialog header="Adicionar Tarefa"
+				  showEffect="fade"
+				  modal="true"
+				  widgetVar="gerenciaCriarTarefaDialog"
+				  responsive="true">
+				  
+			<p:outputPanel id="gerencia-criarTarefa-projeto" 
+						   class="ui-fluid">
+				<p:outputPanel>
+					<div class="field">
+                        <p:outputLabel for="nome_tarefa">Nome: </p:outputLabel>
+                        <p:inputText id="nome_tarefa" 
+                        			 value="#{projetoMB.tarefa.nome}" 
+                        			 required="true" />
+                    </div>
+                    <div class="field">
+                        <p:outputLabel for="descricao">Descrição: </p:outputLabel>
+                        <p:inputTextarea id="descricao" 
+                        				 value="#{projetoMB.tarefa.descricao}" />
+                    </div>
+                    <div class="field">
+                        <p:outputLabel for="peso">Peso: </p:outputLabel>
+                        <p:selectOneMenu id="peso"
+                        				 value="#{projetoMB.tarefa.peso}"			 				 
+										 requiredMessage="Escolha o peso da tarefa"
+										 autoWidth="true">
+							<f:selectItem itemLabel="SELECIONE UM PESO"
+										  noSelectionOption="true"/>
+							<f:selectItems value="#{projetoMB.listaPesos}"
+										   var="peso"
+										   itemValue="#{peso}"
+										   itemLabel="#{peso.nomePeso}"/>									
+						</p:selectOneMenu>		
+                    </div>
+                    <div class="field">
+                        <p:outputLabel for="data_entrega">Data de entrega: </p:outputLabel>
+                        <p:datePicker id="data_entrega" 
+                        			  value="#{projetoMB.tarefa.dataEntrega}"
+                        			  pattern="dd/MM/yyyy"
+                        			  timeZone="GMT-3"
+                        			  />
+                    </div>
+                    
+                    <div class="field">
+                        <p:outputLabel for="tags">Tags: </p:outputLabel>
+                        <p:selectManyMenu id="tags"
+                        				 value="#{projetoMB.tarefa.tags}"
+                        				 converter="objectConverter"
+                        				 items="#{projetoMB.tags}"
+										 autoWidth="true">
+							<f:selectItem itemLabel="SELECIONE TAGS"
+										  noSelectionOption="true"/>
+							<f:selectItems value="#{projetoMB.tags}"
+										   var="tag"
+										   itemValue="#{tag}"
+										   itemLabel="#{tag.nome}"/>
+							<f:attribute name="collectionType" value="java.util.ArrayList"/>									
+						</p:selectManyMenu>
+                    </div>
+                    
+                    <div class="field">
+						<p:commandButton id="cb-tag-tarefa"											  
+										 icon="pi pi-plus"
+										 value="Criar Tag"
+										 actionListener="#{projetoMB.criarNovaTag()}"
+										 update="gerencia-criarTag-Tarefa"
+										 oncomplete="PF('gerenciaCriarTagDialog').show()"
+										 alt="Criar Nova Tag"
+										 title="Nova Tag">
+							<p:resetInput target="gerencia-criarTag-Tarefa"/>
+						</p:commandButton>							
+                    </div>
+                    
+				</p:outputPanel>
+			</p:outputPanel>
+			
+			<f:facet name="footer">
+                <p:commandButton id="cb-criar-tarefa"
+                				 value="Criar" 
+                				 icon="pi pi-check" 
+                				 actionListener="#{projetoMB.adicionarTarefa()}"
+                    			 update="gerencia-criarTarefa-projeto" 
+                    			 process="gerencia-criarTarefa-projeto @this" />
+                <p:commandButton id="cb-cancelar-criar-tarefa"
+                				 value="Cancelar" 
+                				 icon="pi pi-times" 
+                				 onclick="PF('gerenciaCriarTarefaDialog').hide()"
+                    			 class="ui-button-secondary" 
+                    			 type="button" />
+            </f:facet>		
+		
+		</p:dialog>
+		
+		<p:dialog header="Adicionar Tag"
+				  showEffect="fade"
+				  modal="true"
+				  widgetVar="gerenciaCriarTagDialog"
+				  responsive="true">
+				  
+			<p:outputPanel id="gerencia-criarTag-Tarefa" 
+						   class="ui-fluid">
+				<p:outputPanel>
+					<div class="field">
+                        <p:outputLabel for="nome_tag">Nome: </p:outputLabel>
+                        <p:inputText id="nome_tag" 
+                        			 value="#{projetoMB.tag.nome}" 
+                        			 required="true" />
+                    </div>
+                </p:outputPanel>
+           </p:outputPanel>
+           
+           <f:facet name="footer">
+                <p:commandButton id="cb-criar-tag"
+                				 value="Criar" 
+                				 icon="pi pi-check" 
+                				 actionListener="#{projetoMB.adicionarTag()}"
+                    			 update="gerencia-criarTag-Tarefa" 
+                    			 process="gerencia-criarTag-Tarefa @this" />
+                <p:commandButton id="cb-cancelar-criar-tag"
+                				 value="Cancelar" 
+                				 icon="pi pi-times" 
+                				 onclick="PF('projeto').hide()"
+                    			 class="ui-button-secondary" 
+                    			 type="button" />
+            </f:facet>	  
+		</p:dialog>
+		
+		<p:confirmDialog id="excluir-tarefa-dialog"
+					     widgetVar="excluirTarefaDialog" 
+						 showEffect="fade"
+						 width="300"
+						 message="Deseja excluir esta tarefa?"
+						 header="Confirm"
+						 severity="warn">
+						 
+			 <p:commandButton value="Sim" 
+			 				  icon="pi pi-check" 
+			 				  actionListener="#{projetoMB.removerTarefa()}"
+                			  process="@this" 
+                			  update="f-projeto"
+                			  oncomplete="PF('excluirTarefaDialog').hide()" />
+            <p:commandButton value="Não" 
+            				 type="button" 
+            				 styleClass="ui-button-secondary" 
+            				 icon="pi pi-times"
+                			 onclick="PF('excluirTarefaDialog').hide()" />		
+		</p:confirmDialog>	
+	</h:form>
+</h:body>
+</html>

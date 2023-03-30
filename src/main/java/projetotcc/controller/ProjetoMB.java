@@ -1,23 +1,25 @@
 package projetotcc.controller;
 
 import java.io.Serializable;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
-import javax.faces.context.FacesContext;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.primefaces.PrimeFaces;
-import org.primefaces.event.SelectEvent;
-import org.primefaces.event.UnselectEvent;
 
+import projetotcc.enums.PesoEnum;
+import projetotcc.enums.StatusEnum;
 import projetotcc.model.Projeto;
-import projetotcc.model.Usuario;
+import projetotcc.model.Tag;
+import projetotcc.model.Tarefa;
 import projetotcc.service.ProjetoService;
+import projetotcc.service.TagService;
+import projetotcc.service.TarefaService;
 import projetotcc.utility.Message;
 
 @Named
@@ -25,175 +27,205 @@ import projetotcc.utility.Message;
 public class ProjetoMB implements Serializable {
 
 	private static final long serialVersionUID = 1L;
-
-	@Inject
-	private Projeto projetoSelecionadoProprio = new Projeto();
 	
 	@Inject
-	private Projeto projetoSelecionadoParticipado = new Projeto();
+	private Projeto projeto = new Projeto();
+	
+	@Inject 
+	private Tarefa tarefa = new Tarefa(); 
+	
+	@Inject
+	private Tag tag = new Tag();
 	
 	@Inject
 	private ProjetoService projetoService;
-		
-	private List<Projeto> projetos = new ArrayList<>();
-	private List<Projeto> projetosParticipados = new ArrayList<>();
-	private List<Projeto> projetosProprios = new ArrayList<>();
 	
-	private String dataCriada;
+	@Inject
+	private TarefaService tarefaService;
 	
-	private Usuario usuario = new Usuario();
-	private boolean participando = false;
+	@Inject
+	private TagService tagService;
+	
+	private List<Tarefa> tarefas = new ArrayList<>();
+	private List<Tag> tags = new ArrayList<>();
+	private List<PesoEnum> listaPesos;
+	private List<StatusEnum> listaStatus;
+	
+	private Long projetoId;	
 	private String mensagemBotaoExcluir = "Excluir";
-	private boolean existeProjetoSelecionado;
+	private boolean tarefasValidadas;
 	
 	
+	public void init() {		
+		
+		carregaProjetoSelecionado();
+		validaTarefas();
+		carregaTarefas();
+		carregaTags();
+		preenchePesos();
+		preencheStatus();
+		
 
-	public void init() {
-		System.out.println("entrou no init!");
-		this.usuario = (Usuario) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("usuarioLogado");
-		atualizaProjetos();
-		filtraProjetos();
+	}
+	
+	private void carregaProjetoSelecionado() {
+		// Valida se id do projeto foi passado pela url e se foi, busca por esse projeto para popular a página do projeto.
+		if (projetoId != null) {
+			projeto = projetoService.buscarPorId(projetoId);
+		}
+	}
+	
+	private void carregaTarefas() {
+		tarefas = tarefaService.listarTodos();
 		
 	}
 	
-	
-	public void abrirNovo() {
-		this.projetoSelecionadoProprio = new Projeto();
-		projetoSelecionadoProprio.setDataCriacao(new Date());
-		projetoSelecionadoProprio.setCriador(usuario.getNomeExibicao());
-		setParticipando(false);
+	private void carregaTags() {
+		tags = tagService.listarTodos();
 	}
 	
-	public void salvarProjeto() {
+	private void validaTarefas() {
+		
+		carregaTarefas();
+		
+		 // para cada tarefa se data de entrega for anterior a data atual, marcar status tarefa como atrasada
+		for (Tarefa tarefa : this.tarefas) {
+			if (tarefa.getDataEntrega().before(new Date())) {
+				tarefa.setStatus(StatusEnum.ATRASADA);
+				tarefaService.atualizar(tarefa);
+			}
+		}
+		setTarefasValidadas(true);	
+	}
+
+	public void criarNova() {
+		tarefa = new Tarefa();
+		
+	}
+	
+	public void criarNovaTag() {
+		tag = new Tag();
+	}
+	
+	public void adicionarTarefa() {
 		
 		try {
 			
-			if (projetoSelecionadoProprio.getId() == null) {			
+			if(tarefa.getId() == null) {
+				tarefa.setStatus(StatusEnum.ABERTA);
 				
-				projetoSelecionadoProprio.setCriador(usuario.getNomeExibicao());
+				tarefa.setProjeto(projeto);
 				
-				projetoService.salvar(projetoSelecionadoProprio);
-				Message.info("Projeto salvo com sucesso!");
+				tarefaService.salvar(tarefa);
 				
+				Message.info("Nova tarefa adicionada com sucesso!");
 			} else {
 				
-				projetoService.atualizar(projetoSelecionadoProprio);
-				Message.info("Projeto atualizado com sucesso!");
-			}
-			atualizaProjetos();
-			PrimeFaces.current().executeScript("PF('gerenciaProjetoDashboardDialog').hide()");
-			PrimeFaces.current().ajax().update("f-dashboard:messages", 
-					"f-dashboard:dt-meusProjetos-dashboard");
-			
+				Tarefa tarefaEx = tarefaService.buscarPorId(tarefa.getId());
+				
+				if (tarefaEx != null) {
+					
+					
+				}
+				
+				// setar novas tags caso hajam
+				
+				// atualizar a tarefa
+				
+				// atualizar o projeto.
+				
+				Message.info("Tarefa " + tarefa.getNome() + " atualizada com sucesso!");
+			}			
 			
 			
 		} catch (Exception e) {
-			Message.erro(e.getMessage());
+			Message.erro("Ocorreu um erro ao salvar a tarefa: " + e.getMessage());
 		}
+		
+		carregaTarefas();
+		
+		PrimeFaces.current().executeScript("PF('gerenciaCriarTarefaDialog').hide()");
+		PrimeFaces.current().ajax().update("f-projeto:messages", "f-projeto:dt-tarefas-projeto");
 		
 	}
 	
-	public void removerProjeto() {
+	public void removerTarefa() {
+		
+	}
+	
+	public void adicionarTag() {
 		
 		try {
-			projetoService.remover(projetoSelecionadoProprio);
 			
-			atualizaProjetos();
+			tagService.salvar(tag);
 			
-			Message.info("Projeto excluído com sucesso");
-			setMensagemBotaoExcluir("Excluir");
-			setExisteProjetoSelecionado(false);
-			
-			PrimeFaces.current().ajax().update("f-dashboard:messages", 
-					"f-dashboard:dt-meusProjetos-dashboard");
-			
+			Message.info("Nova tag adicionada com sucesso!");
 		} catch (Exception e) {
-			Message.erro(e.getMessage());
-		}
+			Message.erro("Ocorreu um erro ao salvar a tag: " + e.getMessage());
+		}		
 		
-	}
-	
-	private void atualizaProjetos() {
-		this.projetos = projetoService.listarTodos();
-	}
-	
-	public void filtraProjetos() {
+		// atualizar a lista de tags do banco
+		carregaTags();
 		
-		for (Projeto p : projetos) {
-			if (!p.getCriador().equalsIgnoreCase(usuario.getNomeExibicao())) {
-				projetosParticipados.add(p);
-			} else {
-				projetosProprios.add(p);
-			}
-		}
-
+		PrimeFaces.current().executeScript("PF('gerenciaCriarTagDialog').hide()");
+		PrimeFaces.current().ajax().update("f-projeto:messages", "f-projetoTarefa-dialog:tags");
 	}
 	
-	public void participarProjeto() {
-		participando = true;
+	public void preenchePesos() {
+		listaPesos = Arrays.asList(PesoEnum.values());
 	}
 	
-	public void participar() {
-		
+	public void preencheStatus() {
+		listaStatus = Arrays.asList(StatusEnum.values());
 	}
 	
-	public void linhaSelecionada(SelectEvent<Projeto> event) {
-		setMensagemBotaoExcluir("1 projeto selecionado");
-		Message.info("Projeto " + event.getObject().getNome() + " foi selecionado!");
-		setExisteProjetoSelecionado(true);
-	}
-	
-	public void linhaDeselecionada(UnselectEvent<Projeto> event) {
-		setMensagemBotaoExcluir("Excluir");
-		Message.info("Projeto " + event.getObject().getNome() + " foi deselecionado!");
-		setExisteProjetoSelecionado(false);
-	}	
 
-
-	public Projeto getProjetoSelecionadoProprio() {
-		return projetoSelecionadoProprio;
+	public Projeto getProjeto() {
+		return projeto;
 	}
 
-	public void setProjetoSelecionadoProprio(Projeto projetoSelecionadoProprio) {
-		this.projetoSelecionadoProprio = projetoSelecionadoProprio;
+	public void setProjeto(Projeto projeto) {
+		this.projeto = projeto;
 	}
 
-	public Projeto getProjetoSelecionadoParticipado() {
-		return projetoSelecionadoParticipado;
+	public Tarefa getTarefa() {
+		return tarefa;
 	}
 
-
-	public void setProjetoSelecionadoParticipado(Projeto projetoSelecionadoParticipado) {
-		this.projetoSelecionadoParticipado = projetoSelecionadoParticipado;
+	public void setTarefa(Tarefa tarefa) {
+		this.tarefa = tarefa;
 	}
 
-
-	public List<Projeto> getProjetos() {
-		return projetos;
+	public Tag getTag() {
+		return tag;
 	}
 
-	public List<Projeto> getprojetosParticipados() {
-		return projetosParticipados;
-	}
-	
-	public List<Projeto> getProjetosProprios() {
-		return projetosProprios;
+	public void setTag(Tag tag) {
+		this.tag = tag;
 	}
 
-	public String getDataCriada() {
-		return dataCriada;
+	public List<Tarefa> getTarefas() {
+		return tarefas;
 	}
 
-	public void setDataCriada(String dataCriada) {
-		this.dataCriada = dataCriada;
+	public List<Tag> getTags() {
+		return tags;
 	}
 
-	public boolean isParticipando() {
-		return participando;
+	public List<PesoEnum> getListaPesos() {
+		return listaPesos;
 	}
 
-	public void setParticipando(boolean participando) {
-		this.participando = participando;
+	public List<StatusEnum> getListaStatus() {
+		return listaStatus;
+	}
+
+	public Long getProjetoId() {
+		return projetoId;
+	}
+
+	public void setProjetoId(Long projetoId) {
+		this.projetoId = projetoId;
 	}
 
 	public String getMensagemBotaoExcluir() {
@@ -204,19 +236,14 @@ public class ProjetoMB implements Serializable {
 		this.mensagemBotaoExcluir = mensagemBotaoExcluir;
 	}
 
-	public boolean isExisteProjetoSelecionado() {
-		return existeProjetoSelecionado;
+	public boolean isTarefasValidadas() {
+		return tarefasValidadas;
 	}
 
-	public void setExisteProjetoSelecionado(boolean existeProjetoSelecionado) {
-		this.existeProjetoSelecionado = existeProjetoSelecionado;
+	public void setTarefasValidadas(boolean tarefasValidadas) {
+		this.tarefasValidadas = tarefasValidadas;
 	}
-	
-	
 
 
-	
-	
-	
 
 }

@@ -34,7 +34,7 @@
 							<p:outputLabel id="label-email"
 									   	   for="email">E-mail: </p:outputLabel>
 							<p:inputText id="email" 
-								 	 value="#{usuarioLogadoMB.usuarioCadastrado.email}"
+								 	 value="#{usuarioLogadoMB.usuario.email}"
 								     required="true"
 								     size="25"
 								     autocomplete="true" />
@@ -43,7 +43,7 @@
 							<p:outputLabel id="label-senha"
 										   for="senha">Senha: </p:outputLabel>
 							<p:password id="senha" 
-									    value="#{usuarioLogadoMB.usuarioCadastrado.senha}"
+									    value="#{usuarioLogadoMB.usuario.senha}"
 									    required="true"
 									    size="25"
 									    autocomplete="true" />
@@ -55,7 +55,7 @@
 				<p:commandButton value="Entrar"
 								 action="#{usuarioLogadoMB.fazerLogin()}"
 								 title="Logar no sistema"/> <br/>
-								 
+					
 				<h:form id="f-resetarSenha">
 					<p:commandLink value="Esqueceu a senha?" 
 							   oncomplete="PF('resetarSenhaDialog').show()"
@@ -100,7 +100,7 @@
 						<p:outputLabel id="label-email-cadastro"
 								   for="email-cadastro">E-mail:</p:outputLabel>
 						<p:inputText id="email-cadastro" 
-							 	 value="#{usuarioLogadoMB.usuarioCadastrar.email}"
+							 	 value="#{usuarioLogadoMB.usuario.email}"
 							     required="true"
 							     size="25" />
 					</div>
@@ -108,7 +108,7 @@
 						<p:outputLabel id="label-senha-cadastro"
 									   for="senha-cadastro">Senha:</p:outputLabel>
 						<p:password id="senha-cadastro" 
-								    value="#{usuarioLogadoMB.usuarioCadastrar.senha}"
+								    value="#{usuarioLogadoMB.usuario.senha}"
 								    required="true"
 								    size="25" />
 					</div>
@@ -116,7 +116,7 @@
 						<p:outputLabel id="label-nome-exibicao-cadastro"
 									   for="nome-exibicao-cadastro">Nome de Exibição:</p:outputLabel>
 						<p:inputText id="nome-exibicao-cadastro" 
-								    value="#{usuarioLogadoMB.usuarioCadastrar.nomeExibicao}"
+								    value="#{usuarioLogadoMB.usuario.nomeExibicao}"
 								    required="true"
 								    size="25" />
 					</div>					
@@ -148,7 +148,7 @@
 						<p:outputLabel id="label-email-resetar-senha"
 								   for="email-resetar-senha">E-mail:</p:outputLabel>
 						<p:inputText id="email-resetar-senha" 
-							 	 value="#{usuarioLogadoMB.usuarioResetar.email}"
+							 	 value="#{usuarioLogadoMB.usuario.email}"
 							     required="true"
 							     requiredMessage="O email é obrigatório"
 							     size="25"
@@ -158,7 +158,7 @@
 						<p:outputLabel id="label-senha-resetar"
 									   for="senha-resetar">Nova senha:</p:outputLabel>
 						<p:password id="senha-resetar" 
-								    value="#{usuarioLogadoMB.usuarioResetar.senha}"
+								    value="#{usuarioLogadoMB.usuario.senha}"
 								    required="true"
 								    requiredMessage="A nova senha é obrigatória"
 								    size="25" />

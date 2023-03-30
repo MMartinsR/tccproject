@@ -6,6 +6,7 @@ import java.util.List;
 import javax.inject.Inject;
 
 import projetotcc.dao.DAO;
+import projetotcc.dao.ProjetoDAO;
 import projetotcc.model.Projeto;
 
 public class ProjetoService implements Serializable {
@@ -16,6 +17,8 @@ public class ProjetoService implements Serializable {
 	@Inject
 	private DAO<Projeto> projetoDao;
 	
+	@Inject
+	private ProjetoDAO projetoDAO;
 	
 	public void salvar(Projeto projeto) {
 		
@@ -51,6 +54,15 @@ public class ProjetoService implements Serializable {
 
 	public List<Projeto> listarTodos() {
 		return projetoDao.buscarTodos(Projeto.class);
+	}
+	
+	
+	public List<Projeto> buscarPorCriador(String criador) {
+		return projetoDAO.findByNamedQuery(criador);
+	}
+	
+	public Projeto buscarPorId(Long id) {
+		return projetoDao.buscarPorId(Projeto.class, id);
 	}
 	
 	

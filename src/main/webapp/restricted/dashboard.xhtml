@@ -12,7 +12,8 @@
 </h:head>
 
 <f:metadata>
-	<f:viewAction action="#{projetoMB.init()}"/>
+	<f:viewAction action="#{dashboardMB.init()}"/>
+	
 </f:metadata>
 
 <h:body>
@@ -41,15 +42,15 @@
 					
 						<p:dataTable id="dt-meusProjetos-dashboard" 
 								 widgetVar="datatableMeusProjetosDashboard" 
-								 var="meusProjetos"
-								 value="#{projetoMB.projetosProprios}"
+								 var="meuProjeto"
+								 value="#{dashboardMB.projetosProprios}"
 								 lazy="false"
 								 reflow="true"
 								 paginator="true"
 								 paginatorPosition="bottom"
 								 rows="3"
-								 rowKey="#{meusProjetos.id}"
-								 selection="#{projetoMB.projetoSelecionadoProprio}"
+								 rowKey="#{meuProjeto.id}"
+								 selection="#{dashboardMB.projetoSelecionadoProprio}"
 								 selectionMode="single" 
 								 styleClass="ui-grid-col-6"
 								 style="width: 400px; margin-left: 50px; margin-top: 100px">
@@ -59,7 +60,7 @@
 								<p:commandButton id="cb-criarNovoProjeto-dashboard"											  
 												 icon="pi pi-plus"
 												 value="Novo"
-												 actionListener="#{projetoMB.abrirNovo()}"
+												 actionListener="#{dashboardMB.abrirNovo()}"
 												 update=":f-dashboard-dialog:gerencia-conteudo-projeto"
 												 oncomplete="PF('gerenciaProjetoDashboardDialog').show()"
 												 alt="Criar Novo Projeto"
@@ -70,9 +71,9 @@
 							<span>
 								<p:commandButton id="cb-excluirProjeto-dashboard"											  
 												 icon="pi pi-trash"
-												 value="#{projetoMB.mensagemBotaoExcluir}"
+												 value="#{dashboardMB.mensagemBotaoExcluir}"
 												 oncomplete="PF('excluirProjetoDialog').show()"
-												 disabled="#{!projetoMB.existeProjetoSelecionado}"
+												 disabled="#{!dashboardMB.existeProjetoSelecionado}"
 												 update="@this"												 
 												 alt="Excluir Projeto"
 												 title="Excluir Projeto">
@@ -81,22 +82,22 @@
 						</f:facet>
 						
 						<p:ajax event="rowSelect" 
-								listener="#{projetoMB.linhaSelecionada}"
+								listener="#{dashboardMB.linhaSelecionada}"
 								update="cb-excluirProjeto-dashboard f-dashboard:messages" />
             			<p:ajax event="rowUnselect" 
-            					listener="#{projetoMB.linhaDeselecionada}"
+            					listener="#{dashboardMB.linhaDeselecionada}"
             					update="cb-excluirProjeto-dashboard f-dashboard:messages" />
 						
 						<p:column headerText="Meus Projetos">
-							<h:outputText value="#{meusProjetos.nome}" 
+							<h:outputText value="#{meuProjeto.nome}" 
 										  title="Para limpar a seleção: CTRL + Clicar"/>
 						</p:column>
 						
 						<p:column style="width:6rem;text-align: center">
                 			<p:commandButton icon="pi pi-folder-open" 
-                                			 title="Abrir Projeto">
-<!--                     			<f:setPropertyActionListener value="#{projeto}" -->
-<!--                                                  target="#{dtSelectionView.selectedProduct}"/> -->
+                                			 title="Abrir Projeto"
+                                			 action="#{dashboardMB.redirecionarParaProjeto(meuProjeto)}">
+
                 			</p:commandButton>
                 			<p:commandButton icon="pi pi-file-edit" 
                 							 update=":f-dashboard-dialog:gerencia-conteudo-projeto"
@@ -104,8 +105,8 @@
                 							 process="@this"
                                 			 title="Editar Projeto"
                                 			 style="margin-left: 5px">
-                    			<f:setPropertyActionListener value="#{meusProjetos}"
-                                                 target="#{projetoMB.projetoSelecionadoProprio}"/>
+                    			<f:setPropertyActionListener value="#{meuProjeto}"
+                                                 target="#{dashboardMB.projetoSelecionadoProprio}"/>
                                 <p:resetInput target=":f-dashboard-dialog:gerencia-conteudo-projeto"/>
                 			</p:commandButton>
             			</p:column>					
@@ -114,14 +115,14 @@
 					<p:dataTable id="dt-projetosParticipo-dashboard" 
 								 widgetVar="datatableProjetosParticipoDashboard" 
 								 var="projetosParticipo"
-								 value="#{projetoMB.projetosParticipados}"
+								 value="#{dashboardMB.projetosParticipados}"
 								 lazy="false"
 								 reflow="true"
 								 paginator="true"
 								 paginatorPosition="bottom"
 								 rows="3"
 								 rowKey="#{projetosParticipo.id}"
-								 selection="#{projetoMB.projetoSelecionadoParticipado}"
+								 selection="#{dashboardMB.projetoSelecionadoParticipado}"
 								 selectionMode="single" 
 								 styleClass="ui-grid-col-6"
 								 style="width: 400px; margin-left: 90px; margin-top: 100px">
@@ -132,7 +133,7 @@
 												 icon="pi pi-users"
 												 value="Participar"
 												 update=":f-dashboard-dialog:gerencia-conteudo-projeto"
-												 actionListener="#{projetoMB.participarProjeto()}"
+												 actionListener="#{dashboardMB.participarProjeto()}"
 												 oncomplete="PF('gerenciaProjetoParticiparDashboard').show()"
 												 alt="Participar em Projeto"
 												 title="Participar">
@@ -143,10 +144,10 @@
 						</f:facet>
 						
 						<p:ajax event="rowSelect" 
-								listener="#{projetoMB.linhaSelecionada}"
+								listener="#{dashboardMB.linhaSelecionada}"
 								update=" f-dashboard:messages" />
             			<p:ajax event="rowUnselect" 
-            					listener="#{projetoMB.linhaDeselecionada}"
+            					listener="#{dashboardMB.linhaDeselecionada}"
             					update=" f-dashboard:messages" />
 						
 						<p:column headerText="Participo em">
@@ -179,25 +180,28 @@
 					 <div class="field">
                         <p:outputLabel for="nome">Nome: </p:outputLabel>
                         <p:inputText id="nome" 
-                        			 value="#{projetoMB.projetoSelecionadoProprio.nome}" 
+                        			 value="#{dashboardMB.projetoSelecionadoProprio.nome}" 
                         			 required="true" />
                     </div>
                     
                     <div class="field">
                         <p:outputLabel for="descricao">Descrição: </p:outputLabel>
-                        <p:inputTextarea id="descricao" value="#{projetoMB.projetoSelecionadoProprio.descricao}" />
+                        <p:inputTextarea id="descricao" 
+                        				 value="#{dashboardMB.projetoSelecionadoProprio.descricao}" />
                     </div>
                     
                     <div class="field">
                         <p:outputLabel>Data de Criação: </p:outputLabel>
-                        <p:outputLabel id="data_criacao" value="#{projetoMB.projetoSelecionadoProprio.dataCriacao}" >
+                        <p:outputLabel id="data_criacao" 
+                        			   value="#{dashboardMB.projetoSelecionadoProprio.dataCriacao}" >
                         	<f:convertDateTime pattern="dd/MM/yyyy" timeZone="GMT-3"/>
                         </p:outputLabel>
                     </div>
                     
                     <div class="field">
                         <p:outputLabel>Criado por: </p:outputLabel>
-                        <p:outputLabel id="criador_por" value="#{projetoMB.projetoSelecionadoProprio.criador}"/>
+                        <p:outputLabel id="criador_por" 
+                        			value="#{dashboardMB.projetoSelecionadoProprio.criador}"/>
                     </div>
 				</p:outputPanel>
 			</p:outputPanel>
@@ -205,7 +209,7 @@
 			<f:facet name="footer">
                 <p:commandButton value="Salvar" 
                 				 icon="pi pi-check" 
-                				 actionListener="#{projetoMB.salvarProjeto()}"
+                				 actionListener="#{dashboardMB.salvarProjeto()}"
                     			 update="gerencia-conteudo-projeto" 
                     			 process="gerencia-conteudo-projeto @this" />
                 <p:commandButton value="Cancelar" 
@@ -238,7 +242,7 @@
 			<f:facet name="footer">
                 <p:commandButton value="Salvar" 
                 				 icon="pi pi-check" 
-                				 actionListener="#{projetoMB.participar()}"
+                				 actionListener="#{dashboardMB.participar()}"
                     			 update="gerencia-participar-projeto" 
                     			 process="gerencia-participar-projeto @this" />
                 <p:commandButton value="Cancelar" 
@@ -249,8 +253,6 @@
             </f:facet>		
 		</p:dialog>
 		
-
-		
 		<p:confirmDialog id="excluir-projeto-dialog"
 					     widgetVar="excluirProjetoDialog" 
 						 showEffect="fade"
@@ -259,11 +261,17 @@
 						 header="Confirm"
 						 severity="warn">
 						 
-			 <p:commandButton value="Sim" icon="pi pi-check" actionListener="#{projetoMB.removerProjeto()}"
-                process="@this" update="f-dashboard"
-                oncomplete="PF('excluirProjetoDialog').hide()" />
-            <p:commandButton value="Não" type="button" styleClass="ui-button-secondary" icon="pi pi-times"
-                onclick="PF('excluirProjetoDialog').hide()" />		
+			 <p:commandButton value="Sim" 
+			 				  icon="pi pi-check" 
+			 				  actionListener="#{dashboardMB.removerProjeto()}"
+                			  process="@this" 
+                			  update="f-dashboard"
+                			  oncomplete="PF('excluirProjetoDialog').hide()" />
+            <p:commandButton value="Não" 
+            				 type="button" 
+            				 styleClass="ui-button-secondary" 
+            				 icon="pi pi-times"
+                			 onclick="PF('excluirProjetoDialog').hide()" />		
 		</p:confirmDialog>
 	</h:form>
 

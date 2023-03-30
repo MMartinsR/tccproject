@@ -1,12 +1,15 @@
 package projetotcc.model;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToMany;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
@@ -35,6 +38,9 @@ public class Usuario implements Serializable, Base {
 	private String email;
 	private String nomeExibicao;
 	private String senha;
+	
+	@ManyToMany(mappedBy = "usuarios")
+	private List<Projeto> projetos = new ArrayList<Projeto>();
 	
 	
 	public Long getId() {
