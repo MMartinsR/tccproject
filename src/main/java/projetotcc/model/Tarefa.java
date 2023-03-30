@@ -7,6 +7,8 @@ import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -30,10 +32,12 @@ public class Tarefa implements Serializable, Base{
 	@Column(nullable = false)
 	private String nome;
 	private String descricao;
-	private int peso;
+	@Enumerated(EnumType.STRING)
+	private String peso;
 	@Temporal(TemporalType.DATE)
 	private Date dataEntrega;
-	private int status;
+	@Enumerated(EnumType.STRING)
+	private String status;
 	
 	@ManyToOne
 	@JoinColumn(name = "projeto_id")
@@ -70,11 +74,11 @@ public class Tarefa implements Serializable, Base{
 		this.descricao = descricao;
 	}
 
-	public int getPeso() {
+	public String getPeso() {
 		return peso;
 	}
 
-	public void setPeso(int peso) {
+	public void setPeso(String peso) {
 		this.peso = peso;
 	}
 
@@ -86,15 +90,30 @@ public class Tarefa implements Serializable, Base{
 		this.dataEntrega = dataEntrega;
 	}
 
-	public int getStatus() {
+	public String getStatus() {
 		return status;
 	}
 
-	public void setStatus(int status) {
+	public void setStatus(String status) {
 		this.status = status;
 	}
-
 	
+	public Projeto getProjeto() {
+		return projeto;
+	}
+
+	public void setProjeto(Projeto projeto) {
+		this.projeto = projeto;
+	}
+
+	public List<Tag> getTags() {
+		return tags;
+	}
+
+	public void setTags(List<Tag> tags) {
+		this.tags = tags;
+	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;

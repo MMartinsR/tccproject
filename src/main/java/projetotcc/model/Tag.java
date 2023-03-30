@@ -41,6 +41,14 @@ public class Tag implements Serializable, Base {
 		this.nome = nome;
 	}
 
+	public List<Tarefa> getTarefas() {
+		return tarefas;
+	}
+
+	public void setTarefas(List<Tarefa> tarefas) {
+		this.tarefas = tarefas;
+	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;

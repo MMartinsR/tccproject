@@ -92,7 +92,6 @@ public class Projeto implements Serializable, Base {
 	public void setCriador(String criador) {
 		this.criador = criador;
 	}
-
 	
 	public List<Usuario> getUsuarios() {
 		return usuarios;
@@ -100,6 +99,14 @@ public class Projeto implements Serializable, Base {
 
 	public void setUsuarios(List<Usuario> usuarios) {
 		this.usuarios = usuarios;
+	}
+
+	public List<Tarefa> getTarefas() {
+		return tarefas;
+	}
+
+	public void setTarefas(List<Tarefa> tarefas) {
+		this.tarefas = tarefas;
 	}
 
 	@Override

@@ -2,20 +2,24 @@ package projetotcc.controller;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import org.primefaces.event.DashboardReorderEvent;
-import org.primefaces.model.DashboardColumn;
-import org.primefaces.model.DashboardModel;
-import org.primefaces.model.DefaultDashboardColumn;
-import org.primefaces.model.DefaultDashboardModel;
+import org.primefaces.PrimeFaces;
 
+import projetotcc.enums.PesoEnum;
+import projetotcc.enums.StatusEnum;
 import projetotcc.model.Projeto;
+import projetotcc.model.Tag;
+import projetotcc.model.Tarefa;
 import projetotcc.service.ProjetoService;
+import projetotcc.service.TagService;
+import projetotcc.service.TarefaService;
 import projetotcc.utility.Message;
 
 @Named
@@ -27,59 +31,152 @@ public class ProjetoMB implements Serializable {
 	@Inject
 	private Projeto projeto = new Projeto();
 	
+	@Inject 
+	private Tarefa tarefa = new Tarefa(); 
+	
+	@Inject
+	private Tag tag = new Tag();
+	
 	@Inject
 	private ProjetoService projetoService;
 	
-	private Long projetoId;
-	private DashboardModel modelo;
+	@Inject
+	private TarefaService tarefaService;
 	
-	private String nomeLista = "lista1";
+	@Inject
+	private TagService tagService;
 	
-	private List<DashboardColumn> listaColunas = new ArrayList<DashboardColumn>();
-
+	private List<Tarefa> tarefas = new ArrayList<>();
+	private List<Tag> tags = new ArrayList<>();
+	private List<PesoEnum> listaPesos;
+	private List<StatusEnum> listaStatus;
 	
-	public void init() {
+	private Long projetoId;	
+	private String mensagemBotaoExcluir = "Excluir";
+	private boolean tarefasValidadas;
+	
+	
+	public void init() {		
 		
+		carregaProjetoSelecionado();
+		validaTarefas();
+		carregaTarefas();
+		carregaTags();
+		preenchePesos();
+		preencheStatus();
+		
+
+	}
+	
+	private void carregaProjetoSelecionado() {
+		// Valida se id do projeto foi passado pela url e se foi, busca por esse projeto para popular a página do projeto.
 		if (projetoId != null) {
 			projeto = projetoService.buscarPorId(projetoId);
 		}
-		
-		modelo = new DefaultDashboardModel();
-		
-//		DashboardColumn coluna1 = new DefaultDashboardColumn();
-//		DashboardColumn coluna2 = new DefaultDashboardColumn();
-//		DashboardColumn coluna3 = new DefaultDashboardColumn();
-//		DashboardColumn coluna4 = new DefaultDashboardColumn();
-//		
-//		coluna1.addWidget("lista1");
-//		coluna1.addWidget("lista1");
-//		coluna1.addWidget("lista2");
-//		
-//		coluna2.addWidget("lista1");
-//		coluna2.addWidget("weather");
-//		
-//		coluna3.addWidget("politics");
-//		coluna3.addWidget("lista1");
-//		
-//		
-//		modelo.addColumn(coluna1);
-//		modelo.addColumn(coluna2);
-//		modelo.addColumn(coluna3);
-//		modelo.addColumn(coluna4);
 	}
 	
-	// Criar um método que irá gerar os dashboard columns
-	public void novaLista() {		
+	private void carregaTarefas() {
+		tarefas = tarefaService.listarTodos();
 		
-		modelo.addColumn(new DefaultDashboardColumn());					
+	}
+	
+	private void carregaTags() {
+		tags = tagService.listarTodos();
+	}
+	
+	private void validaTarefas() {
+		
+		carregaTarefas();
+		
+		 // para cada tarefa se data de entrega for anterior a data atual, marcar status tarefa como atrasada
+		for (Tarefa tarefa : this.tarefas) {
+			if (tarefa.getDataEntrega().before(new Date())) {
+				tarefa.setStatus(StatusEnum.ATRASADA.getId().intValue());
+				tarefaService.atualizar(tarefa);
+			}
+		}
+		setTarefasValidadas(true);	
+	}
+
+	public void criarNova() {
+		tarefa = new Tarefa();
+		
+	}
+	
+	public void criarNovaTag() {
+		tag = new Tag();
+	}
+	
+	public void adicionarTarefa() {
+		
+		try {
 			
-		setListaColunas(modelo.getColumns());
+			if(tarefa.getId() == null) {
+				tarefa.setStatus(StatusEnum.ABERTA.getStatus());
+				
+				tarefa.setProjeto(projeto);
+				
+				tarefaService.salvar(tarefa);
+				
+				Message.info("Nova tarefa adicionada com sucesso!");
+			} else {
+				
+				Tarefa tarefaEx = tarefaService.buscarPorId(tarefa.getId());
+				
+				if (tarefaEx != null) {
+					
+					
+				}
+				
+				// setar novas tags caso hajam
+				
+				// atualizar a tarefa
+				
+				// atualizar o projeto.
+				
+				Message.info("Tarefa " + tarefa.getNome() + " atualizada com sucesso!");
+			}			
+			
+			
+		} catch (Exception e) {
+			Message.erro("Ocorreu um erro ao salvar a tarefa: " + e.getMessage());
+		}
+		
+		carregaTarefas();
+		
+		PrimeFaces.current().executeScript("PF('gerenciaCriarTarefaDialog').hide()");
+		PrimeFaces.current().ajax().update("f-projeto:messages", "f-projeto:dt-tarefas-projeto");
+		
 	}
 	
-	public void reordenacao(DashboardReorderEvent event) {
-		Message.info("Reordenado: " + event.getWidgetId(), 
-				"Item index: " + event.getItemIndex() + ", Column index: " + event.getColumnIndex() 
-				+ ", Sender index: " + event.getSenderColumnIndex());
+	public void removerTarefa() {
+		
+	}
+	
+	public void adicionarTag() {
+		
+		try {
+			
+			tagService.salvar(tag);
+			
+			Message.info("Nova tag adicionada com sucesso!");
+		} catch (Exception e) {
+			Message.erro("Ocorreu um erro ao salvar a tag: " + e.getMessage());
+		}		
+		
+		// atualizar a lista de tags do banco
+		carregaTags();
+		
+		PrimeFaces.current().executeScript("PF('gerenciaCriarTagDialog').hide()");
+		PrimeFaces.current().ajax().update("f-projeto:messages", "f-projetoTarefa-dialog:tags");
+	}
+	
+	public void preenchePesos() {
+		listaPesos = Arrays.asList(PesoEnum.values());
+	}
+	
+	public void preencheStatus() {
+		listaStatus = Arrays.asList(StatusEnum.values());
 	}
 	
 
@@ -91,6 +188,38 @@ public class ProjetoMB implements Serializable {
 		this.projeto = projeto;
 	}
 
+	public Tarefa getTarefa() {
+		return tarefa;
+	}
+
+	public void setTarefa(Tarefa tarefa) {
+		this.tarefa = tarefa;
+	}
+
+	public Tag getTag() {
+		return tag;
+	}
+
+	public void setTag(Tag tag) {
+		this.tag = tag;
+	}
+
+	public List<Tarefa> getTarefas() {
+		return tarefas;
+	}
+
+	public List<Tag> getTags() {
+		return tags;
+	}
+
+	public List<PesoEnum> getListaPesos() {
+		return listaPesos;
+	}
+
+	public List<StatusEnum> getListaStatus() {
+		return listaStatus;
+	}
+
 	public Long getProjetoId() {
 		return projetoId;
 	}
@@ -99,16 +228,22 @@ public class ProjetoMB implements Serializable {
 		this.projetoId = projetoId;
 	}
 
-	public DashboardModel getModelo() {
-		return modelo;
+	public String getMensagemBotaoExcluir() {
+		return mensagemBotaoExcluir;
 	}
 
-	public List<DashboardColumn> getListaColunas() {
-		return listaColunas;
+	public void setMensagemBotaoExcluir(String mensagemBotaoExcluir) {
+		this.mensagemBotaoExcluir = mensagemBotaoExcluir;
 	}
 
-	public void setListaColunas(List<DashboardColumn> listaColunas) {
-		this.listaColunas = listaColunas;
+	public boolean isTarefasValidadas() {
+		return tarefasValidadas;
 	}
+
+	public void setTarefasValidadas(boolean tarefasValidadas) {
+		this.tarefasValidadas = tarefasValidadas;
+	}
+
+
 
 }
