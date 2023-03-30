@@ -2,10 +2,10 @@ package projetotcc.enums;
 
 public enum StatusEnum {
 	
-	ABERTA(1, "Aberta"),
-	CONCLUIDA(2, "Concluída"),
-	ATRASADA(3, "Atrasada"),
-	EM_DESENVOLVIMENTO(4, "Em desenvolvimento");
+	ABERTA(0, "Aberta"),
+	CONCLUIDA(1, "Concluída"),
+	ATRASADA(2, "Atrasada"),
+	EM_DESENVOLVIMENTO(3, "Em desenvolvimento");
 	
 	private StatusEnum(Integer id, String status) {
 		this.id = id;

@@ -62,6 +62,7 @@ public class UsuarioLogadoMB implements Serializable{
 				
 				if (usuarioEncontrado.getEmail().equals(usuario.getEmail()) 
 						&& usuarioEncontrado.getNomeExibicao().equals(usuario.getNomeExibicao())) {
+					
 					return "/restricted/dashboard.xhtml?faces-redirect=true";
 				}
 				
@@ -80,7 +81,9 @@ public class UsuarioLogadoMB implements Serializable{
 			Usuario usuarioPodeLogar = usuarioService.buscarPorId(usuarioPermitido.getId()).get(0);
 	           System.out.println("Login efetuado com sucesso");
 	           SessionContext.getInstance().setAttribute("usuarioLogado", usuarioPodeLogar);
-	           return "/restricted/dashboard.xhtml?faces-redirect=true";
+	           
+	           String url = "/restricted/dashboard.xhtml?faces-redirect=true";
+	           return url;
 			
 		} catch (Exception e) {
 			Message.erro(e.getMessage());

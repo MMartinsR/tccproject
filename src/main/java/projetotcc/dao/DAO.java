@@ -12,10 +12,10 @@ public class DAO<T extends Base> implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 	
-	private static EntityManager manager = ConnectionFactory.getEntityManager();
-	
 	
 	public T buscarPorId(Class<T> clazz, Long id) {
+		
+		EntityManager manager = ConnectionFactory.getEntityManager();
 		
 		return manager.find(clazz, id);
 	}
@@ -23,7 +23,9 @@ public class DAO<T extends Base> implements Serializable {
 	
 	public void salvar(T obj) {
 		
-		try {
+		EntityManager manager = ConnectionFactory.getEntityManager();
+		
+		try {			
 			
 			manager.getTransaction().begin();
 			
@@ -39,6 +41,9 @@ public class DAO<T extends Base> implements Serializable {
 	}
 	
 	public void atualizar(T obj) {
+		
+		EntityManager manager = ConnectionFactory.getEntityManager();
+		
 		try {
 			
 			manager.getTransaction().begin();
@@ -57,6 +62,8 @@ public class DAO<T extends Base> implements Serializable {
 	
 	public void remover(Class<T> clazz, Long id) {
 		
+		EntityManager manager = ConnectionFactory.getEntityManager();
+		
 		T obj = buscarPorId(clazz, id);
 		
 		try {
@@ -74,6 +81,8 @@ public class DAO<T extends Base> implements Serializable {
 	
 	@SuppressWarnings("unchecked")
 	public List<T> buscarTodos(Class<T> clazz) {
+		
+		EntityManager manager = ConnectionFactory.getEntityManager();
 		
 		String sql = " select object(o) from " + clazz.getName() + " as o ";
 		

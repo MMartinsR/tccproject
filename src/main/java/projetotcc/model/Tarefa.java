@@ -20,6 +20,9 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import projetotcc.enums.PesoEnum;
+import projetotcc.enums.StatusEnum;
+
 @Entity
 @Table(name = "tb_tarefa")
 public class Tarefa implements Serializable, Base{
@@ -32,12 +35,12 @@ public class Tarefa implements Serializable, Base{
 	@Column(nullable = false)
 	private String nome;
 	private String descricao;
-	@Enumerated(EnumType.STRING)
-	private String peso;
+	@Enumerated(EnumType.ORDINAL)
+	private PesoEnum peso;
 	@Temporal(TemporalType.DATE)
 	private Date dataEntrega;
-	@Enumerated(EnumType.STRING)
-	private String status;
+	@Enumerated(EnumType.ORDINAL)
+	private StatusEnum status;
 	
 	@ManyToOne
 	@JoinColumn(name = "projeto_id")
@@ -74,11 +77,11 @@ public class Tarefa implements Serializable, Base{
 		this.descricao = descricao;
 	}
 
-	public String getPeso() {
+	public PesoEnum getPeso() {
 		return peso;
 	}
 
-	public void setPeso(String peso) {
+	public void setPeso(PesoEnum peso) {
 		this.peso = peso;
 	}
 
@@ -90,11 +93,11 @@ public class Tarefa implements Serializable, Base{
 		this.dataEntrega = dataEntrega;
 	}
 
-	public String getStatus() {
+	public StatusEnum getStatus() {
 		return status;
 	}
 
-	public void setStatus(String status) {
+	public void setStatus(StatusEnum status) {
 		this.status = status;
 	}
 	

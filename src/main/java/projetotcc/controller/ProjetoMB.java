@@ -91,7 +91,7 @@ public class ProjetoMB implements Serializable {
 		 // para cada tarefa se data de entrega for anterior a data atual, marcar status tarefa como atrasada
 		for (Tarefa tarefa : this.tarefas) {
 			if (tarefa.getDataEntrega().before(new Date())) {
-				tarefa.setStatus(StatusEnum.ATRASADA.getId().intValue());
+				tarefa.setStatus(StatusEnum.ATRASADA);
 				tarefaService.atualizar(tarefa);
 			}
 		}
@@ -112,7 +112,7 @@ public class ProjetoMB implements Serializable {
 		try {
 			
 			if(tarefa.getId() == null) {
-				tarefa.setStatus(StatusEnum.ABERTA.getStatus());
+				tarefa.setStatus(StatusEnum.ABERTA);
 				
 				tarefa.setProjeto(projeto);
 				

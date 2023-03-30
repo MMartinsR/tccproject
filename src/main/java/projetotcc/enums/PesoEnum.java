@@ -2,9 +2,9 @@ package projetotcc.enums;
 
 public enum PesoEnum {
 	
-	BAIXA(1, "Baixa"),
-	MEDIA(2, "Média"),
-	ALTA(3, "Alta");
+	BAIXA(0, "Baixa"),
+	MEDIA(1, "Média"),
+	ALTA(2, "Alta");
 	
 	private PesoEnum(Integer id, String nomePeso) {
 		this.id = id;

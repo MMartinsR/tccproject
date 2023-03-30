@@ -6,7 +6,6 @@ import java.util.Date;
 import java.util.List;
 
 import javax.faces.context.FacesContext;
-import javax.faces.context.Flash;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -18,6 +17,7 @@ import org.primefaces.event.UnselectEvent;
 import projetotcc.model.Projeto;
 import projetotcc.model.Usuario;
 import projetotcc.service.ProjetoService;
+import projetotcc.service.UsuarioService;
 import projetotcc.utility.Message;
 
 @Named
@@ -35,11 +35,13 @@ public class DashboardMB implements Serializable {
 	@Inject
 	private ProjetoService projetoService;
 	
+	@Inject
+	private UsuarioService usuarioService;
+	
 	private List<Projeto> projetosParticipados = new ArrayList<>();
 	private List<Projeto> projetosProprios = new ArrayList<>();
 	
 	private String dataCriada;
-	
 	private Usuario usuario = new Usuario();
 	private boolean participando = false;
 	private String mensagemBotaoExcluir = "Excluir";
@@ -65,11 +67,16 @@ public class DashboardMB implements Serializable {
 	
 	public void salvarProjeto() {
 		
+		Long usuarioId = this.usuario.getId();
+		Usuario usuarioEx = usuarioService.buscarPorId(usuarioId).get(0);
+		List<Usuario> usuariosEx = new ArrayList<Usuario>();
+		usuariosEx.add(usuarioEx);
+		
 		try {
 			
-			if (projetoSelecionadoProprio.getId() == null) {				
-
-				projetoSelecionadoProprio.getUsuarios().add(this.usuario);
+			if (projetoSelecionadoProprio.getId() == null) {
+				
+				projetoSelecionadoProprio.setUsuarios(usuariosEx);
 				
 				projetoService.salvar(projetoSelecionadoProprio);
 				Message.info("Projeto salvo com sucesso!");
@@ -120,15 +127,12 @@ public class DashboardMB implements Serializable {
 
 	}
 	
-	public void redirecionarParaProjeto() {
+	public void redirecionarParaProjeto(Projeto projeto) {
 		
 		try {
 			
-			Flash flash = FacesContext.getCurrentInstance().getExternalContext().getFlash();
-			flash.put("projetoSelecionadoProprio", projetoSelecionadoProprio);
-			
 			String url = "/restricted/projeto.xhtml";
-			url += "?projetoId=" + projetoSelecionadoProprio.getId();
+			url += "?projetoId=" + projeto.getId();
 			
 			String contextPath = FacesContext.getCurrentInstance().getExternalContext().getRequestContextPath();
 			FacesContext.getCurrentInstance().getExternalContext().redirect(contextPath + url);

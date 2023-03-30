@@ -13,6 +13,7 @@
 
 <f:metadata>
 	<f:viewAction action="#{dashboardMB.init()}"/>
+	
 </f:metadata>
 
 <h:body>
@@ -41,14 +42,14 @@
 					
 						<p:dataTable id="dt-meusProjetos-dashboard" 
 								 widgetVar="datatableMeusProjetosDashboard" 
-								 var="meusProjetos"
+								 var="meuProjeto"
 								 value="#{dashboardMB.projetosProprios}"
 								 lazy="false"
 								 reflow="true"
 								 paginator="true"
 								 paginatorPosition="bottom"
 								 rows="3"
-								 rowKey="#{meusProjetos.id}"
+								 rowKey="#{meuProjeto.id}"
 								 selection="#{dashboardMB.projetoSelecionadoProprio}"
 								 selectionMode="single" 
 								 styleClass="ui-grid-col-6"
@@ -88,16 +89,15 @@
             					update="cb-excluirProjeto-dashboard f-dashboard:messages" />
 						
 						<p:column headerText="Meus Projetos">
-							<h:outputText value="#{meusProjetos.nome}" 
+							<h:outputText value="#{meuProjeto.nome}" 
 										  title="Para limpar a seleção: CTRL + Clicar"/>
 						</p:column>
 						
 						<p:column style="width:6rem;text-align: center">
                 			<p:commandButton icon="pi pi-folder-open" 
                                 			 title="Abrir Projeto"
-                                			 action="#{dashboardMB.redirecionarParaProjeto()}">
-                    			<f:setPropertyActionListener value="#{meusProjetos}"
-                                                 target="#{dashboardMB.projetoSelecionadoProprio}"/>
+                                			 action="#{dashboardMB.redirecionarParaProjeto(meuProjeto)}">
+
                 			</p:commandButton>
                 			<p:commandButton icon="pi pi-file-edit" 
                 							 update=":f-dashboard-dialog:gerencia-conteudo-projeto"
@@ -105,7 +105,7 @@
                 							 process="@this"
                                 			 title="Editar Projeto"
                                 			 style="margin-left: 5px">
-                    			<f:setPropertyActionListener value="#{meusProjetos}"
+                    			<f:setPropertyActionListener value="#{meuProjeto}"
                                                  target="#{dashboardMB.projetoSelecionadoProprio}"/>
                                 <p:resetInput target=":f-dashboard-dialog:gerencia-conteudo-projeto"/>
                 			</p:commandButton>

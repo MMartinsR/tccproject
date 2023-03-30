@@ -65,7 +65,7 @@ public class UsuarioService implements Serializable {
 	public Usuario usuarioPodeLogar(String email, String senha) {
 		try {			
 			email = email.toLowerCase().trim();
-			System.out.println("Verificando login do usuário" + email);
+			System.out.println("Verificando login do usuário " + email);
 			List<Usuario> retorno = usuarioDAO.findByNamedQuery(email, converteStringParaMd5(senha));
 			
 			if (retorno.size() == 1) {
