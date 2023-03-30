@@ -48,7 +48,7 @@ public class DashboardMB implements Serializable {
 	
 
 	public void init() {
-		System.out.println("entrou no init!");
+		System.out.println("Carregando Dashboard");
 		this.usuario = (Usuario) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("usuarioLogado");
 		carregaProjetosProprios();
 		filtraProjetosParticipados();

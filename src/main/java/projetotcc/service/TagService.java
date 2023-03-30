@@ -7,6 +7,7 @@ import javax.inject.Inject;
 
 import projetotcc.dao.DAO;
 import projetotcc.model.Tag;
+import projetotcc.model.Tarefa;
 
 public class TagService implements Serializable {
 
@@ -46,6 +47,10 @@ public class TagService implements Serializable {
 
 	public List<Tag> listarTodos() {
 		return tagDao.buscarTodos(Tag.class);
+	}
+	
+	public Tag buscarPorId(Long id) {
+		return tagDao.buscarPorId(Tag.class, id);
 	}
 
 }

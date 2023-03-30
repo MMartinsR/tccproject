@@ -41,7 +41,7 @@ public class UsuarioLogadoMB implements Serializable{
 	
 	
 	public void init() {
-		System.out.println("entrou no init login");
+		System.out.println("Carregando Login");
 	}
 	
 	/**
@@ -114,6 +114,7 @@ public class UsuarioLogadoMB implements Serializable{
 			Message.info("Novo usuário cadastrado!");
 			
 			PrimeFaces.current().executeScript("PF('novoCadastroDialog').hide();");
+			PrimeFaces.current().ajax().update("f-login");
 			
 		} catch (Exception e) {
 			e.printStackTrace();

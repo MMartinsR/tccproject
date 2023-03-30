@@ -46,5 +46,9 @@ public class TarefaService implements Serializable {
 	public List<Tarefa> listarTodos() {
 		return tarefaDao.buscarTodos(Tarefa.class);
 	}
+	
+	public Tarefa buscarPorId(Long id) {
+		return tarefaDao.buscarPorId(Tarefa.class, id);
+	}
 
 }
