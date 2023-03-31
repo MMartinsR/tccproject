@@ -101,26 +101,34 @@
 							<div class="field">
 								<p:outputLabel id="label-email-cadastro"
 										   	   for="email-cadastro">E-mail:</p:outputLabel>
+								
+								<div>	   	   
 								<p:inputText id="email-cadastro" 
 										 	 value="#{usuarioLogadoMB.usuario.email}"
 										     required="true"
 										     size="25" />
+								</div>	
 							</div>
 							<div class="field">	 
 								<p:outputLabel id="label-senha-cadastro"
 											   for="senha-cadastro">Senha:</p:outputLabel>
+								<div>
 								<p:password id="senha-cadastro" 
 										    value="#{usuarioLogadoMB.usuario.senha}"
 										    required="true"
 										    size="25" />
+								</div>
 							</div>
 							<div class="field">	 
 								<p:outputLabel id="label-nome-exibicao-cadastro"
-											   for="nome-exibicao-cadastro">Nome de Exibição:</p:outputLabel>
+											   for="nome-exibicao-cadastro">Nome de Usuario:</p:outputLabel>
+								
+								<div>
 								<p:inputText id="nome-exibicao-cadastro" 
 										     value="#{usuarioLogadoMB.usuario.nomeExibicao}"
 										     required="true"
 										     size="25" />
+								</div>
 							</div>					
 						</p:outputPanel>		 
 					</p:outputPanel>
@@ -136,7 +144,7 @@
 			
 			<h:form id="f-reset-dialog">	
 				<p:dialog id="dialog-resetar-senha" 
-						  header="Resetar Senha"
+						  header="Redefinir Senha"
 		                  widgetVar="resetarSenhaDialog" 
 		                  modal="true"
 		                  showEffect="fade" 
@@ -145,37 +153,42 @@
 		                  
 		            <p:outputPanel id="conteudo-resetar-senha-dialog" 
 								   class="ui-fluid">
-						<p:outputPanel>
-							<div class="field">
-								<p:outputLabel id="label-email-resetar-senha"
-										   	   for="email-resetar-senha">E-mail:</p:outputLabel>
+						<div class="field">
+							<p:outputLabel id="label-email-resetar-senha"
+									   	   for="email-resetar-senha">E-mail:</p:outputLabel>
+							<div>
 								<p:inputText id="email-resetar-senha" 
 										 	 value="#{usuarioLogadoMB.usuario.email}"
 										     required="true"
 										     requiredMessage="O email é obrigatório"
-										     size="25"
 										     autocomplete="true" />
 							</div>
-							<div class="field">	 
-								<p:outputLabel id="label-senha-resetar"
-											   for="senha-resetar">Nova senha:</p:outputLabel>
+						</div>
+						<div class="field">	 
+							<p:outputLabel id="label-senha-resetar"
+										   for="senha-resetar">Nova senha:</p:outputLabel>
+							<div>
 								<p:password id="senha-resetar" 
 										    value="#{usuarioLogadoMB.usuario.senha}"
 										    required="true"
-										    requiredMessage="A nova senha é obrigatória"
-										    size="25" />
-							</div>				
-						</p:outputPanel>		 
+										    requiredMessage="A nova senha é obrigatória" />
+							</div>
+							
+						</div>	 
 					</p:outputPanel>
-		         	<p:commandButton value="Confirmar"
-                  					 icon="ui-icon-circle-check"
-                        			 actionListener="#{usuarioLogadoMB.solicitarNovaSenha()}"
-                        			 oncomplete="if (!args.validationFailed)
-                        			{resetarSenhaDialog.hide()}" />
-		            <p:commandButton value="Cancelar"
-                  					 type="button" 
-                   					 icon="ui-icon-circle-close"
-                         			 onclick="resetarSenhaDialog.hide()" />
+					
+					<div class="botoes-confirmar-reset">
+						<div class="botoes-confirmar-reset-separar">
+			         	<p:commandButton value="Confirmar"
+	                        			 actionListener="#{usuarioLogadoMB.solicitarNovaSenha()}"
+	                        			 oncomplete="if (!args.validationFailed)
+	                        			{resetarSenhaDialog.hide()}" />
+	                    </div>
+			            <p:commandButton value="Cancelar"
+	                  					 type="button"
+	                         			 onclick="resetarSenhaDialog.hide()" />
+
+                    </div>
 		
 		        </p:dialog>	
 			</h:form>
