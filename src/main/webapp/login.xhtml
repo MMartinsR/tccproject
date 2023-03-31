@@ -6,7 +6,7 @@
       xmlns:p="http://primefaces.org/ui"> 
 
 <h:head>
-	<title>Login</title>
+		
 </h:head>
 
 <f:metadata>
@@ -14,169 +14,172 @@
 </f:metadata>
 <h:body>
 
-	<h:form id="f-login">
-		<p:growl id="messages">
-			<p:autoUpdate/>
-		</p:growl>
-		<div id="div-login" style="width: 300px; margin: 10% auto 1% auto;">
-			<p:panel id="panel-login">
-			
-				<div id="logo_login" style="display: flex; justify-content: center; margin: 5px">
-                     <h:graphicImage value="/img/logo.png"
-                     width="50" />
-              	</div>
-				<strong>Fazer login</strong>
-				<p:divider style="background-color: #ddeeff; height: 2px"/>			
+	<ui:composition template="/templates/template.xhtml">
+	
+		<ui:define name="content">
+		
+			<h:form id="f-login">
+				<p:growl id="messages">
+					<p:autoUpdate/>
+				</p:growl>
 				
-				<p:outputPanel id="conteudo-login" class="ui-fluid">
-					<p:outputPanel>
-						<div class="field">
-							<p:outputLabel id="label-email"
-									   	   for="email">E-mail: </p:outputLabel>
-							<p:inputText id="email" 
-								 	 value="#{usuarioLogadoMB.usuario.email}"
-								     required="true"
-								     size="25"
-								     autocomplete="true" />
-						</div>
-						<div class="field">	 
-							<p:outputLabel id="label-senha"
-										   for="senha">Senha: </p:outputLabel>
-							<p:password id="senha" 
-									    value="#{usuarioLogadoMB.usuario.senha}"
-									    required="true"
-									    size="25"
-									    autocomplete="true" />
-						</div>
+				<div id="div-login">
+					<p:panel id="panel-login">					
+						<div id="logo-login" class="logo-login">
+		                     <h:graphicImage value="/img/logo.png"
+		                     width="50" />
+		              	</div>
+		              	
+						<div class="titulo-login"><strong>ENTRAR NO SISTEMA</strong></div>
 						
-					</p:outputPanel>		 
-				</p:outputPanel>
-				
-				<p:commandButton value="Entrar"
-								 action="#{usuarioLogadoMB.fazerLogin()}"
-								 title="Logar no sistema"/> <br/>
-					
-				<h:form id="f-resetarSenha">
-					<p:commandLink value="Esqueceu a senha?" 
-							   oncomplete="PF('resetarSenhaDialog').show()"
-							   update="f-reset-dialog:conteudo-resetar-senha-dialog"/>
-				</h:form>
-				
-				<p:divider style="background-color: #ddeeff; height: 2px"/>
-				
-				<h:form id="f-cadastrar">
-					Cadastre-se	<br/>	   
-						<p:commandButton id="cb-cadastrar"
-										 value="Cadastrar"
-										 actionListener="#{usuarioLogadoMB.novoUsuario()}"
-										 update="f-login-dialog:conteudo-login-dialog"
-										 oncomplete="PF('novoCadastroDialog').show()"
-										 alt="Cadastrar novo usuário"
-										 title="Cadastrar Novo">
+						<p:divider/>			
+						
+						<p:outputPanel id="conteudo-login" class="ui-fluid">							
+							<div class="field">
+								<p:outputLabel id="label-email"
+										   	   for="email">E-mail: </p:outputLabel>
+								<p:inputText id="email" 
+									 	 value="#{usuarioLogadoMB.usuario.email}"
+									     required="true"
+									     size="29"
+									     autocomplete="true" />
+							</div>
+							<div class="field">	 
+								<p:outputLabel id="label-senha"
+											   for="senha">Senha: </p:outputLabel>
+								<p:password id="senha" 
+										    value="#{usuarioLogadoMB.usuario.senha}"
+										    required="true"
+										    size="29"
+										    autocomplete="true" />
+							</div> 
+						</p:outputPanel>
+						
+						<p:commandButton value="Entrar"
+										 action="#{usuarioLogadoMB.fazerLogin()}"
+										 title="Logar no sistema"
+										 /> <br/>
 							
-							<p:resetInput target="f-login-dialog:conteudo-login-dialog"/>
-						</p:commandButton>
-
-				</h:form>		
-			</p:panel>
-		</div>
-	</h:form>
+						<h:form id="f-resetarSenha">
+							<p:commandLink value="Esqueceu a senha?" 
+										   oncomplete="PF('resetarSenhaDialog').show()"
+										   update="f-reset-dialog:conteudo-resetar-senha-dialog"/>
+						</h:form>
+						
+<!-- 						<p:divider/> -->
+						
+						<h:form id="f-cadastrar">
+							<div class="cadastro-login">Não possui conta?</div>	   
+								<p:commandButton id="cb-cadastrar"
+												 value="Cadastre-se"
+												 actionListener="#{usuarioLogadoMB.novoUsuario()}"
+												 update="f-login-dialog:conteudo-login-dialog"
+												 oncomplete="PF('novoCadastroDialog').show()"
+												 alt="Cadastrar novo usuário"
+												 title="Cadastrar Novo">
+									
+									<p:resetInput target="f-login-dialog:conteudo-login-dialog"/>
+								</p:commandButton>
+		
+						</h:form>		
+					</p:panel>
+				</div>
+			</h:form>
 	
-
-	
-	<h:form id="f-login-dialog">
-		<p:dialog id="dialog-login"
-				  header="Cadastro"
-				  showEffect="fade"
-				  modal="true"
-				  widgetVar="novoCadastroDialog"
-				  responsive="true"
-				  draggable="false">
-				  
-			<p:outputPanel id="conteudo-login-dialog" 
-						   class="ui-fluid">
-				<p:outputPanel>
-					<div class="field">
-						<p:outputLabel id="label-email-cadastro"
-								   for="email-cadastro">E-mail:</p:outputLabel>
-						<p:inputText id="email-cadastro" 
-							 	 value="#{usuarioLogadoMB.usuario.email}"
-							     required="true"
-							     size="25" />
-					</div>
-					<div class="field">	 
-						<p:outputLabel id="label-senha-cadastro"
-									   for="senha-cadastro">Senha:</p:outputLabel>
-						<p:password id="senha-cadastro" 
-								    value="#{usuarioLogadoMB.usuario.senha}"
-								    required="true"
-								    size="25" />
-					</div>
-					<div class="field">	 
-						<p:outputLabel id="label-nome-exibicao-cadastro"
-									   for="nome-exibicao-cadastro">Nome de Exibição:</p:outputLabel>
-						<p:inputText id="nome-exibicao-cadastro" 
-								    value="#{usuarioLogadoMB.usuario.nomeExibicao}"
-								    required="true"
-								    size="25" />
-					</div>					
-				</p:outputPanel>		 
-			</p:outputPanel>
+			<h:form id="f-login-dialog">
+				<p:dialog id="dialog-login"
+						  header="Cadastro"
+						  showEffect="fade"
+						  modal="true"
+						  widgetVar="novoCadastroDialog"
+						  responsive="true"
+						  draggable="false">
+						  
+					<p:outputPanel id="conteudo-login-dialog" 
+								   class="ui-fluid">
+						<p:outputPanel>
+							<div class="field">
+								<p:outputLabel id="label-email-cadastro"
+										   	   for="email-cadastro">E-mail:</p:outputLabel>
+								<p:inputText id="email-cadastro" 
+										 	 value="#{usuarioLogadoMB.usuario.email}"
+										     required="true"
+										     size="25" />
+							</div>
+							<div class="field">	 
+								<p:outputLabel id="label-senha-cadastro"
+											   for="senha-cadastro">Senha:</p:outputLabel>
+								<p:password id="senha-cadastro" 
+										    value="#{usuarioLogadoMB.usuario.senha}"
+										    required="true"
+										    size="25" />
+							</div>
+							<div class="field">	 
+								<p:outputLabel id="label-nome-exibicao-cadastro"
+											   for="nome-exibicao-cadastro">Nome de Exibição:</p:outputLabel>
+								<p:inputText id="nome-exibicao-cadastro" 
+										     value="#{usuarioLogadoMB.usuario.nomeExibicao}"
+										     required="true"
+										     size="25" />
+							</div>					
+						</p:outputPanel>		 
+					</p:outputPanel>
+					
+					<f:facet name="footer">
+						<p:commandButton value="Cadastrar"
+										 actionListener="#{usuarioLogadoMB.cadastrarUsuario()}"
+										 update="conteudo-login-dialog"
+										 process="conteudo-login-dialog @this"/>
+					</f:facet>
+				</p:dialog>
+			</h:form>
 			
-			<f:facet name="footer">
-				<p:commandButton value="Cadastrar"
-								 actionListener="#{usuarioLogadoMB.cadastrarUsuario()}"
-								 update="conteudo-login-dialog"
-								 process="conteudo-login-dialog @this"/>
-			</f:facet>
-		</p:dialog>
-	</h:form>
-	
-	<h:form id="f-reset-dialog">	
-		<p:dialog id="dialog-resetar-senha" 
-				  header="Resetar Senha"
-                  widgetVar="resetarSenhaDialog" 
-                  modal="true"
-                  showEffect="fade" 
-                  resizable="false"
-                  hideEffect="fade">
-                  
-            <p:outputPanel id="conteudo-resetar-senha-dialog" 
-						   class="ui-fluid">
-				<p:outputPanel>
-					<div class="field">
-						<p:outputLabel id="label-email-resetar-senha"
-								   for="email-resetar-senha">E-mail:</p:outputLabel>
-						<p:inputText id="email-resetar-senha" 
-							 	 value="#{usuarioLogadoMB.usuario.email}"
-							     required="true"
-							     requiredMessage="O email é obrigatório"
-							     size="25"
-							     autocomplete="true" />
-					</div>
-					<div class="field">	 
-						<p:outputLabel id="label-senha-resetar"
-									   for="senha-resetar">Nova senha:</p:outputLabel>
-						<p:password id="senha-resetar" 
-								    value="#{usuarioLogadoMB.usuario.senha}"
-								    required="true"
-								    requiredMessage="A nova senha é obrigatória"
-								    size="25" />
-					</div>				
-				</p:outputPanel>		 
-			</p:outputPanel>
-         	<p:commandButton value="Confirmar"
-                  					icon="ui-icon-circle-check"
-                        			actionListener="#{usuarioLogadoMB.solicitarNovaSenha()}"
-                        			oncomplete="if (!args.validationFailed)
+			<h:form id="f-reset-dialog">	
+				<p:dialog id="dialog-resetar-senha" 
+						  header="Resetar Senha"
+		                  widgetVar="resetarSenhaDialog" 
+		                  modal="true"
+		                  showEffect="fade" 
+		                  resizable="false"
+		                  hideEffect="fade">
+		                  
+		            <p:outputPanel id="conteudo-resetar-senha-dialog" 
+								   class="ui-fluid">
+						<p:outputPanel>
+							<div class="field">
+								<p:outputLabel id="label-email-resetar-senha"
+										   	   for="email-resetar-senha">E-mail:</p:outputLabel>
+								<p:inputText id="email-resetar-senha" 
+										 	 value="#{usuarioLogadoMB.usuario.email}"
+										     required="true"
+										     requiredMessage="O email é obrigatório"
+										     size="25"
+										     autocomplete="true" />
+							</div>
+							<div class="field">	 
+								<p:outputLabel id="label-senha-resetar"
+											   for="senha-resetar">Nova senha:</p:outputLabel>
+								<p:password id="senha-resetar" 
+										    value="#{usuarioLogadoMB.usuario.senha}"
+										    required="true"
+										    requiredMessage="A nova senha é obrigatória"
+										    size="25" />
+							</div>				
+						</p:outputPanel>		 
+					</p:outputPanel>
+		         	<p:commandButton value="Confirmar"
+                  					 icon="ui-icon-circle-check"
+                        			 actionListener="#{usuarioLogadoMB.solicitarNovaSenha()}"
+                        			 oncomplete="if (!args.validationFailed)
                         			{resetarSenhaDialog.hide()}" />
-            <p:commandButton value="Cancelar"
-                  					type="button" 
-                   					icon="ui-icon-circle-close"
-                         			onclick="resetarSenhaDialog.hide()" />
-
-        </p:dialog>	
-	</h:form>
-
+		            <p:commandButton value="Cancelar"
+                  					 type="button" 
+                   					 icon="ui-icon-circle-close"
+                         			 onclick="resetarSenhaDialog.hide()" />
+		
+		        </p:dialog>	
+			</h:form>
+		</ui:define>		
+	</ui:composition>	
 </h:body> 
 </html>
