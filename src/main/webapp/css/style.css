@@ -90,6 +90,9 @@ div.botoes-confirmar-reset-separar {
 	display: inline-block;
 }
 
+body .ui-dialog .ui-dialog-footer {
+	text-align: right;	
+}
 
 
 
