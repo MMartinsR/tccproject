@@ -13,6 +13,7 @@ import projetotcc.dao.UsuarioDAO;
 import projetotcc.exception.AutenticacaoException;
 import projetotcc.exception.CadastrarException;
 import projetotcc.model.Usuario;
+import projetotcc.utility.Message;
 import projetotcc.utility.RegexUtil;
 
 public class UsuarioService implements Serializable {
@@ -32,6 +33,8 @@ public class UsuarioService implements Serializable {
 		if (usuario != null) {
 			
 			if (!RegexUtil.emailValido(usuario.getEmail())) {
+				usuario.setEmail(null);
+				
 				throw new CadastrarException("E-mail inválido.");
 			}
 			
@@ -41,20 +44,37 @@ public class UsuarioService implements Serializable {
 			}
 			
 			if (usuario.getNomeExibicao().length() < 3 || !RegexUtil.nomeUsuarioValido(usuario.getNomeExibicao())) {
+				usuario.setNomeExibicao(null);
+				
 				throw new CadastrarException("Nome de usuário deve possuir entre 3 e 30 caracteres, "
 							+ "sendo a primeira letra maiuscula. Pode ainda inserir - ou _ ou . além de números.");				
 			}
 			
-			Usuario usuarioExiste = usuarioDAO.findByEmail(usuario.getEmail());
-			Usuario nomeUsuarioDisponivel = usuarioDAO.findByNomeExibicao(usuario.getNomeExibicao());
+			Usuario usuarioExiste;
+			Usuario nomeUsuarioDisponivel;
 			
-			if (usuarioExiste != null) {
-				throw new CadastrarException("Este e-mail já se encontra cadastrado.");
-			}
-			
-			if (nomeUsuarioDisponivel != null) {
-				throw new CadastrarException("Este nome de usuário não está disponível.");
-			}
+			try {
+				usuarioExiste = usuarioDAO.findByEmail(usuario.getEmail());
+				
+				if (usuarioExiste != null) {
+					usuario.setEmail(null);
+					
+					throw new CadastrarException("Este e-mail já se encontra cadastrado.");
+				}
+				
+				nomeUsuarioDisponivel = usuarioDAO.findByNomeExibicao(usuario.getNomeExibicao());
+				
+				if (nomeUsuarioDisponivel != null) {
+					usuario.setNomeExibicao(null);
+					
+					throw new CadastrarException("Este nome de usuário não está disponível.");
+				}
+				
+				
+			}catch (IndexOutOfBoundsException e) {
+				
+				Message.info("E-mail e usuário válidos, cadastrando...");
+			}	
 			
 			usuario.setSenha(converteStringParaMd5(usuario.getSenha()));
 			
@@ -85,10 +105,14 @@ public class UsuarioService implements Serializable {
 	public Usuario usuarioPodeLogar(String email, String senha) {
 
 		if (!RegexUtil.emailValido(email)) {
+			email = null;
+			
 			throw new AutenticacaoException("E-mail inválido.");
 		}
 		
 		if (!RegexUtil.senhaValida(senha)) {
+			senha = null;
+			
 			throw new AutenticacaoException("A senha deve conter de 8 a 20 caracteres, "
 					+ "sendo ao menos um maiusculo, um minusculo, um número e um caractere especial.");
 		}
@@ -138,10 +162,14 @@ public class UsuarioService implements Serializable {
 	public String gerarNovaSenha(String email, String senha) {
 		
 		if (!RegexUtil.emailValido(email)) {
+			email = null;
+			
 			throw new CadastrarException("E-mail inválido.");
 		}
 		
 		if (!RegexUtil.senhaValida(senha)) {
+			senha = null;
+			
 			throw new CadastrarException("A senha deve conter de 8 a 20 caracteres, "
 					+ "sendo ao menos um maiusculo, um minusculo, um número e um caractere especial.");
 		}		
@@ -149,11 +177,15 @@ public class UsuarioService implements Serializable {
 		Usuario usuario = usuarioDAO.findByEmail(email);
 		
 		if (usuario == null) {
+			email = null;
+			
 			throw new AutenticacaoException("O email fornecido não se encontra em nosso cadastro. Cadastra-se para ter acesso "
 					+ "aos nossos serviços.");
 		}
 		
 		if (usuario.getSenha().equals(converteStringParaMd5(senha))) {
+			senha = null;
+			
 			throw new AutenticacaoException("As senhas não podem ser iguais.");
 		}
 	     

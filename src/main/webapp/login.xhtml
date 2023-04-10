@@ -72,13 +72,10 @@
 							<div class="cadastro-login">Não possui conta?</div>	   
 								<p:commandButton id="cb-cadastrar"
 												 value="Cadastre-se"
-												 actionListener="#{usuarioLogadoMB.novoUsuario()}"
 												 update="f-login-dialog:conteudo-login-dialog"
 												 oncomplete="PF('novoCadastroDialog').show()"
 												 alt="Cadastrar novo usuário"
 												 title="Cadastrar Novo">
-									
-									<p:resetInput target="f-login-dialog:conteudo-login-dialog"/>
 								</p:commandButton>
 		
 						</h:form>		
@@ -97,48 +94,46 @@
 						  
 					<p:outputPanel id="conteudo-login-dialog" 
 								   class="ui-fluid">
-						<p:outputPanel>
-							<div class="field">
-								<p:outputLabel id="label-email-cadastro"
-										   	   for="email-cadastro">E-mail:</p:outputLabel>
-								
-								<div>	   	   
-								<p:inputText id="email-cadastro" 
-										 	 value="#{usuarioLogadoMB.usuario.email}"
-										     required="true"
-										     requiredMessage="E-mail é obrigatório!"
-										     size="25"
-										     placeholder="exemplo@mail.com"
-										     autocomplete="true" />
-								</div>	
+						<div class="field">
+							<p:outputLabel id="label-email-cadastro"
+									   	   for="email-cadastro">E-mail:</p:outputLabel>
+							
+							<div>	   	   
+							<p:inputText id="email-cadastro" 
+									 	 value="#{usuarioLogadoMB.usuario.email}"
+									     required="true"
+									     requiredMessage="E-mail é obrigatório!"
+									     size="25"
+									     placeholder="exemplo@mail.com"
+									     autocomplete="true" />
+							</div>	
+						</div>
+						<div class="field">	 
+							<p:outputLabel id="label-senha-cadastro"
+										   for="senha-cadastro">Senha:</p:outputLabel>
+							<div>
+							<p:password id="senha-cadastro" 
+									    value="#{usuarioLogadoMB.usuario.senha}"
+									    required="true"
+									    requiredMessage="Senha é obrigatória!"
+									    size="25"
+									    autocomplete="true" />
 							</div>
-							<div class="field">	 
-								<p:outputLabel id="label-senha-cadastro"
-											   for="senha-cadastro">Senha:</p:outputLabel>
-								<div>
-								<p:password id="senha-cadastro" 
-										    value="#{usuarioLogadoMB.usuario.senha}"
-										    required="true"
-										    requiredMessage="Senha é obrigatória!"
-										    size="25"
-										    autocomplete="true" />
-								</div>
+						</div>
+						<div class="field">	 
+							<p:outputLabel id="label-nome-exibicao-cadastro"
+										   for="nome-exibicao-cadastro">Nome de Usuario:</p:outputLabel>
+							
+							<div>
+							<p:inputText id="nome-exibicao-cadastro" 
+									     value="#{usuarioLogadoMB.usuario.nomeExibicao}"
+									     required="true"
+									     requiredMessage="Deverá inserir um nome de usuário valido!"
+									     size="25"
+									     placeholder="João Martins"
+									     autocomplete="true" />
 							</div>
-							<div class="field">	 
-								<p:outputLabel id="label-nome-exibicao-cadastro"
-											   for="nome-exibicao-cadastro">Nome de Usuario:</p:outputLabel>
-								
-								<div>
-								<p:inputText id="nome-exibicao-cadastro" 
-										     value="#{usuarioLogadoMB.usuario.nomeExibicao}"
-										     required="true"
-										     requiredMessage="Deverá inserir um nome de usuário valido!"
-										     size="25"
-										     placeholder="João Martins"
-										     autocomplete="true" />
-								</div>
-							</div>					
-						</p:outputPanel>		 
+						</div>		 
 					</p:outputPanel>
 					
 					<f:facet name="footer">
@@ -193,7 +188,9 @@
 			         	<p:commandButton value="Confirmar"
 	                        			 actionListener="#{usuarioLogadoMB.solicitarNovaSenha()}"
 	                        			 oncomplete="if (!args.validationFailed)
-	                        			{resetarSenhaDialog.hide()}" />
+	                        			{resetarSenhaDialog.hide()}"
+	                        			update="conteudo-resetar-senha-dialog"
+	                        			process="conteudo-resetar-senha-dialog @this"/>
 	                    </div>
 			            <p:commandButton value="Cancelar"
 	                  					 type="button"

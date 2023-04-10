@@ -31,7 +31,7 @@ public class UsuarioLogadoMB implements Serializable{
 	
 
 	@Inject 
-	private Usuario usuario = new Usuario();
+	private Usuario usuario;
 	
 	@Inject
 	private UsuarioService usuarioService;
@@ -44,6 +44,7 @@ public class UsuarioLogadoMB implements Serializable{
 	
 	
 	public void init() {
+		usuario = new Usuario();
 		System.out.println("Carregando Login");
 	}
 	
@@ -112,8 +113,8 @@ public class UsuarioLogadoMB implements Serializable{
 		return "/login.xhtml?faces-redirect=true";
 	}
 	
-	public void novoUsuario() {
-		this.usuario = new Usuario();
+	public void limpar() {
+		usuario = new Usuario();
 	}
 	
 	public void cadastrarUsuario() {
@@ -126,6 +127,7 @@ public class UsuarioLogadoMB implements Serializable{
 			usuarioService.salvar(usuario);
 			Message.info("Seja bem-vindo! Cadastro realizado com sucesso.");
 			
+			limpar();
 			PrimeFaces.current().executeScript("PF('novoCadastroDialog').hide();");
 			PrimeFaces.current().ajax().update("f-login");
 			
@@ -150,7 +152,9 @@ public class UsuarioLogadoMB implements Serializable{
 			
 			enviarEmailRedefinicaoSenha(email, novaSenha);
 			
+			limpar();
 			PrimeFaces.current().executeScript("PF('resetarSenhaDialog').hide();");
+			PrimeFaces.current().ajax().update("f-login");
 			
 		} catch (AutenticacaoException e) {
 			Message.erro(e.getMessage());
