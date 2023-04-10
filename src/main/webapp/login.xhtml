@@ -41,8 +41,10 @@
 								<p:inputText id="email" 
 									 	 value="#{usuarioLogadoMB.usuario.email}"
 									     required="true"
+									     requiredMessage="E-mail é obrigatório!"
 									     size="29"
-									     autocomplete="true" />
+									     autocomplete="true"
+									     placeholder="exemplo@mail.com"/>
 							</div>
 							<div class="field">	 
 								<p:outputLabel id="label-senha"
@@ -50,6 +52,7 @@
 								<p:password id="senha" 
 										    value="#{usuarioLogadoMB.usuario.senha}"
 										    required="true"
+										    requiredMessage="Senha é obrigatória!"
 										    size="29"
 										    autocomplete="true" />
 							</div> 
@@ -57,16 +60,13 @@
 						
 						<p:commandButton value="Entrar"
 										 action="#{usuarioLogadoMB.fazerLogin()}"
-										 title="Logar no sistema"
-										 /> <br/>
+										 title="Logar no sistema"/> <br/>
 							
 						<h:form id="f-resetarSenha">
 							<p:commandLink value="Esqueceu a senha?" 
 										   oncomplete="PF('resetarSenhaDialog').show()"
 										   update="f-reset-dialog:conteudo-resetar-senha-dialog"/>
 						</h:form>
-						
-<!-- 						<p:divider/> -->
 						
 						<h:form id="f-cadastrar">
 							<div class="cadastro-login">Não possui conta?</div>	   
@@ -106,7 +106,10 @@
 								<p:inputText id="email-cadastro" 
 										 	 value="#{usuarioLogadoMB.usuario.email}"
 										     required="true"
-										     size="25" />
+										     requiredMessage="E-mail é obrigatório!"
+										     size="25"
+										     placeholder="exemplo@mail.com"
+										     autocomplete="true" />
 								</div>	
 							</div>
 							<div class="field">	 
@@ -116,7 +119,9 @@
 								<p:password id="senha-cadastro" 
 										    value="#{usuarioLogadoMB.usuario.senha}"
 										    required="true"
-										    size="25" />
+										    requiredMessage="Senha é obrigatória!"
+										    size="25"
+										    autocomplete="true" />
 								</div>
 							</div>
 							<div class="field">	 
@@ -127,14 +132,18 @@
 								<p:inputText id="nome-exibicao-cadastro" 
 										     value="#{usuarioLogadoMB.usuario.nomeExibicao}"
 										     required="true"
-										     size="25" />
+										     requiredMessage="Deverá inserir um nome de usuário valido!"
+										     size="25"
+										     placeholder="João Martins"
+										     autocomplete="true" />
 								</div>
 							</div>					
 						</p:outputPanel>		 
 					</p:outputPanel>
 					
 					<f:facet name="footer">
-						<p:commandButton value="Cadastrar"
+						<p:commandButton id="b-cadastrar-usuario"
+										 value="Cadastrar"
 										 actionListener="#{usuarioLogadoMB.cadastrarUsuario()}"
 										 update="conteudo-login-dialog"
 										 process="conteudo-login-dialog @this"/>
@@ -160,8 +169,9 @@
 								<p:inputText id="email-resetar-senha" 
 										 	 value="#{usuarioLogadoMB.usuario.email}"
 										     required="true"
-										     requiredMessage="O email é obrigatório"
-										     autocomplete="true" />
+										     requiredMessage="E-mail é obrigatório!"
+										     autocomplete="true"
+										     placeholder="exemplo@mail.com" />
 							</div>
 						</div>
 						<div class="field">	 
@@ -171,10 +181,11 @@
 								<p:password id="senha-resetar" 
 										    value="#{usuarioLogadoMB.usuario.senha}"
 										    required="true"
-										    requiredMessage="A nova senha é obrigatória" />
+										    requiredMessage="Nova senha é obrigatória"
+										    autocomplete="true" />
 							</div>
 							
-						</div>	 
+						</div> 
 					</p:outputPanel>
 					
 					<div class="botoes-confirmar-reset">
@@ -186,7 +197,7 @@
 	                    </div>
 			            <p:commandButton value="Cancelar"
 	                  					 type="button"
-	                         			 onclick="resetarSenhaDialog.hide()" />
+	                         			 onclick="PF('resetarSenhaDialog').hide()" />
 
                     </div>
 		

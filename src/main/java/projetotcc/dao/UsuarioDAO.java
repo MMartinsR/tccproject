@@ -49,4 +49,16 @@ public class UsuarioDAO implements Serializable {
 		return listObjetos.get(0);
 	}
 	
+	public Usuario findByNomeExibicao(String nomeExibicao) {
+		EntityManager manager = ConnectionFactory.getEntityManager();
+		
+		Query query = manager.createNamedQuery("Usuario.findByNomeExibicao");
+		query.setParameter("nomeExibicao", nomeExibicao);
+		
+		@SuppressWarnings("unchecked")
+		List<Usuario> listObjetos = query.getResultList();
+		return listObjetos.get(0);
+		
+	}
+	
 }

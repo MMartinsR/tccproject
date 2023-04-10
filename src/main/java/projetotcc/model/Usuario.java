@@ -25,7 +25,10 @@ import javax.persistence.Table;
 				+ "WHERE c.id = :id"),
 		@NamedQuery(name = "Usuario.findByEmail",
 				query = "SELECT c FROM Usuario c "
-				+ "WHERE c.email = :email")})
+				+ "WHERE c.email = :email"),
+		@NamedQuery(name = "Usuario.findByNomeExibicao",
+				query = "SELECT c FROM Usuario c "
+				+ "WHERE c.nomeExibicao = :nomeExibicao")})
 public class Usuario implements Serializable, Base {
 
 	private static final long serialVersionUID = 1L;
@@ -36,6 +39,7 @@ public class Usuario implements Serializable, Base {
 	
 	@Column(unique = true)
 	private String email;
+	@Column(unique = true)
 	private String nomeExibicao;
 	private String senha;
 	

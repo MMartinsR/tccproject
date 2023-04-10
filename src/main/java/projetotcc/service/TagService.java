@@ -7,7 +7,6 @@ import javax.inject.Inject;
 
 import projetotcc.dao.DAO;
 import projetotcc.model.Tag;
-import projetotcc.model.Tarefa;
 
 public class TagService implements Serializable {
 
