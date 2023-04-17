@@ -12,6 +12,7 @@ import projetotcc.dao.DAO;
 import projetotcc.dao.UsuarioDAO;
 import projetotcc.exception.AutenticacaoException;
 import projetotcc.exception.CadastrarException;
+import projetotcc.exception.DatabaseException;
 import projetotcc.model.Usuario;
 import projetotcc.utility.Message;
 import projetotcc.utility.RegexUtil;
@@ -28,7 +29,6 @@ public class UsuarioService implements Serializable {
 		
 
 	public void salvar(Usuario usuario) {
-
 
 		if (usuario != null) {
 			
@@ -70,15 +70,30 @@ public class UsuarioService implements Serializable {
 					throw new CadastrarException("Este nome de usuário não está disponível.");
 				}
 				
-				
-			}catch (IndexOutOfBoundsException e) {
+			// Caso o usuário não exista, ele retornará um erro dizendo que o array está vazio, 
+			// sendo assim podemos continuar.
+			} catch (IndexOutOfBoundsException e) {
 				
 				Message.info("E-mail e usuário válidos, cadastrando...");
-			}	
+			} catch (DatabaseException e) {
+				Message.erro(e.getMessage());
+			}
 			
-			usuario.setSenha(converteStringParaMd5(usuario.getSenha()));
 			
-			usuarioDao.salvar(usuario);	
+			try {
+				usuario.setSenha(converteStringParaMd5(usuario.getSenha()));
+				
+				if (usuario.getSenha() != null) {
+					usuarioDao.salvar(usuario);
+				} else {
+					throw new CadastrarException("Ocorreu um erro ao cadastrar este usuário.");
+				}
+				
+			} catch (DatabaseException e) {
+				
+				Message.erro(e.getMessage() + " o usuário.");
+			}
+							
 		}
 
 	}
@@ -88,44 +103,72 @@ public class UsuarioService implements Serializable {
 
 		// TODO - Validações
 
-		usuarioDao.remover(Usuario.class, usuario.getId());
+		try {
+			usuarioDao.remover(Usuario.class, usuario.getId());
+			
+		} catch (DatabaseException e) {
+			Message.erro(e.getMessage() + " o usuário.");
+		}
+		
 	}
 
 	public List<Usuario> listarTodos() {
 		
-		return usuarioDao.buscarTodos(Usuario.class);
+		try {			
+			return usuarioDao.buscarTodos(Usuario.class);
+			
+		} catch (DatabaseException e) {
+			Message.erro(e.getMessage() + " os usuários.");
+			return null;
+		}
+		
 	}
 	
-	public List<Usuario> buscarPorId(Long id){
-		return usuarioDAO.findByNamedQuery(id);
+	public Usuario buscarPorId(Long id){
+		
+		try {
+			return usuarioDao.buscarPorId(Usuario.class, id);
+		} catch (DatabaseException e) {
+			Message.erro(e.getMessage() + " o usuário.");
+			return null;
+		}
+		
 	}
 
 	
 	// Verifica se o usuário existe ou se pode logar
 	public Usuario usuarioPodeLogar(String email, String senha) {
 
-		if (!RegexUtil.emailValido(email)) {
-			email = null;
+		try {
 			
-			throw new AutenticacaoException("E-mail inválido.");
-		}
-		
-		if (!RegexUtil.senhaValida(senha)) {
-			senha = null;
+			if (!RegexUtil.emailValido(email)) {
+				email = null;
+				
+				throw new AutenticacaoException("E-mail inválido.");
+			}
 			
-			throw new AutenticacaoException("A senha deve conter de 8 a 20 caracteres, "
-					+ "sendo ao menos um maiusculo, um minusculo, um número e um caractere especial.");
+			if (!RegexUtil.senhaValida(senha)) {
+				senha = null;
+				
+				throw new AutenticacaoException("A senha deve conter de 8 a 20 caracteres, "
+						+ "sendo ao menos um maiusculo, um minusculo, um número e um caractere especial.");
+			}
+			
+			System.out.println("Verificando login do usuário " + email);
+			Usuario retorno = usuarioDAO.findByNamedQuery(email, converteStringParaMd5(senha));
+			
+			if (retorno != null) {
+				Usuario usuarioEncontrado = retorno;
+				return usuarioEncontrado;
+			}
+			
+			throw new AutenticacaoException("Email ou senha incorretas, verifique suas credenciais e tente novamente!");
+			
+		} catch (DatabaseException e) {
+			Message.erro(e.getMessage() + " este usuário.");
+			return null;
 		}
 		
-		System.out.println("Verificando login do usuário " + email);
-		List<Usuario> retorno = usuarioDAO.findByNamedQuery(email, converteStringParaMd5(senha));
-		
-		if (retorno != null && retorno.size() == 1) {
-			Usuario usuarioEncontrado = (Usuario) retorno.get(0);
-			return usuarioEncontrado;
-		}
-		
-		throw new AutenticacaoException("Email ou senha incorretas, verifique suas credenciais e tente novamente!");
 
 	}
 	
@@ -161,39 +204,50 @@ public class UsuarioService implements Serializable {
 	
 	public String gerarNovaSenha(String email, String senha) {
 		
-		if (!RegexUtil.emailValido(email)) {
-			email = null;
+		
+		try {
 			
-			throw new CadastrarException("E-mail inválido.");
+			if (!RegexUtil.emailValido(email)) {
+				email = null;
+				
+				throw new CadastrarException("E-mail inválido.");
+			}
+			
+			if (!RegexUtil.senhaValida(senha)) {
+				senha = null;
+				
+				throw new CadastrarException("A senha deve conter de 8 a 20 caracteres, "
+						+ "sendo ao menos um maiusculo, um minusculo, um número e um caractere especial.");
+			}		
+			
+			Usuario usuario = usuarioDAO.findByEmail(email);
+			
+			if (usuario == null) {
+				email = null;
+				
+				throw new AutenticacaoException("O email fornecido não se encontra em nosso cadastro. Cadastra-se para ter acesso "
+						+ "aos nossos serviços.");
+			}
+			
+			if (usuario.getSenha().equals(converteStringParaMd5(senha))) {
+				senha = null;
+				
+				throw new AutenticacaoException("As senhas não podem ser iguais.");
+			}
+		     
+		     usuario.setSenha(converteStringParaMd5(senha));
+		     
+		     if (usuario.getSenha() != null) {
+		    	 usuarioDao.atualizar(usuario);
+		    	 return senha;
+		     }
+		     
+		     return null;		     
+		} catch (DatabaseException e) {
+			Message.erro("Ocorreu um erro ao redefinir senha.");
+			return null;
 		}
 		
-		if (!RegexUtil.senhaValida(senha)) {
-			senha = null;
-			
-			throw new CadastrarException("A senha deve conter de 8 a 20 caracteres, "
-					+ "sendo ao menos um maiusculo, um minusculo, um número e um caractere especial.");
-		}		
-		
-		Usuario usuario = usuarioDAO.findByEmail(email);
-		
-		if (usuario == null) {
-			email = null;
-			
-			throw new AutenticacaoException("O email fornecido não se encontra em nosso cadastro. Cadastra-se para ter acesso "
-					+ "aos nossos serviços.");
-		}
-		
-		if (usuario.getSenha().equals(converteStringParaMd5(senha))) {
-			senha = null;
-			
-			throw new AutenticacaoException("As senhas não podem ser iguais.");
-		}
-	     
-	     usuario.setSenha(converteStringParaMd5(senha));
-	     
-	     usuarioDao.atualizar(usuario);	
-
-	     return senha;
 	}
 
 }

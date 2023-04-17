@@ -89,7 +89,7 @@ public class UsuarioLogadoMB implements Serializable{
 			
 			System.out.println("Usuario permitido encontrado " + usuario.getEmail());
 					
-			Usuario usuarioPodeLogar = usuarioService.buscarPorId(usuarioPermitido.getId()).get(0);
+			Usuario usuarioPodeLogar = usuarioService.buscarPorId(usuarioPermitido.getId());
             System.out.println("Login efetuado com sucesso");
             SessionContext.getInstance().setAttribute("usuarioLogado", usuarioPodeLogar);
            
