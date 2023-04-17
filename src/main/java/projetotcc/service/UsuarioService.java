@@ -155,20 +155,26 @@ public class UsuarioService implements Serializable {
 			}
 			
 			System.out.println("Verificando login do usuário " + email);
-			Usuario retorno = usuarioDAO.findByNamedQuery(email, converteStringParaMd5(senha));
 			
-			if (retorno != null) {
-				Usuario usuarioEncontrado = retorno;
-				return usuarioEncontrado;
+			String senhaConvertida = converteStringParaMd5(senha);
+			
+			Usuario retorno;
+			if(senhaConvertida != null) {
+				retorno = usuarioDAO.findByNamedQuery(email, senhaConvertida);
+				
+				if (retorno != null) {
+					return retorno;
+				}
+			} else {
+				throw new AutenticacaoException("Ocorreu um erro ao autenticar este usuário.");
 			}
 			
 			throw new AutenticacaoException("Email ou senha incorretas, verifique suas credenciais e tente novamente!");
 			
 		} catch (DatabaseException e) {
-			Message.erro(e.getMessage() + " este usuário.");
+			Message.erro(e.getMessage() + " ao validar este usuário.");
 			return null;
-		}
-		
+		}		
 
 	}
 	
@@ -202,8 +208,7 @@ public class UsuarioService implements Serializable {
 		}
 	}
 	
-	public String gerarNovaSenha(String email, String senha) {
-		
+	public String gerarNovaSenha(String email, String senha) {		
 		
 		try {
 			
@@ -243,8 +248,7 @@ public class UsuarioService implements Serializable {
 		     }
 		     
 		     return null;		     
-		} catch (DatabaseException e) {
-			Message.erro("Ocorreu um erro ao redefinir senha.");
+		} catch (DatabaseException e) {			
 			return null;
 		}
 		

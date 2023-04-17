@@ -30,7 +30,7 @@ public class UsuarioDAO implements Serializable {
 			
 		} catch (Exception e) {
 			e.printStackTrace();
-			throw new DatabaseException("Ocorreu um erro ao buscar");
+			throw new DatabaseException("Ocorreu um erro");
 		} finally {
 			manager.close();
 		}

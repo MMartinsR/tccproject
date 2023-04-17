@@ -87,19 +87,23 @@ public class UsuarioLogadoMB implements Serializable{
 			System.out.println("Tentando logar com usuário " + usuario.getEmail());
 			Usuario usuarioPermitido = usuarioService.usuarioPodeLogar(usuario.getEmail(), usuario.getSenha());
 			
-			System.out.println("Usuario permitido encontrado " + usuario.getEmail());
-					
-			Usuario usuarioPodeLogar = usuarioService.buscarPorId(usuarioPermitido.getId());
-            System.out.println("Login efetuado com sucesso");
-            SessionContext.getInstance().setAttribute("usuarioLogado", usuarioPodeLogar);
-           
-            String url = "/restricted/dashboard.xhtml?faces-redirect=true";
-            return url;
+			if(usuarioPermitido != null) {
+				System.out.println("Usuario permitido encontrado " + usuarioPermitido.getEmail());
+				
+				Usuario usuarioPodeLogar = usuarioService.buscarPorId(usuarioPermitido.getId());
+	            System.out.println("Login efetuado com sucesso");
+	            SessionContext.getInstance().setAttribute("usuarioLogado", usuarioPodeLogar);
+	           
+	            String url = "/restricted/dashboard.xhtml?faces-redirect=true";
+	            return url;
+			}			
+			
+			Message.erro("Ocorreu um erro ao validar este usuário.");
+			return "";
 			
 		} catch (AutenticacaoException e) {
 			Message.erro(e.getMessage());
-			FacesContext.getCurrentInstance().validationFailed();
-			
+			FacesContext.getCurrentInstance().validationFailed();			
 			return "";
 		} 
 	}
@@ -132,7 +136,7 @@ public class UsuarioLogadoMB implements Serializable{
 			PrimeFaces.current().ajax().update("f-login");
 			
 		} catch (CadastrarException e) {
-			Message.erro("Não foi possível cadastrar o usuário, motivo: " + e.getMessage());
+			Message.erro("Não foi possível cadastrar o usuário: " + e.getMessage());
 		} catch (Exception e) {
 			e.printStackTrace();
 		}	
@@ -145,8 +149,11 @@ public class UsuarioLogadoMB implements Serializable{
 			
 			String email = this.usuario.getEmail().toLowerCase().trim();
 			String novaSenha = this.usuario.getSenha();
-					
-			usuarioService.gerarNovaSenha(email, novaSenha);
+			
+			if (usuarioService.gerarNovaSenha(email, novaSenha) == null) {
+				Message.erro("Ocorreu um erro ao redefinir senha.");
+				return;
+			}			
 			
 			Message.info("Senha alterada com sucesso!" );
 			
@@ -157,6 +164,9 @@ public class UsuarioLogadoMB implements Serializable{
 			PrimeFaces.current().ajax().update("f-login");
 			
 		} catch (AutenticacaoException e) {
+			Message.erro(e.getMessage());
+			FacesContext.getCurrentInstance().validationFailed();
+		} catch (CadastrarException e) {
 			Message.erro(e.getMessage());
 			FacesContext.getCurrentInstance().validationFailed();
 		} catch (Exception e) {
