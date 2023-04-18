@@ -22,13 +22,13 @@ import projetotcc.model.Usuario;
 import projetotcc.service.UsuarioService;
 import projetotcc.utility.EmailUtil;
 import projetotcc.utility.Message;
+import projetotcc.utility.RegexUtil;
 
 @Named
 @SessionScoped
 public class UsuarioLogadoMB implements Serializable{
 
-	private static final long serialVersionUID = 1L;
-	
+	private static final long serialVersionUID = 1L;	
 
 	@Inject 
 	private Usuario usuario;
@@ -70,19 +70,19 @@ public class UsuarioLogadoMB implements Serializable{
 		
 		try {
 			
-			if (retornaUsuario() != null) {
-				
-				Usuario usuarioEncontrado = retornaUsuario();
-				
-				if (usuarioEncontrado.getEmail().equals(usuario.getEmail()) 
-						&& usuarioEncontrado.getNomeExibicao().equals(usuario.getNomeExibicao())) {
+			Usuario usuarioEncontrado = retornaUsuario();
+			
+			if (usuarioEncontrado != null && (usuarioEncontrado.getEmail().equals(usuario.getEmail()) 
+					&& usuarioEncontrado.getNomeExibicao().equals(usuario.getNomeExibicao()))) {
 					
 					String url = "/restricted/dashboard.xhtml?faces-redirect=true";
 		            return url;
 				}
-				
-				fazerLogout();				
-			}
+			
+			if (validaCamposLogin(usuario)) {
+				Message.erro("Email ou senha não seguem as regras de aceitação, por favor verifique e tente novamente!");
+				return "";
+			}			
 			
 			System.out.println("Tentando logar com usuário " + usuario.getEmail());
 			Usuario usuarioPermitido = usuarioService.usuarioPodeLogar(usuario.getEmail(), usuario.getSenha());
@@ -108,6 +108,11 @@ public class UsuarioLogadoMB implements Serializable{
 		} 
 	}
 	
+	private boolean validaCamposLogin(Usuario usuario) {
+		
+		return RegexUtil.emailInvalido(usuario.getEmail()) || RegexUtil.senhaInvalida(usuario.getSenha());
+	}
+	
 	public String fazerLogout() {
 		System.out.println("Fazendo logout do usuario "
 				+ SessionContext.getInstance().getUsuarioLogado().getNomeExibicao());
@@ -125,8 +130,9 @@ public class UsuarioLogadoMB implements Serializable{
 		
 		try {
 			
-			this.usuario.setEmail(this.usuario.getEmail().toLowerCase().trim());			
-			this.usuario.setSenha(this.usuario.getSenha());
+			this.usuario.setEmail(this.usuario.getEmail().toLowerCase().trim());
+			
+			validarCamposCadastro();
 			
 			usuarioService.salvar(usuario);
 			Message.info("Seja bem-vindo! Cadastro realizado com sucesso.");
@@ -136,11 +142,30 @@ public class UsuarioLogadoMB implements Serializable{
 			PrimeFaces.current().ajax().update("f-login");
 			
 		} catch (CadastrarException e) {
-			Message.erro("Não foi possível cadastrar o usuário: " + e.getMessage());
+			Message.erro("Não foi possível cadastrar o usuário - " + e.getMessage());
 		} catch (Exception e) {
 			e.printStackTrace();
 		}	
 		
+	}
+	
+	private void validarCamposCadastro() {
+		
+		if (RegexUtil.emailInvalido(usuario.getEmail())) {
+			usuario.setEmail(null);
+			
+			throw new CadastrarException("E-mail inválido.");
+		}
+		
+		if (RegexUtil.senhaInvalida(usuario.getSenha())) {
+			throw new CadastrarException("Senha inválida");
+		}
+		
+		if (usuario.getNomeExibicao().length() < 3 || RegexUtil.nomeUsuarioInvalido(usuario.getNomeExibicao())) {
+			usuario.setNomeExibicao(null);
+			
+			throw new CadastrarException("Nome de usuário inválido.");				
+		}
 	}
 
 	public void solicitarNovaSenha() {

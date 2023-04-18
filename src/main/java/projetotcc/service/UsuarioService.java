@@ -28,80 +28,75 @@ public class UsuarioService implements Serializable {
 	private UsuarioDAO usuarioDAO;
 		
 
-	public void salvar(Usuario usuario) {
+	public void salvar(Usuario usuario) throws CadastrarException {
 
-		if (usuario != null) {
+		if (usuario == null) {
+			throw new CadastrarException("Usuário não pode estar vazio.");
+		}		
 			
-			if (!RegexUtil.emailValido(usuario.getEmail())) {
-				usuario.setEmail(null);
-				
-				throw new CadastrarException("E-mail inválido.");
+		try {
+			
+			validarUsuarioEmailExiste(usuario);
+			validarUsuarioNomeExiste(usuario);
+			
+			usuario.setSenha(converteStringParaMd5(usuario.getSenha()));
+			
+			if (usuario.getSenha() != null) {
+				usuarioDao.salvar(usuario);
+			} else {
+				throw new CadastrarException("Ocorreu um erro ao cadastrar este usuário.");
 			}
-			
-			if (!RegexUtil.senhaValida(usuario.getSenha())) {
-				throw new CadastrarException("A senha deve conter de 8 a 20 caracteres, "
-						+ "sendo ao menos um maiusculo, um minusculo, um número e um caractere especial.");
-			}
-			
-			if (usuario.getNomeExibicao().length() < 3 || !RegexUtil.nomeUsuarioValido(usuario.getNomeExibicao())) {
-				usuario.setNomeExibicao(null);
-				
-				throw new CadastrarException("Nome de usuário deve possuir entre 3 e 30 caracteres, "
-							+ "sendo a primeira letra maiuscula. Pode ainda inserir - ou _ ou . além de números.");				
-			}
-			
-			Usuario usuarioExiste;
-			Usuario nomeUsuarioDisponivel;
-			
-			try {
-				usuarioExiste = usuarioDAO.findByEmail(usuario.getEmail());
-				
-				if (usuarioExiste != null) {
-					usuario.setEmail(null);
-					
-					throw new CadastrarException("Este e-mail já se encontra cadastrado.");
-				}
-				
-				nomeUsuarioDisponivel = usuarioDAO.findByNomeExibicao(usuario.getNomeExibicao());
-				
-				if (nomeUsuarioDisponivel != null) {
-					usuario.setNomeExibicao(null);
-					
-					throw new CadastrarException("Este nome de usuário não está disponível.");
-				}
-				
-			// Caso o usuário não exista, ele retornará um erro dizendo que o array está vazio, 
-			// sendo assim podemos continuar.
-			} catch (IndexOutOfBoundsException e) {
-				
-				Message.info("E-mail e usuário válidos, cadastrando...");
-			} catch (DatabaseException e) {
-				Message.erro(e.getMessage());
-			}
-			
-			
-			try {
-				usuario.setSenha(converteStringParaMd5(usuario.getSenha()));
-				
-				if (usuario.getSenha() != null) {
-					usuarioDao.salvar(usuario);
-				} else {
-					throw new CadastrarException("Ocorreu um erro ao cadastrar este usuário.");
-				}
-				
-			} catch (DatabaseException e) {
-				
-				Message.erro(e.getMessage() + " o usuário.");
-			}
-							
-		}
+		
+		}  catch (DatabaseException e) {
+			Message.erro(e.getMessage());
+		}			
 
 	}
 	
+	private void validarUsuarioEmailExiste(Usuario usuario) throws CadastrarException {
+		
+		Usuario usuarioExiste;
+		
+		try {
+			
+			usuarioExiste = usuarioDAO.findByEmail(usuario.getEmail());
+			
+			if (usuarioExiste != null) {
+				usuario.setEmail(null);
+				
+				throw new CadastrarException("Este e-mail já se encontra cadastrado.");
+			}
+			
+		// Caso o usuário não exista, ele retornará um erro dizendo que o array está vazio, 
+		// sendo assim podemos continuar.
+		} catch (IndexOutOfBoundsException e) {			
+			Message.info(e.getMessage());			
+		}
+	
+	}
+	
+	private void validarUsuarioNomeExiste(Usuario usuario) throws CadastrarException {		
+
+		Usuario nomeUsuarioDisponivel;
+		
+		try {
+			
+			nomeUsuarioDisponivel = usuarioDAO.findByNomeExibicao(usuario.getNomeExibicao());
+			
+			if (nomeUsuarioDisponivel != null) {
+				usuario.setNomeExibicao(null);
+				
+				throw new CadastrarException("Este nome de usuário não está disponível.");
+			}
+			
+		// Caso o usuário não exista, ele retornará um erro dizendo que o array está vazio, 
+		// sendo assim podemos continuar.
+		} catch (IndexOutOfBoundsException e) {			
+			Message.info(e.getMessage());			
+		}
+	}
 
 	public void remover(Usuario usuario) {
-
-		// TODO - Validações
 
 		try {
 			usuarioDao.remover(Usuario.class, usuario.getId());
@@ -141,19 +136,6 @@ public class UsuarioService implements Serializable {
 
 		try {
 			
-			if (!RegexUtil.emailValido(email)) {
-				email = null;
-				
-				throw new AutenticacaoException("E-mail inválido.");
-			}
-			
-			if (!RegexUtil.senhaValida(senha)) {
-				senha = null;
-				
-				throw new AutenticacaoException("A senha deve conter de 8 a 20 caracteres, "
-						+ "sendo ao menos um maiusculo, um minusculo, um número e um caractere especial.");
-			}
-			
 			System.out.println("Verificando login do usuário " + email);
 			
 			String senhaConvertida = converteStringParaMd5(senha);
@@ -172,7 +154,7 @@ public class UsuarioService implements Serializable {
 			throw new AutenticacaoException("Email ou senha incorretas, verifique suas credenciais e tente novamente!");
 			
 		} catch (DatabaseException e) {
-			Message.erro(e.getMessage() + " ao validar este usuário.");
+			Message.erro(e.getMessage());
 			return null;
 		}		
 
@@ -208,21 +190,20 @@ public class UsuarioService implements Serializable {
 		}
 	}
 	
-	public String gerarNovaSenha(String email, String senha) {		
+	public String gerarNovaSenha(String email, String senha) throws CadastrarException {		
 		
 		try {
 			
-			if (!RegexUtil.emailValido(email)) {
+			if (RegexUtil.emailInvalido(email)) {
 				email = null;
 				
 				throw new CadastrarException("E-mail inválido.");
 			}
 			
-			if (!RegexUtil.senhaValida(senha)) {
+			if (RegexUtil.senhaInvalida(senha)) {
 				senha = null;
 				
-				throw new CadastrarException("A senha deve conter de 8 a 20 caracteres, "
-						+ "sendo ao menos um maiusculo, um minusculo, um número e um caractere especial.");
+				throw new CadastrarException("Senha inválida");
 			}		
 			
 			Usuario usuario = usuarioDAO.findByEmail(email);

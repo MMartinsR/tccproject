@@ -39,7 +39,7 @@ public class Usuario implements Serializable, Base {
 	
 	@Column(unique = true)
 	private String email;
-	@Column(unique = true)
+	@Column(unique = true, length = 30)
 	private String nomeExibicao;
 	private String senha;
 	

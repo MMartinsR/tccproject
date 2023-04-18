@@ -28,9 +28,12 @@ public class UsuarioDAO implements Serializable {
 			List<Usuario> listObjetos = query.getResultList();
 			return listObjetos.get(0);
 			
+		} catch (IndexOutOfBoundsException e) {
+			 throw new DatabaseException("Não existe nenhum usuário com estas credenciais. "
+			 		+ "Cadastra-se para ter acesso aos nossos serviços.");
 		} catch (Exception e) {
 			e.printStackTrace();
-			throw new DatabaseException("Ocorreu um erro");
+			throw new DatabaseException("Ocorreu um erro ao buscar este usuário");
 		} finally {
 			manager.close();
 		}
@@ -59,7 +62,7 @@ public class UsuarioDAO implements Serializable {
 		
 	}
 	
-	public Usuario findByEmail(String email) {
+	public Usuario findByEmail(String email) throws IndexOutOfBoundsException {
 		
 		EntityManager manager = ConnectionFactory.getEntityManager();
 		
@@ -70,6 +73,8 @@ public class UsuarioDAO implements Serializable {
 			@SuppressWarnings("unchecked")
 			List<Usuario> listObjetos = query.getResultList();
 			return listObjetos.get(0);
+		} catch (IndexOutOfBoundsException e) {
+			throw new IndexOutOfBoundsException("Este email é valido.");
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new DatabaseException("Ocorreu um erro ao buscar este email");
@@ -90,6 +95,8 @@ public class UsuarioDAO implements Serializable {
 			@SuppressWarnings("unchecked")
 			List<Usuario> listObjetos = query.getResultList();
 			return listObjetos.get(0);
+		} catch (IndexOutOfBoundsException e) {
+			throw new IndexOutOfBoundsException("Este nome de usuário é válido.");
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new DatabaseException("Ocorreu um erro ao buscar este nome de exibição");

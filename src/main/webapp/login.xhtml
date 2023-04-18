@@ -20,7 +20,7 @@
 <h:body>
 	
 	<h:form id="f-login">
-		<p:growl id="messages">
+		<p:growl id="messages" sticky="true">
 			<p:autoUpdate/>
 		</p:growl>
 		
@@ -59,7 +59,24 @@
 								    requiredMessage="Senha é obrigatória!"
 								    size="29"
 								    autocomplete="true"
-								    toggleMask="true" />
+								    toggleMask="true" />						
+						<p:tooltip for="senha" 
+							my="left center" 
+							at="right bottom"
+							showEffect="clip" 
+							hideEffect="fold">
+							<h:outputText value="A senha deve conter: " escape="false" />
+							<br/>
+							<h:outputText value=" * 8 a 20 caracteres; " escape="false" />
+							<br/>
+							<h:outputText value=" * 1 maiusculo;" escape="false" />
+							<br/>
+							<h:outputText value=" * 1 minusculo;" escape="false" />
+							<br/>
+							<h:outputText value=" * 1 número;" escape="false" />
+							<br/>
+							<h:outputText value=" * 1 caracter especial." escape="false" />
+						</p:tooltip>
 					</div> 
 				</p:outputPanel>
 				
@@ -126,6 +143,23 @@
 							    size="29"
 							    autocomplete="true"
 							    toggleMask="true" />
+					<p:tooltip for="senha-cadastro" 
+							my="left center" 
+							at="right bottom"
+							showEffect="clip" 
+							hideEffect="fold">
+							<h:outputText value="A senha deve conter: " escape="false" />
+							<br/>
+							<h:outputText value=" * 8 a 20 caracteres; " escape="false" />
+							<br/>
+							<h:outputText value=" * 1 maiusculo;" escape="false" />
+							<br/>
+							<h:outputText value=" * 1 minusculo;" escape="false" />
+							<br/>
+							<h:outputText value=" * 1 número;" escape="false" />
+							<br/>
+							<h:outputText value=" * 1 caracter especial." escape="false" />
+						</p:tooltip>
 					</div>
 				</div>
 				<div class="field">	 
@@ -141,6 +175,24 @@
 							     size="25"
 							     placeholder="João Martins"
 							     autocomplete="true" />
+					<p:tooltip for="nome-exibicao-cadastro" 
+							my="left center" 
+							at="right bottom"
+							showEffect="clip" 
+							hideEffect="fold">
+							<h:outputText value="Nome de usuário deve conter: " escape="false" />
+							<br/>
+							<h:outputText value="* 3 a 30 caracteres; " escape="false" />
+							<br/>
+							<h:outputText value=" * primeira letra maiúscula;" escape="false" />
+							<br/>
+							<h:outputText value="Pode ainda conter: " escape="false" />
+							<br/>
+							<h:outputText value=" * hifen, underline e ponto;" escape="false" />
+							<br/>
+							<h:outputText value=" * e números." escape="false" />
+							
+						</p:tooltip>
 					</div>
 				</div>		 
 			</p:outputPanel>
@@ -191,6 +243,23 @@
 								    autocomplete="true"
 								    toggleMask="true"
 								    size="25" />
+						<p:tooltip for="senha-resetar" 
+							my="left center" 
+							at="right bottom"
+							showEffect="clip" 
+							hideEffect="fold">
+							<h:outputText value="A senha deve conter: " escape="false" />
+							<br/>
+							<h:outputText value=" * 8 a 20 caracteres; " escape="false" />
+							<br/>
+							<h:outputText value=" * 1 maiusculo;" escape="false" />
+							<br/>
+							<h:outputText value=" * 1 minusculo;" escape="false" />
+							<br/>
+							<h:outputText value=" * 1 número;" escape="false" />
+							<br/>
+							<h:outputText value=" * 1 caracter especial." escape="false" />
+						</p:tooltip>
 					</div>
 					
 				</div> 
