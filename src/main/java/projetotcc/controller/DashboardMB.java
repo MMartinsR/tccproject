@@ -14,11 +14,13 @@ import org.primefaces.PrimeFaces;
 import org.primefaces.event.SelectEvent;
 import org.primefaces.event.UnselectEvent;
 
+import projetotcc.exception.CadastrarException;
 import projetotcc.model.Projeto;
 import projetotcc.model.Usuario;
 import projetotcc.service.ProjetoService;
 import projetotcc.service.UsuarioService;
 import projetotcc.utility.Message;
+import projetotcc.utility.RegexUtil;
 
 @Named
 @ViewScoped
@@ -51,7 +53,9 @@ public class DashboardMB implements Serializable {
 
 	public void init() {
 		System.out.println("Carregando Dashboard");
-		this.usuario = (Usuario) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("usuarioLogado");
+		this.usuario = (Usuario) FacesContext.getCurrentInstance()
+				.getExternalContext().getSessionMap().get("usuarioLogado");
+		
 		carregaProjetosProprios();
 		filtraProjetosParticipados();
 		
@@ -68,9 +72,11 @@ public class DashboardMB implements Serializable {
 	public void salvarProjeto() {
 		
 		Long usuarioId = this.usuario.getId();
-		Usuario usuarioEx = usuarioService.buscarPorId(usuarioId).get(0);
+		Usuario usuarioEx = usuarioService.buscarPorId(usuarioId);
 		List<Usuario> usuariosEx = new ArrayList<Usuario>();
 		usuariosEx.add(usuarioEx);
+		
+		validarNomeProjeto(projetoSelecionadoProprio.getNome());
 		
 		try {
 			
@@ -94,10 +100,19 @@ public class DashboardMB implements Serializable {
 			PrimeFaces.current().ajax().update("f-dashboard:messages", 
 					"f-dashboard:dt-meusProjetos-dashboard");
 
+		} catch (CadastrarException e) {
+			Message.erro("Não foi possível cadastrar o projeto - " + e.getMessage());
 		} catch (Exception e) {
-			Message.erro(e.getMessage());
+			e.printStackTrace();
 		}
 		
+	}
+
+	private void validarNomeProjeto(String nomeProjeto) {
+		if (RegexUtil.nomeProjetoInvalido(nomeProjeto)) {
+			
+			throw new CadastrarException("Nome inválido.");
+		}
 	}
 	
 	public void removerProjeto() {
@@ -115,6 +130,8 @@ public class DashboardMB implements Serializable {
 			PrimeFaces.current().ajax().update("f-dashboard:messages", 
 					"f-dashboard:dt-meusProjetos-dashboard");
 			
+		} catch (CadastrarException e) {
+			Message.erro(e.getMessage());
 		} catch (Exception e) {
 			Message.erro(e.getMessage());
 		}
@@ -123,6 +140,10 @@ public class DashboardMB implements Serializable {
 	
 	private void carregaProjetosProprios() {
 		this.projetosProprios = projetoService.buscarPorCriador(usuario.getNomeExibicao());
+		
+		if (this.projetosProprios.isEmpty() || this.projetosProprios == null) {
+			Message.erro("Ocorreu um erro ao carregar os projetos");
+		}
 
 
 	}
@@ -165,7 +186,7 @@ public class DashboardMB implements Serializable {
 	
 	public void linhaDeselecionada(UnselectEvent<Projeto> event) {
 		setMensagemBotaoExcluir("Excluir");
-		Message.info("Projeto " + event.getObject().getNome() + " foi deselecionado!");
+		Message.info("Projeto " + event.getObject().getNome() + " não está mais selecionado!");
 		setExisteProjetoSelecionado(false);
 	}	
 
