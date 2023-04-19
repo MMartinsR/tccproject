@@ -79,8 +79,9 @@ public class UsuarioLogadoMB implements Serializable{
 		            return url;
 				}
 			
-			if (validaCamposLogin(usuario)) {
-				Message.erro("Email ou senha não seguem as regras de aceitação, por favor verifique e tente novamente!");
+			if (validaCampos(usuario)) {
+				Message.erro("Email ou senha não seguem as regras de aceitação, "
+						+ "por favor verifique e tente novamente!");
 				return "";
 			}			
 			
@@ -108,7 +109,7 @@ public class UsuarioLogadoMB implements Serializable{
 		} 
 	}
 	
-	private boolean validaCamposLogin(Usuario usuario) {
+	private boolean validaCampos(Usuario usuario) {
 		
 		return RegexUtil.emailInvalido(usuario.getEmail()) || RegexUtil.senhaInvalida(usuario.getSenha());
 	}
@@ -171,6 +172,12 @@ public class UsuarioLogadoMB implements Serializable{
 	public void solicitarNovaSenha() {
 		
 		try {
+			
+			if (validaCampos(usuario)) {
+				Message.erro("Email ou senha não seguem as regras de aceitação, "
+						+ "por favor verifique e tente novamente!");
+				return;
+			}
 			
 			String email = this.usuario.getEmail().toLowerCase().trim();
 			String novaSenha = this.usuario.getSenha();

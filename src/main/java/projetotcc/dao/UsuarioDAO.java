@@ -74,7 +74,7 @@ public class UsuarioDAO implements Serializable {
 			List<Usuario> listObjetos = query.getResultList();
 			return listObjetos.get(0);
 		} catch (IndexOutOfBoundsException e) {
-			throw new IndexOutOfBoundsException("Este email é valido.");
+			return null;
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new DatabaseException("Ocorreu um erro ao buscar este email");
@@ -96,7 +96,7 @@ public class UsuarioDAO implements Serializable {
 			List<Usuario> listObjetos = query.getResultList();
 			return listObjetos.get(0);
 		} catch (IndexOutOfBoundsException e) {
-			throw new IndexOutOfBoundsException("Este nome de usuário é válido.");
+			return null;
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new DatabaseException("Ocorreu um erro ao buscar este nome de exibição");

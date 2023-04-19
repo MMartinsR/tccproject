@@ -15,7 +15,6 @@ import projetotcc.exception.CadastrarException;
 import projetotcc.exception.DatabaseException;
 import projetotcc.model.Usuario;
 import projetotcc.utility.Message;
-import projetotcc.utility.RegexUtil;
 
 public class UsuarioService implements Serializable {
 
@@ -31,7 +30,8 @@ public class UsuarioService implements Serializable {
 	public void salvar(Usuario usuario) throws CadastrarException {
 
 		if (usuario == null) {
-			throw new CadastrarException("Usuário não pode estar vazio.");
+			System.out.println("O Usuário está nulo");
+			throw new CadastrarException("Ocorreu um erro ao cadastrar o usuário.");
 		}		
 			
 		try {
@@ -56,44 +56,33 @@ public class UsuarioService implements Serializable {
 	private void validarUsuarioEmailExiste(Usuario usuario) throws CadastrarException {
 		
 		Usuario usuarioExiste;
+
+		usuarioExiste = usuarioDAO.findByEmail(usuario.getEmail());
 		
-		try {
+		if (usuarioExiste != null) {
+			usuario.setEmail(null);
 			
-			usuarioExiste = usuarioDAO.findByEmail(usuario.getEmail());
-			
-			if (usuarioExiste != null) {
-				usuario.setEmail(null);
-				
-				throw new CadastrarException("Este e-mail já se encontra cadastrado.");
-			}
-			
-		// Caso o usuário não exista, ele retornará um erro dizendo que o array está vazio, 
-		// sendo assim podemos continuar.
-		} catch (IndexOutOfBoundsException e) {			
-			Message.info(e.getMessage());			
+			throw new CadastrarException("Este e-mail já se encontra cadastrado.");
+		} else {
+			Message.info("Este e-mail é valido.");
 		}
-	
+
 	}
 	
 	private void validarUsuarioNomeExiste(Usuario usuario) throws CadastrarException {		
 
 		Usuario nomeUsuarioDisponivel;
+			
+		nomeUsuarioDisponivel = usuarioDAO.findByNomeExibicao(usuario.getNomeExibicao());
 		
-		try {
+		if (nomeUsuarioDisponivel != null) {
+			usuario.setNomeExibicao(null);
 			
-			nomeUsuarioDisponivel = usuarioDAO.findByNomeExibicao(usuario.getNomeExibicao());
-			
-			if (nomeUsuarioDisponivel != null) {
-				usuario.setNomeExibicao(null);
-				
-				throw new CadastrarException("Este nome de usuário não está disponível.");
-			}
-			
-		// Caso o usuário não exista, ele retornará um erro dizendo que o array está vazio, 
-		// sendo assim podemos continuar.
-		} catch (IndexOutOfBoundsException e) {			
-			Message.info(e.getMessage());			
+			throw new CadastrarException("Este nome de usuário não está disponível.");
+		} else {
+			Message.info("Este nome de usuário é valido.");
 		}
+
 	}
 
 	public void remover(Usuario usuario) {
@@ -193,19 +182,7 @@ public class UsuarioService implements Serializable {
 	public String gerarNovaSenha(String email, String senha) throws CadastrarException {		
 		
 		try {
-			
-			if (RegexUtil.emailInvalido(email)) {
-				email = null;
-				
-				throw new CadastrarException("E-mail inválido.");
-			}
-			
-			if (RegexUtil.senhaInvalida(senha)) {
-				senha = null;
-				
-				throw new CadastrarException("Senha inválida");
-			}		
-			
+						
 			Usuario usuario = usuarioDAO.findByEmail(email);
 			
 			if (usuario == null) {
@@ -231,7 +208,7 @@ public class UsuarioService implements Serializable {
 		     return null;		     
 		} catch (DatabaseException e) {			
 			return null;
-		}
+		} 
 		
 	}
 
