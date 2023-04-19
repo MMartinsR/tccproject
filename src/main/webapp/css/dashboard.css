@@ -1,0 +1,278 @@
+@charset "UTF-8";
+
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600;700&display=swap');
+
+* {
+	margin: 0px;
+	padding: 0px;	
+}
+
+body {
+	height: 100vh;
+	background: black url("../img/bg.jpg") center center no-repeat fixed;
+	background-size: cover;
+}
+
+::-webkit-scrollbar {
+    width: 0px;
+    height: 0px;
+}
+
+body .ui-panel .ui-panel-content {
+	max-width: 1000px; 
+	min-height: 670px;
+	margin: 0px auto 20px auto;
+	padding: 0px 16px 70px 16px;
+	
+}
+
+body .ui-panel>div:last-of-type {	
+	border-radius: 20px;
+	box-shadow: 2px 6px 10px #bdc4ca;
+}
+
+ .container-p-dashboard {
+	padding-top: 70px;
+}
+
+.title_dashboard {
+	font-size: 30px; 
+	background-color: #89c156; 
+	color: white; 
+	padding: 15px 35px 5px 10px; 
+	margin: 15px 5px 5px 5px; 
+	border-radius: 15px 0px 15px 0px; 
+	font-family: 'Open Sans', sans-serif;
+	font-size: 2rem;
+	font-weight: 400;
+	box-shadow: 1px 3px 5px #bdc4ca;
+}
+
+body .ui-button {	
+	background-color: #89c156;
+	border: 1px solid #89c156;
+}
+
+body .ui-button.ui-state-hover {
+    background: #b5e38b;
+    border-color: #b5e38b;
+    color: #fff;
+}
+
+body .ui-button.ui-state-active {
+    background: #b5e38b;
+    border-color: #b5e38b;
+    color: #fff;
+}
+
+.ui-button .ui-button-text {
+	font-weight: 600;
+	font-family: 'Open Sans', sans-serif;
+}
+
+
+.b-sign_out {
+	position: relative;
+	float: right;
+	margin-top: 15px !important;
+	
+}
+
+span.ui-button-icon-left.ui-icon.ui-c.pi.pi-sign-out {
+	font-weight: bold;
+}
+
+.div-greet {
+	margin: 80px 10px 0px 10px;	
+	box-shadow: 1px 3px 8px #bdc4ca;
+	border-radius: 20px;
+	min-height: 200px;
+	background: #f0f9e6;
+	padding: 15px 10px 10px 25px;
+	
+}
+
+.label-greet {
+	font-size: 2rem; 
+	font-weight: 600; 
+	font-family: 'Open Sans', sans-serif;
+}
+
+.div-greet-left {
+	min-height: 170px;
+	max-width: 650px;
+	float: left;
+	padding-top: 50px;
+}
+
+.div-greet-right {
+	height: 170px;
+	width: 170px;
+	background: url("../img/dashboard-bemvindo.png") center center no-repeat scroll;
+	background-size: contain;
+	float: right;
+	margin-right: 50px;
+}
+
+.title_meus_projetos {
+	float: left;
+    font-weight: 600;
+    font-family: 'Open Sans', sans-serif;
+    font-size: 1.5rem;
+    margin-left: 30px;       
+	background-color: #89c156;
+	padding: 10px 15px 10px 15px;	 
+	border-radius: 10px 0px 10px 0px; 
+	color: #fff;
+}
+
+div .div-title-meusprojetos {
+	height: 50px;	
+	width: 48.5%;
+	margin: 70px 0px 10px 10px;
+	display: inline-block;
+}
+
+.title_participados {
+	float: left;
+    font-weight: 600;
+    font-family: 'Open Sans', sans-serif;
+    font-size: 1.5rem;
+    margin-left: 30px;       
+	background-color: #89c156;
+	padding: 10px 15px 10px 15px;	 
+	border-radius: 10px 0px 10px 0px; 
+	color: #fff;
+}
+
+div .div-title-participados {
+	height: 50px;
+	width: 48.5%;
+	margin: 70px 10px 10px 0px;
+	display: inline-block;
+}
+
+.ui-datatable {
+	margin: 5px 5px 0px 5px;	
+	box-shadow: 1px 3px 8px #bdc4ca;		 
+	border-radius: 10px 10px 0px 0px; 
+}
+
+body .ui-datatable .ui-datatable-header {	
+	background-color: #f0f9e6;
+	
+}
+
+body .ui-datatable thead {
+	display: none;
+}
+
+div.field {
+	margin-bottom: 15px;
+}
+
+body .ui-dialog .ui-dialog-titlebar .ui-dialog-title {
+	font-family: 'Open Sans', sans-serif;
+	font-size: 1.3rem;
+}
+
+.ui-fluid .ui-inputtext {
+	margin-top: 5px;
+}
+
+.ui-fluid .ui-inputtextarea {
+	margin-top: 5px;
+	margin-bottom: 5px;
+}
+
+div.botoes-confirmar-cancelar-separar {
+	margin-right: 36px;
+	display: inline-block;
+}
+
+div.botoes-confirmar-cancelar-separar-participados {
+	margin-right: 87px;
+	display: inline-block;
+}
+
+div.botoes-confirmar-exclusao-separar {
+	margin-right: 25px;
+	display: inline-block;
+}
+
+body .ui-dialog .ui-dialog-footer button{
+	margin: 0px;
+}
+body .ui-widget {
+	font-family: 'Open Sans', sans-serif;
+}
+
+body .ui-widget .negrito {
+	font-weight: bold;
+}
+
+.coluna-botoes {
+	width: 7rem;
+	text-align: center; 
+}
+
+td {
+	vertical-align: top;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
