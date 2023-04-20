@@ -145,7 +145,7 @@ public class UsuarioService implements Serializable {
 		} catch (DatabaseException e) {
 			Message.erro(e.getMessage());
 			return null;
-		}		
+		} 		
 
 	}
 	

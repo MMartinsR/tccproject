@@ -29,8 +29,7 @@ public class UsuarioDAO implements Serializable {
 			return listObjetos.get(0);
 			
 		} catch (IndexOutOfBoundsException e) {
-			 throw new DatabaseException("Não existe nenhum usuário com estas credenciais. "
-			 		+ "Cadastra-se para ter acesso aos nossos serviços.");
+			 return null;
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new DatabaseException("Ocorreu um erro ao buscar este usuário");
