@@ -20,6 +20,9 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
+
 import projetotcc.enums.PesoEnum;
 import projetotcc.enums.StatusEnum;
 
@@ -32,8 +35,9 @@ public class Tarefa implements Serializable, Base{
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-	@Column(nullable = false)
+	@Column(nullable = false, length = 500)
 	private String nome;
+	@Column(length = 3000)
 	private String descricao;
 	@Enumerated(EnumType.ORDINAL)
 	private PesoEnum peso;
@@ -46,6 +50,7 @@ public class Tarefa implements Serializable, Base{
 	@JoinColumn(name = "projeto_id")
 	private Projeto projeto;
 	
+	@Fetch(FetchMode.JOIN)
 	@ManyToMany
 	@JoinTable(name = "tb_tarefa_tag",
 	joinColumns = @JoinColumn(name = "tarefa_id"),

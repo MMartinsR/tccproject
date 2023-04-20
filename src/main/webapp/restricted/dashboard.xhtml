@@ -5,10 +5,8 @@
 	xmlns:h="http://xmlns.jcp.org/jsf/html"
 	xmlns:p="http://primefaces.org/ui">
 
-<h:head>
-	<title>Dashboard</title>
-	<h:link rel="icon" type="image/x-icon" href="/img/favicon.ico"/>
-	
+<h:head>	
+
 </h:head>
 
 <f:metadata>
@@ -17,264 +15,323 @@
 </f:metadata>
 
 <h:body>
-	<h:form id="f-dashboard">	
-		<p:growl id="messages">
-			<p:autoUpdate/>
-		</p:growl>
+
+	<ui:composition template="/templates/template.xhtml">
 		
-		<h:panelGroup id="pg-dashboard" 
-					  layout="block"
-			style="width: 1000px; height: 750px; margin: 50px auto 20px auto; border-radius: 20px; border-style: solid; border-width: 2px; border-color: #bdc4ca; box-shadow: 2px 6px 10px #bdc4ca;">
-			<h:outputLabel id="title-dashboard" 
-						   value="Dashboard"
-				style="font-size: 30px; background-color: #008cff; color: white; padding: 15px 35px 5px 10px; margin: 15px 5px 5px 5px; border-radius: 10px; font-family: Arial, sans-serif;" />
-
-			<p:commandButton action="#{usuarioLogadoMB.fazerLogout()}" 
-							 icon="pi pi-sign-out"
-							 title="Logout"
-							 style="margin-left: 740px; margin-top: 10px" />
-			<div id="div-greet-dashboard"
-				style="text-align: center; margin-top: 40px;">
-				<h:outputLabel id="label-greet-dashboard"
-							   value="Seja bem-vindo(a) #{usuarioLogadoMB.retornaUsuario().nomeExibicao}"
-					style="font-size: 20px; font-weight: bold; font-family: Arial, sans-serif;" />
-			</div>
-					
-						<p:dataTable id="dt-meusProjetos-dashboard" 
-								 widgetVar="datatableMeusProjetosDashboard" 
-								 var="meuProjeto"
-								 value="#{dashboardMB.projetosProprios}"
-								 lazy="false"
-								 reflow="true"
-								 paginator="true"
-								 paginatorPosition="bottom"
-								 rows="3"
-								 rowKey="#{meuProjeto.id}"
-								 selection="#{dashboardMB.projetoSelecionadoProprio}"
-								 selectionMode="single" 
-								 styleClass="ui-grid-col-6"
-								 style="width: 400px; margin-left: 50px; margin-top: 100px">
-								 
-						<f:facet name="header">
-							<span>
-								<p:commandButton id="cb-criarNovoProjeto-dashboard"											  
-												 icon="pi pi-plus"
-												 value="Novo"
-												 actionListener="#{dashboardMB.abrirNovo()}"
-												 update=":f-dashboard-dialog:gerencia-conteudo-projeto"
-												 oncomplete="PF('gerenciaProjetoDashboardDialog').show()"
-												 alt="Criar Novo Projeto"
-												 title="Novo Projeto">
-									<p:resetInput target=":f-dashboard-dialog:gerencia-conteudo-projeto"/>
-								</p:commandButton>							
-							</span>
-							<span>
-								<p:commandButton id="cb-excluirProjeto-dashboard"											  
-												 icon="pi pi-trash"
-												 value="#{dashboardMB.mensagemBotaoExcluir}"
-												 oncomplete="PF('excluirProjetoDialog').show()"
-												 disabled="#{!dashboardMB.existeProjetoSelecionado}"
-												 update="@this"												 
-												 alt="Excluir Projeto"
-												 title="Excluir Projeto">
-								</p:commandButton>							
-							</span>
-						</f:facet>
-						
-						<p:ajax event="rowSelect" 
-								listener="#{dashboardMB.linhaSelecionada}"
-								update="cb-excluirProjeto-dashboard f-dashboard:messages" />
-            			<p:ajax event="rowUnselect" 
-            					listener="#{dashboardMB.linhaDeselecionada}"
-            					update="cb-excluirProjeto-dashboard f-dashboard:messages" />
-						
-						<p:column headerText="Meus Projetos">
-							<h:outputText value="#{meuProjeto.nome}" 
-										  title="Para limpar a seleção: CTRL + Clicar"/>
-						</p:column>
-						
-						<p:column style="width:6rem;text-align: center">
-                			<p:commandButton icon="pi pi-folder-open" 
-                                			 title="Abrir Projeto"
-                                			 action="#{dashboardMB.redirecionarParaProjeto(meuProjeto)}">
-
-                			</p:commandButton>
-                			<p:commandButton icon="pi pi-file-edit" 
-                							 update=":f-dashboard-dialog:gerencia-conteudo-projeto"
-                							 oncomplete="PF('gerenciaProjetoDashboardDialog').show()"
-                							 process="@this"
-                                			 title="Editar Projeto"
-                                			 style="margin-left: 5px">
-                    			<f:setPropertyActionListener value="#{meuProjeto}"
-                                                 target="#{dashboardMB.projetoSelecionadoProprio}"/>
-                                <p:resetInput target=":f-dashboard-dialog:gerencia-conteudo-projeto"/>
-                			</p:commandButton>
-            			</p:column>					
-					</p:dataTable>
-					
-					<p:dataTable id="dt-projetosParticipo-dashboard" 
-								 widgetVar="datatableProjetosParticipoDashboard" 
-								 var="projetosParticipo"
-								 value="#{dashboardMB.projetosParticipados}"
-								 lazy="false"
-								 reflow="true"
-								 paginator="true"
-								 paginatorPosition="bottom"
-								 rows="3"
-								 rowKey="#{projetosParticipo.id}"
-								 selection="#{dashboardMB.projetoSelecionadoParticipado}"
-								 selectionMode="single" 
-								 styleClass="ui-grid-col-6"
-								 style="width: 400px; margin-left: 90px; margin-top: 100px">
-								 
-						<f:facet name="header">
-							<span>
-								<p:commandButton id="cb-participarProjeto-dashboard"											  
-												 icon="pi pi-users"
-												 value="Participar"
-												 update=":f-dashboard-dialog:gerencia-conteudo-projeto"
-												 actionListener="#{dashboardMB.participarProjeto()}"
-												 oncomplete="PF('gerenciaProjetoParticiparDashboard').show()"
-												 alt="Participar em Projeto"
-												 title="Participar">
-									<p:resetInput target=":f-dashboard-dialog:gerencia-participar-projeto"/>
-								</p:commandButton>							
-							</span>
-							
-						</f:facet>
-						
-						<p:ajax event="rowSelect" 
-								listener="#{dashboardMB.linhaSelecionada}"
-								update=" f-dashboard:messages" />
-            			<p:ajax event="rowUnselect" 
-            					listener="#{dashboardMB.linhaDeselecionada}"
-            					update=" f-dashboard:messages" />
-						
-						<p:column headerText="Participo em">
-							<h:outputText value="#{projetosParticipo.nome}" 
-										  title="Para limpar a seleção: CTRL + Clicar"/>
-						</p:column>
-						
-						<p:column style="width:3rem;text-align: center">
-                			<p:commandButton icon="pi pi-folder-open" 
-                                			 title="Abrir Projeto">
-<!--                     			<f:setPropertyActionListener value="#{projeto}" -->
-<!--                                                  target="#{dtSelectionView.selectedProduct}"/> -->
-                			</p:commandButton>
-            			</p:column>					
-						</p:dataTable>
-					
-		</h:panelGroup>
-	</h:form>
-	
-	<h:form id="f-dashboard-dialog">
-		<p:dialog header="Detalhes" 
-				  showEffect="fade"
-				  modal="true"
-				  widgetVar="gerenciaProjetoDashboardDialog" 
-				  responsive="true">
-				  
-			<p:outputPanel id="gerencia-conteudo-projeto" 
-						   class="ui-fluid">
-				<p:outputPanel>
-					 <div class="field">
-                        <p:outputLabel for="nome">Nome: </p:outputLabel>
-                        <p:inputText id="nome" 
-                        			 value="#{dashboardMB.projetoSelecionadoProprio.nome}" 
-                        			 required="true" />
-                    </div>
-                    
-                    <div class="field">
-                        <p:outputLabel for="descricao">Descrição: </p:outputLabel>
-                        <p:inputTextarea id="descricao" 
-                        				 value="#{dashboardMB.projetoSelecionadoProprio.descricao}" />
-                    </div>
-                    
-                    <div class="field">
-                        <p:outputLabel>Data de Criação: </p:outputLabel>
-                        <p:outputLabel id="data_criacao" 
-                        			   value="#{dashboardMB.projetoSelecionadoProprio.dataCriacao}" >
-                        	<f:convertDateTime pattern="dd/MM/yyyy" timeZone="GMT-3"/>
-                        </p:outputLabel>
-                    </div>
-                    
-                    <div class="field">
-                        <p:outputLabel>Criado por: </p:outputLabel>
-                        <p:outputLabel id="criador_por" 
-                        			value="#{dashboardMB.projetoSelecionadoProprio.criador}"/>
-                    </div>
-				</p:outputPanel>
-			</p:outputPanel>
+		<ui:define name="content">
+		
+			<h:form id="f-dashboard">	
+				<p:growl id="messages">
+					<p:autoUpdate/>
+				</p:growl>
+				
+				<div class="container-p-dashboard">
+					<p:panel id="p-dashboard"
+								  styleClass="p_dashboard">
+						<h:outputLabel id="title-dashboard" 
+									   value="Dashboard"
+									   styleClass="title_dashboard" />
 			
-			<f:facet name="footer">
-                <p:commandButton value="Salvar" 
-                				 icon="pi pi-check" 
-                				 actionListener="#{dashboardMB.salvarProjeto()}"
-                    			 update="gerencia-conteudo-projeto" 
-                    			 process="gerencia-conteudo-projeto @this" />
-                <p:commandButton value="Cancelar" 
-                				 icon="pi pi-times" 
-                				 onclick="PF('gerenciaProjetoDashboardDialog').hide()"
-                    			 class="ui-button-secondary" 
-                    			 type="button" />
-            </f:facet>		
-		</p:dialog>
-		
-		<p:dialog header="Pedido de Participação" 
-				  showEffect="fade"
-				  modal="true"
-				  widgetVar="gerenciaProjetoParticiparDashboard" 
-				  responsive="true">
-				  
-			<p:outputPanel id="gerencia-participar-projeto" 
-						   class="ui-fluid">
-				<p:outputPanel>
-					 <div class="field">
-                        <p:outputLabel for="nome_projeto">Nome do projeto: </p:outputLabel>
-                        <p:inputText id="nome_projeto" 
-                        			 value="Nome do Projeto" 
-                        			 required="true" />
-                    </div>
-                    
-				</p:outputPanel>
-			</p:outputPanel>
+						<p:commandButton action="#{usuarioLogadoMB.fazerLogout()}" 
+										 icon="pi pi-sign-out"
+										 title="Logout"
+										 styleClass="b-sign_out"/>
+						<div id="div-greet-dashboard"
+							 class="div-greet">
+							 <div class="div-greet-left">
+								<h:outputLabel id="label-greet-dashboard"
+											   value="Seja bem-vindo(a) #{usuarioLogadoMB.retornaUsuario().nomeExibicao}"
+											   styleClass="label-greet" />
+							</div>
+							<div class="div-greet-right">								
+							</div>
+						</div>
+						
+						<div class="div-title-meusprojetos">
+							<h:outputLabel id="title-meus_projetos"
+										   value="Meus Projetos"
+										   styleClass="title_meus_projetos" />
+						</div>
+						
+						<div class="div-title-participados">
+							<h:outputLabel id="title-participados"
+										   value="Participados"
+										   styleClass="title_participados" />
+						</div>
+						
+							<h:panelGrid id="pg-dt-meus_projetos" 
+										 columns="2">
+										 
+								<p:dataTable id="dt-meusProjetos-dashboard" 
+											 widgetVar="datatableMeusProjetosDashboard" 
+											 var="meuProjeto"
+											 value="#{dashboardMB.projetosProprios}"
+											 lazy="false"
+											 reflow="true"
+											 paginator="true"
+											 paginatorPosition="bottom"
+											 paginatorAlwaysVisible="false"
+											 rows="3"
+											 rowKey="#{meuProjeto.id}"
+											 selection="#{dashboardMB.projetoSelecionadoProprio}"
+											 selectionMode="single" 
+											 styleClass="coluna-nome,coluna-botoes">
+											 
+									<f:facet name="header">
+										<span>
+											<p:commandButton id="cb-criarNovoProjeto-dashboard"											  
+															 icon="pi pi-plus"
+															 value="Novo"
+															 actionListener="#{dashboardMB.abrirNovo()}"
+															 update=":f-dashboard-dialog:gerencia-conteudo-projeto"
+															 oncomplete="PF('gerenciaProjetoDashboardDialog').show()"
+															 alt="Criar Novo Projeto"
+															 title="Novo Projeto">
+												<p:resetInput target=":f-dashboard-dialog:gerencia-conteudo-projeto"/>
+											</p:commandButton>							
+										</span>
+										<span>
+											<p:commandButton id="cb-excluirProjeto-dashboard"											  
+															 icon="pi pi-trash"
+															 value="#{dashboardMB.mensagemBotaoExcluir}"
+															 oncomplete="PF('excluirProjetoDialog').show()"
+															 disabled="#{!dashboardMB.existeProjetoSelecionado}"
+															 update="@this"												 
+															 alt="Excluir Projeto"
+															 title="Excluir Projeto">
+											</p:commandButton>							
+										</span>
+									</f:facet>
+									
+									<p:ajax event="rowSelect" 
+											listener="#{dashboardMB.linhaSelecionada}"
+											update="cb-excluirProjeto-dashboard f-dashboard:messages" />
+			            			<p:ajax event="rowUnselect" 
+			            					listener="#{dashboardMB.linhaDeselecionada}"
+			            					update="cb-excluirProjeto-dashboard f-dashboard:messages" />
+									
+									<p:column>
+										<h:outputText value="#{meuProjeto.nome}" 
+													  title="Para limpar a seleção: CTRL + Clique"/>
+									</p:column>
+									
+									<p:column styleClass="coluna-botoes">
+			                			<p:commandButton icon="pi pi-folder-open" 
+			                                			 title="Abrir Projeto"
+			                                			 action="#{dashboardMB.redirecionarParaProjeto(meuProjeto)}"
+			                                			 style="margin-right: 2px;">
 			
-			<f:facet name="footer">
-                <p:commandButton value="Salvar" 
-                				 icon="pi pi-check" 
-                				 actionListener="#{dashboardMB.participar()}"
-                    			 update="gerencia-participar-projeto" 
-                    			 process="gerencia-participar-projeto @this" />
-                <p:commandButton value="Cancelar" 
-                				 icon="pi pi-times" 
-                				 onclick="PF('gerenciaProjetoParticiparDashboard').hide()"
-                    			 class="ui-button-secondary" 
-                    			 type="button" />
-            </f:facet>		
-		</p:dialog>
-		
-		<p:confirmDialog id="excluir-projeto-dialog"
-					     widgetVar="excluirProjetoDialog" 
-						 showEffect="fade"
-						 width="300"
-						 message="Deseja excluir este projeto?"
-						 header="Confirm"
-						 severity="warn">
-						 
-			 <p:commandButton value="Sim" 
-			 				  icon="pi pi-check" 
-			 				  actionListener="#{dashboardMB.removerProjeto()}"
-                			  process="@this" 
-                			  update="f-dashboard"
-                			  oncomplete="PF('excluirProjetoDialog').hide()" />
-            <p:commandButton value="Não" 
-            				 type="button" 
-            				 styleClass="ui-button-secondary" 
-            				 icon="pi pi-times"
-                			 onclick="PF('excluirProjetoDialog').hide()" />		
-		</p:confirmDialog>
-	</h:form>
-
-
+			                			</p:commandButton>
+			                			<p:commandButton icon="pi pi-file-edit" 
+			                							 update=":f-dashboard-dialog:gerencia-conteudo-projeto"
+			                							 oncomplete="PF('gerenciaProjetoDashboardDialog').show()"
+			                							 process="@this"
+			                                			 title="Editar Projeto">
+			                    			<f:setPropertyActionListener value="#{meuProjeto}"
+			                                                 target="#{dashboardMB.projetoSelecionadoProprio}"/>
+			                                <p:resetInput target=":f-dashboard-dialog:gerencia-conteudo-projeto"/>
+			                			</p:commandButton>
+			            			</p:column>					
+								</p:dataTable>
+								
+								<p:dataTable id="dt-projetosParticipo-dashboard" 
+											 widgetVar="datatableProjetosParticipoDashboard" 
+											 var="projetosParticipo"
+											 value="#{dashboardMB.projetosParticipados}"
+											 lazy="false"
+											 reflow="true"
+											 paginator="true"
+											 paginatorPosition="bottom"
+											 paginatorAlwaysVisible="false"
+											 rows="3"
+											 rowKey="#{projetosParticipo.id}"
+											 selection="#{dashboardMB.projetoSelecionadoParticipado}"
+											 selectionMode="single"
+											 styleClass="coluna-nome,coluna-botoes">
+											 
+									<f:facet name="header">
+										<span>
+											<p:commandButton id="cb-participarProjeto-dashboard"											  
+															 icon="pi pi-users"
+															 value="Participar"
+															 update=":f-dashboard-dialog:gerencia-conteudo-projeto"
+															 actionListener="#{dashboardMB.participarProjeto()}"
+															 oncomplete="PF('gerenciaProjetoParticiparDashboard').show()"
+															 alt="Participar em Projeto"
+															 title="Participar">
+												<p:resetInput target=":f-dashboard-dialog:gerencia-participar-projeto"/>
+											</p:commandButton>							
+										</span>
+										
+									</f:facet>
+									
+									<p:ajax event="rowSelect" 
+											listener="#{dashboardMB.linhaSelecionada}"
+											update=" f-dashboard:messages" />
+			            			<p:ajax event="rowUnselect" 
+			            					listener="#{dashboardMB.linhaDeselecionada}"
+			            					update=" f-dashboard:messages" />
+									
+									<p:column>
+										<h:outputText value="#{projetosParticipo.nome}" 
+													  title="Para limpar a seleção: CTRL + Clique"/>
+									</p:column>
+									
+									<p:column style="width:3rem;text-align: center">
+			                			<p:commandButton icon="pi pi-folder-open" 
+			                                			 title="Abrir Projeto">
+			<!--                     			<f:setPropertyActionListener value="#{projeto}" -->
+			<!--                                                  target="#{dtSelectionView.selectedProduct}"/> -->
+			                			</p:commandButton>
+			            			</p:column>					
+									</p:dataTable>
+							</h:panelGrid>			
+					</p:panel>
+				</div>
+			</h:form>
+			
+			<h:form id="f-dashboard-dialog">
+				<p:dialog header="Detalhes" 
+						  showEffect="fade"
+						  modal="true"
+						  widgetVar="gerenciaProjetoDashboardDialog" 
+						  responsive="true"
+						  width="330px"
+						  resizable="false">
+						  
+					<p:outputPanel id="gerencia-conteudo-projeto" 
+								   class="ui-fluid">
+						<p:outputPanel>
+							 <div class="field">
+		                        <p:outputLabel for="nome"
+		                        			   styleClass="negrito">Nome:</p:outputLabel>
+		                        <p:inputText id="nome" 
+		                        			 value="#{dashboardMB.projetoSelecionadoProprio.nome}" 
+		                        			 required="true"
+		                        			 maxlength="30" />
+		                        <p:tooltip for="nome" 
+									my="left center" 
+									at="right bottom"
+									showEffect="clip" 
+									hideEffect="fold">
+									<h:outputText value="Nome do projeto deve conter: " escape="false" />
+									<br/>
+									<h:outputText value="* até 30 caracteres; " escape="false" />
+									<br/>
+									<h:outputText value=" * primeira letra maiúscula;" escape="false" />
+									<br/>
+									<h:outputText value="Pode ainda conter: " escape="false" />
+									<br/>
+									<h:outputText value=" * acentos e espaço" escape="false" />							
+								</p:tooltip>
+		                    </div>
+		                    
+		                    <div class="field">
+		                        <p:outputLabel for="descricao"
+		                        			   styleClass="negrito">Descrição:</p:outputLabel>
+		                        <p:inputTextarea id="descricao" 
+		                        				 value="#{dashboardMB.projetoSelecionadoProprio.descricao}"
+		                        				 maxlength="255"
+		                        				 counter="contador"
+		                        				 counterTemplate="{0} caracteres restantes." />
+		                        <h:outputText id="contador" />
+		                    </div>
+		                    
+		                    <div class="field">
+		                        <p:outputLabel styleClass="negrito">Data de Criação: </p:outputLabel>
+		                        <p:outputLabel id="data_criacao" 
+		                        			   value="#{dashboardMB.projetoSelecionadoProprio.dataCriacao}" >
+		                        	<f:convertDateTime pattern="dd/MM/yyyy" timeZone="GMT-3"/>
+		                        </p:outputLabel>
+		                    </div>
+		                    
+		                    <div class="field">
+		                        <p:outputLabel styleClass="negrito">Criado por: </p:outputLabel>
+		                        <p:outputLabel id="criador_por" 
+		                        			value="#{dashboardMB.projetoSelecionadoProprio.criador}"/>
+		                    </div>
+						</p:outputPanel>
+					</p:outputPanel>
+					
+					<f:facet name="footer">
+						<div class="botoes-confirmar-cancelar-separar">
+			                <p:commandButton value="Salvar" 
+			                				 icon="pi pi-check" 
+			                				 actionListener="#{dashboardMB.salvarProjeto()}"
+			                    			 update="gerencia-conteudo-projeto" 
+			                    			 process="gerencia-conteudo-projeto @this" />
+		                </div>
+		                <p:commandButton value="Cancelar" 
+		                				 icon="pi pi-times" 
+		                				 onclick="PF('gerenciaProjetoDashboardDialog').hide()"
+		                    			 class="ui-button-secondary" 
+		                    			 type="button" />
+		            </f:facet>		
+				</p:dialog>
+				
+				<p:dialog header="Pedido de Participação" 
+						  showEffect="fade"
+						  modal="true"
+						  widgetVar="gerenciaProjetoParticiparDashboard" 
+						  responsive="true"
+						  width="350"
+						  resizable="false">
+						  
+					<p:outputPanel id="gerencia-participar-projeto" 
+								   class="ui-fluid">
+						<p:outputPanel>
+							 <div class="field">
+		                        <p:outputLabel for="codigo_projeto"
+		                        			   styleClass="negrito">Código do projeto:</p:outputLabel>
+		                        <p:inputText id="codigo_projeto" 
+		                        			 title="Código do Projeto"
+		                        			 placeholder="@Azult12825" 
+		                        			 required="true" />
+		                    </div>
+		                    
+						</p:outputPanel>
+					</p:outputPanel>
+					
+					<f:facet name="footer">
+						<div class="botoes-confirmar-cancelar-separar-participados">
+			                <p:commandButton value="Salvar" 
+			                				 icon="pi pi-check" 
+			                				 actionListener="#{dashboardMB.participar()}"
+			                    			 update="gerencia-participar-projeto" 
+			                    			 process="gerencia-participar-projeto @this" />
+			            </div>
+		                <p:commandButton value="Cancelar" 
+		                				 icon="pi pi-times" 
+		                				 onclick="PF('gerenciaProjetoParticiparDashboard').hide()"
+		                    			 class="ui-button-secondary" 
+		                    			 type="button" />
+		            </f:facet>		
+				</p:dialog>
+				
+				<p:confirmDialog id="excluir-projeto-dialog"
+							     widgetVar="excluirProjetoDialog" 
+								 showEffect="fade"
+								 width="320"
+								 message="Deseja excluir este projeto?"
+								 header="Excluir"
+								 severity="warn">
+					
+					<div class="botoes-confirmar-exclusao-separar">		 
+						<p:commandButton value="Confirmar" 
+						 				 icon="pi pi-check" 
+						 				 actionListener="#{dashboardMB.removerProjeto()}"
+			                			 process="@this" 
+			                			 update="f-dashboard:dt-meusProjetos-dashboard"
+			                			 oncomplete="PF('excluirProjetoDialog').hide()" />
+		           </div>
+		            <p:commandButton value="Cancelar" 
+		            				 type="button" 
+		            				 styleClass="ui-button-secondary" 
+		            				 icon="pi pi-times"
+		                			 onclick="PF('excluirProjetoDialog').hide()" />		
+				</p:confirmDialog>
+			</h:form>
+		</ui:define>
+	</ui:composition>
 </h:body>
 </html>

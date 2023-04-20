@@ -6,50 +6,78 @@
       xmlns:p="http://primefaces.org/ui"> 
 
 <h:head>
-	<title>Login</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<title>Teamwork Tasks</title>
+
+	<link rel="shortcut icon" href="img/favicon.png" type="image/x-icon"/>
+	<link rel="shortcut icon" href="img/favicon.ico" type="image/x-icon"/>
+	<link rel="StyleSheet" href="css/login.css" type="text/css" media="all"/>		
 </h:head>
 
 <f:metadata>
 	<f:viewAction action="#{usuarioLogadoMB.init()}"></f:viewAction>
 </f:metadata>
 <h:body>
-
+	
 	<h:form id="f-login">
-		<p:growl id="messages">
+		<p:growl id="messages" sticky="true">
 			<p:autoUpdate/>
 		</p:growl>
-		<div id="div-login" style="width: 300px; margin: 10% auto 1% auto;">
-			<p:panel id="panel-login">
-			
-				<div id="logo_login" style="display: flex; justify-content: center; margin: 5px">
+		
+		<div id="div-login">
+			<p:panel id="panel-login">					
+				<div id="logo-login" class="logo-login">
                      <h:graphicImage value="/img/logo.png"
                      width="50" />
               	</div>
-				<strong>Fazer login</strong>
-				<p:divider style="background-color: #ddeeff; height: 2px"/>			
-				
-				<p:outputPanel id="conteudo-login" class="ui-fluid">
-					<p:outputPanel>
-						<div class="field">
-							<p:outputLabel id="label-email"
-									   	   for="email">E-mail: </p:outputLabel>
-							<p:inputText id="email" 
-								 	 value="#{usuarioLogadoMB.usuario.email}"
-								     required="true"
-								     size="25"
-								     autocomplete="true" />
-						</div>
-						<div class="field">	 
-							<p:outputLabel id="label-senha"
-										   for="senha">Senha: </p:outputLabel>
-							<p:password id="senha" 
-									    value="#{usuarioLogadoMB.usuario.senha}"
-									    required="true"
-									    size="25"
-									    autocomplete="true" />
-						</div>
-						
-					</p:outputPanel>		 
+              	
+              	<div class="container-titulo-login">
+					<p:outputLabel id="titulo-login"
+								   value="Bem-vindo" 
+								   styleClass="titulo-login" />		
+				</div>
+				<p:outputPanel id="conteudo-login" class="ui-fluid">							
+					<div class="field">
+						<p:outputLabel id="label-email"
+								   	   for="email"
+								   	   styleClass="negrito">E-mail:</p:outputLabel>
+						<p:inputText id="email" 
+							 	 value="#{usuarioLogadoMB.usuario.email}"
+							     required="true"
+							     requiredMessage="E-mail é obrigatório!"
+							     size="29"
+							     autocomplete="true"
+							     placeholder="exemplo@mail.com"/>
+					</div>
+					<div class="field">	 
+						<p:outputLabel id="label-senha"
+									   for="senha"
+									   styleClass="negrito">Senha:</p:outputLabel>
+						<p:password id="senha" 
+								    value="#{usuarioLogadoMB.usuario.senha}"
+								    required="true"
+								    requiredMessage="Senha é obrigatória!"
+								    size="29"
+								    autocomplete="true"
+								    toggleMask="true" />						
+						<p:tooltip for="senha" 
+							my="left center" 
+							at="right bottom"
+							showEffect="clip" 
+							hideEffect="fold">
+							<h:outputText value="A senha deve conter: " escape="false" />
+							<br/>
+							<h:outputText value=" * 8 a 20 caracteres; " escape="false" />
+							<br/>
+							<h:outputText value=" * 1 maiusculo;" escape="false" />
+							<br/>
+							<h:outputText value=" * 1 minusculo;" escape="false" />
+							<br/>
+							<h:outputText value=" * 1 número;" escape="false" />
+							<br/>
+							<h:outputText value=" * 1 caracter especial." escape="false" />
+						</p:tooltip>
+					</div> 
 				</p:outputPanel>
 				
 				<p:commandButton value="Entrar"
@@ -58,32 +86,25 @@
 					
 				<h:form id="f-resetarSenha">
 					<p:commandLink value="Esqueceu a senha?" 
-							   oncomplete="PF('resetarSenhaDialog').show()"
-							   update="f-reset-dialog:conteudo-resetar-senha-dialog"/>
+								   oncomplete="PF('resetarSenhaDialog').show()"
+								   update="f-reset-dialog:conteudo-resetar-senha-dialog"/>
 				</h:form>
 				
-				<p:divider style="background-color: #ddeeff; height: 2px"/>
-				
 				<h:form id="f-cadastrar">
-					Cadastre-se	<br/>	   
+					<div class="cadastro-login">Não possui conta?</div>	   
 						<p:commandButton id="cb-cadastrar"
-										 value="Cadastrar"
-										 actionListener="#{usuarioLogadoMB.novoUsuario()}"
+										 value="Cadastre-se"
 										 update="f-login-dialog:conteudo-login-dialog"
 										 oncomplete="PF('novoCadastroDialog').show()"
 										 alt="Cadastrar novo usuário"
 										 title="Cadastrar Novo">
-							
-							<p:resetInput target="f-login-dialog:conteudo-login-dialog"/>
 						</p:commandButton>
 
 				</h:form>		
 			</p:panel>
 		</div>
 	</h:form>
-	
 
-	
 	<h:form id="f-login-dialog">
 		<p:dialog id="dialog-login"
 				  header="Cadastro"
@@ -95,36 +116,90 @@
 				  
 			<p:outputPanel id="conteudo-login-dialog" 
 						   class="ui-fluid">
-				<p:outputPanel>
-					<div class="field">
-						<p:outputLabel id="label-email-cadastro"
-								   for="email-cadastro">E-mail:</p:outputLabel>
-						<p:inputText id="email-cadastro" 
+				<div class="field">
+					<p:outputLabel id="label-email-cadastro"
+							   	   for="email-cadastro"
+							   	   styleClass="negrito">E-mail:</p:outputLabel>
+					
+					<div>	   	   
+					<p:inputText id="email-cadastro" 
 							 	 value="#{usuarioLogadoMB.usuario.email}"
 							     required="true"
-							     size="25" />
+							     requiredMessage="E-mail é obrigatório!"
+							     size="25"
+							     placeholder="exemplo@mail.com"
+							     autocomplete="true" />
+					</div>	
+				</div>
+				<div class="field">	 
+					<p:outputLabel id="label-senha-cadastro"
+								   for="senha-cadastro"
+								   styleClass="negrito">Senha:</p:outputLabel>
+					<div>
+					<p:password id="senha-cadastro" 
+							    value="#{usuarioLogadoMB.usuario.senha}"
+							    required="true"
+							    requiredMessage="Senha é obrigatória!"
+							    size="29"
+							    autocomplete="true"
+							    toggleMask="true" />
+					<p:tooltip for="senha-cadastro" 
+							my="left center" 
+							at="right bottom"
+							showEffect="clip" 
+							hideEffect="fold">
+							<h:outputText value="A senha deve conter: " escape="false" />
+							<br/>
+							<h:outputText value=" * 8 a 20 caracteres; " escape="false" />
+							<br/>
+							<h:outputText value=" * 1 maiusculo;" escape="false" />
+							<br/>
+							<h:outputText value=" * 1 minusculo;" escape="false" />
+							<br/>
+							<h:outputText value=" * 1 número;" escape="false" />
+							<br/>
+							<h:outputText value=" * 1 caracter especial." escape="false" />
+						</p:tooltip>
 					</div>
-					<div class="field">	 
-						<p:outputLabel id="label-senha-cadastro"
-									   for="senha-cadastro">Senha:</p:outputLabel>
-						<p:password id="senha-cadastro" 
-								    value="#{usuarioLogadoMB.usuario.senha}"
-								    required="true"
-								    size="25" />
+				</div>
+				<div class="field">	 
+					<p:outputLabel id="label-nome-exibicao-cadastro"
+								   for="nome-exibicao-cadastro"
+								   styleClass="negrito">Nome de Usuario:</p:outputLabel>
+					
+					<div>
+					<p:inputText id="nome-exibicao-cadastro" 
+							     value="#{usuarioLogadoMB.usuario.nomeExibicao}"
+							     required="true"
+							     requiredMessage="Deverá inserir um nome de usuário valido!"
+							     size="25"
+							     placeholder="João Martins"
+							     autocomplete="true" />
+					<p:tooltip for="nome-exibicao-cadastro" 
+							my="left center" 
+							at="right bottom"
+							showEffect="clip" 
+							hideEffect="fold">
+							<h:outputText value="Nome de usuário deve conter: " escape="false" />
+							<br/>
+							<h:outputText value="* 3 a 30 caracteres; " escape="false" />
+							<br/>
+							<h:outputText value=" * primeira letra maiúscula;" escape="false" />
+							<br/>
+							<h:outputText value="Pode ainda conter: " escape="false" />
+							<br/>
+							<h:outputText value=" * hifen, underline e ponto;" escape="false" />
+							<br/>
+							<h:outputText value=" * e números." escape="false" />
+							
+						</p:tooltip>
 					</div>
-					<div class="field">	 
-						<p:outputLabel id="label-nome-exibicao-cadastro"
-									   for="nome-exibicao-cadastro">Nome de Exibição:</p:outputLabel>
-						<p:inputText id="nome-exibicao-cadastro" 
-								    value="#{usuarioLogadoMB.usuario.nomeExibicao}"
-								    required="true"
-								    size="25" />
-					</div>					
-				</p:outputPanel>		 
+				</div>		 
 			</p:outputPanel>
 			
 			<f:facet name="footer">
-				<p:commandButton value="Cadastrar"
+				<p:commandButton id="b-cadastrar-usuario"
+								 value="Cadastrar"
 								 actionListener="#{usuarioLogadoMB.cadastrarUsuario()}"
 								 update="conteudo-login-dialog"
 								 process="conteudo-login-dialog @this"/>
@@ -134,7 +209,7 @@
 	
 	<h:form id="f-reset-dialog">	
 		<p:dialog id="dialog-resetar-senha" 
-				  header="Resetar Senha"
+				  header="Redefinir Senha"
                   widgetVar="resetarSenhaDialog" 
                   modal="true"
                   showEffect="fade" 
@@ -143,40 +218,73 @@
                   
             <p:outputPanel id="conteudo-resetar-senha-dialog" 
 						   class="ui-fluid">
-				<p:outputPanel>
-					<div class="field">
-						<p:outputLabel id="label-email-resetar-senha"
-								   for="email-resetar-senha">E-mail:</p:outputLabel>
+				<div class="field">
+					<p:outputLabel id="label-email-resetar-senha"
+							   	   for="email-resetar-senha"
+							   	   styleClass="negrito">E-mail:</p:outputLabel>
+					<div>
 						<p:inputText id="email-resetar-senha" 
-							 	 value="#{usuarioLogadoMB.usuario.email}"
-							     required="true"
-							     requiredMessage="O email é obrigatório"
-							     size="25"
-							     autocomplete="true" />
+								 	 value="#{usuarioLogadoMB.usuario.email}"
+								     required="true"
+								     requiredMessage="E-mail é obrigatório!"
+								     autocomplete="true"
+								     placeholder="exemplo@mail.com" />
 					</div>
-					<div class="field">	 
-						<p:outputLabel id="label-senha-resetar"
-									   for="senha-resetar">Nova senha:</p:outputLabel>
+				</div>
+				<div class="field">	 
+					<p:outputLabel id="label-senha-resetar"
+								   for="senha-resetar"
+								   styleClass="negrito">Nova senha:</p:outputLabel>
+					<div>
 						<p:password id="senha-resetar" 
 								    value="#{usuarioLogadoMB.usuario.senha}"
 								    required="true"
-								    requiredMessage="A nova senha é obrigatória"
+								    requiredMessage="Nova senha é obrigatória"
+								    autocomplete="true"
+								    toggleMask="true"
 								    size="25" />
-					</div>				
-				</p:outputPanel>		 
+						<p:tooltip for="senha-resetar" 
+							my="left center" 
+							at="right bottom"
+							showEffect="clip" 
+							hideEffect="fold">
+							<h:outputText value="A senha deve conter: " escape="false" />
+							<br/>
+							<h:outputText value=" * 8 a 20 caracteres; " escape="false" />
+							<br/>
+							<h:outputText value=" * 1 maiusculo;" escape="false" />
+							<br/>
+							<h:outputText value=" * 1 minusculo;" escape="false" />
+							<br/>
+							<h:outputText value=" * 1 número;" escape="false" />
+							<br/>
+							<h:outputText value=" * 1 caracter especial." escape="false" />
+						</p:tooltip>
+					</div>
+					
+				</div> 
 			</p:outputPanel>
-         	<p:commandButton value="Confirmar"
-                  					icon="ui-icon-circle-check"
-                        			actionListener="#{usuarioLogadoMB.solicitarNovaSenha()}"
-                        			oncomplete="if (!args.validationFailed)
-                        			{resetarSenhaDialog.hide()}" />
-            <p:commandButton value="Cancelar"
-                  					type="button" 
-                   					icon="ui-icon-circle-close"
-                         			onclick="resetarSenhaDialog.hide()" />
+			
+			<div class="botoes-confirmar-reset">
+				<div class="botoes-confirmar-cancelar-separar">
+		         	<p:commandButton value="Confirmar"
+	                       			 actionListener="#{usuarioLogadoMB.solicitarNovaSenha()}"
+	                       			 oncomplete="if (!args.validationFailed)
+	                       			 {resetarSenhaDialog.hide()}"
+	                       			 update="conteudo-resetar-senha-dialog"
+	                       			 process="conteudo-resetar-senha-dialog @this"
+	                       			 icon="pi pi-check" />
+                </div>
+		            <p:commandButton value="Cancelar"
+	                 			     type="button"
+	                        	   	 onclick="PF('resetarSenhaDialog').hide()"
+	                        	   	 icon="pi pi-times"
+	                        	   	 class="ui-button-secondary" />
+
+           </div>
 
         </p:dialog>	
 	</h:form>
-
+	
 </h:body> 
 </html>

@@ -6,18 +6,28 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
+import projetotcc.exception.DatabaseException;
 import projetotcc.model.Base;
+
 
 public class DAO<T extends Base> implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 	
-	
+
 	public T buscarPorId(Class<T> clazz, Long id) {
 		
 		EntityManager manager = ConnectionFactory.getEntityManager();
 		
-		return manager.find(clazz, id);
+		try {			
+			return manager.find(clazz, id);
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new DatabaseException("Ocorreu um erro ao buscar");
+		} finally {
+			manager.close();
+		}
+		
 	}
 	
 	
@@ -37,6 +47,10 @@ public class DAO<T extends Base> implements Serializable {
 			
 		} catch (Exception e) {
 			manager.getTransaction().rollback();
+			e.printStackTrace();
+			throw new DatabaseException("Ocorreu um erro ao salvar");
+		} finally {
+			manager.close();
 		}
 	}
 	
@@ -56,6 +70,10 @@ public class DAO<T extends Base> implements Serializable {
 			
 		} catch (Exception e) {
 			manager.getTransaction().rollback();
+			e.printStackTrace();
+			throw new DatabaseException("Ocorreu um erro ao atualizar");
+		} finally {
+			manager.close();
 		}
 	}
 	
@@ -64,7 +82,7 @@ public class DAO<T extends Base> implements Serializable {
 		
 		EntityManager manager = ConnectionFactory.getEntityManager();
 		
-		T obj = buscarPorId(clazz, id);
+		T obj = manager.find(clazz, id);
 		
 		try {
 			manager.getTransaction().begin();
@@ -75,6 +93,10 @@ public class DAO<T extends Base> implements Serializable {
 			
 		} catch (Exception e) {
 			manager.getTransaction().rollback();
+			e.printStackTrace();
+			throw new DatabaseException("Ocorreu um erro ao remover");
+		} finally {
+			manager.close();
 		}
 	}
 	
@@ -82,13 +104,21 @@ public class DAO<T extends Base> implements Serializable {
 	@SuppressWarnings("unchecked")
 	public List<T> buscarTodos(Class<T> clazz) {
 		
-		EntityManager manager = ConnectionFactory.getEntityManager();
+		EntityManager manager = ConnectionFactory.getEntityManager();		
 		
-		String sql = " select object(o) from " + clazz.getName() + " as o ";
+		try {
+			String sql = " select object(o) from " + clazz.getName() + " as o ";
+			
+			Query query = manager.createQuery(sql);
+			
+			return query.getResultList();
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new DatabaseException("Ocorreu um erro ao buscar");
+		} finally {
+			manager.close();
+		}
 		
-		Query query = manager.createQuery(sql);
-		
-		return query.getResultList();
 	}
 
 }

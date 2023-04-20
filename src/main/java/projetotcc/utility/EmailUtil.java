@@ -8,6 +8,8 @@ import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
+import projetotcc.exception.EmailException;
+
 public class EmailUtil {
 	
 	/**
@@ -45,7 +47,7 @@ public class EmailUtil {
 			System.out.println("Email enviado com sucesso!");
 			
 		} catch (Exception e) {
-			e.printStackTrace();
+			throw new EmailException(e);
 		}
 	}
 

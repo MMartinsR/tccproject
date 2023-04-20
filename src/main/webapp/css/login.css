@@ -1,0 +1,125 @@
+@charset "UTF-8";
+
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600;700&display=swap');
+
+* {
+	margin: 0px;
+	padding: 0px;	
+}
+
+body {
+	height: 100vh;
+	background: black url("../img/bg.jpg") center center no-repeat scroll;
+	background-size: cover;
+}
+
+::-webkit-scrollbar {
+    width: 0px;
+    height: 0px;
+}
+
+div#div-login {
+	width: 300px; 
+	margin: 0 auto 1% auto;
+	padding-top: 10%;
+}
+
+.container-titulo-login {
+	margin-bottom: 40px;	
+	text-align: center;
+}
+
+body .ui-widget .titulo-login {
+	font-weight: bold;
+	font-size: 1.3rem;
+}
+
+body .ui-panel>div:last-of-type {
+	border-radius: 10px;
+	box-shadow: 2px 6px 10px #bdc4ca;
+}
+
+body .ui-widget {	
+	font-family: 'Open Sans', sans-serif;
+}
+
+body .ui-widget .negrito {
+	font-weight: bold;
+}
+
+div.logo-login {
+	display: flex; 
+	justify-content: center;
+	margin: 5px 5px 15px 5px;
+}
+
+body .ui-divider.ui-divider-horizontal {
+	background-color: #bef28d; height: 2px;
+}
+
+div.field {
+	margin-bottom: 10px;
+}
+
+body .ui-inputfield {
+	margin-top: 5px;
+}
+
+body .ui-button.ui-button-text-only .ui-button-text {
+	font-weight: bold;
+}
+
+body .ui-button {	
+	background: #89c156;
+	border: 1px solid #89c156;
+	margin: 5px 0px 10px 0px;
+}
+
+body .ui-button.ui-state-hover {
+    background: #b5e38b;
+    border-color: #b5e38b;
+    color: #fff;
+}
+
+body .ui-button.ui-state-active {
+    background: #b5e38b;
+    border-color: #b5e38b;
+    color: #fff;
+}
+
+body .ui-commandlink, body .ui-link {
+	color: #81b94e;
+	text-shadow: 1px 6px 10px #bdc4ca;
+}
+
+ .cadastro-login {
+	padding: 25px 0px 5px 0px;
+	
+}
+
+.ui-fluid .ui-inputtext[size], .ui-fluid .ui-inputfield[size] {
+	width: 100%;
+}
+
+div.botoes-confirmar-reset {
+	margin-top: 30px;
+	text-align: center;
+}
+
+div.botoes-confirmar-cancelar-separar {
+	margin-right: 20px;
+	display: inline-block;
+}
+
+body .ui-button.ui-button-text-icon-left .ui-button-text {
+	font-family: 'Open Sans', sans-serif;
+	font-weight: bold;
+}
+
+body .ui-dialog .ui-dialog-footer {
+	text-align: right;	
+}
+
+
+
+

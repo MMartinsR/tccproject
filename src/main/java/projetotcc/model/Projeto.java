@@ -34,7 +34,7 @@ public class Projeto implements Serializable, Base {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-	@Column(nullable = false, length = 60)
+	@Column(nullable = false, length = 30)
 	private String nome;
 	private String descricao;
 	@Temporal(TemporalType.DATE)
