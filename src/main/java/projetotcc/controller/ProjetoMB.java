@@ -6,6 +6,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
+import javax.faces.context.FacesContext;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -14,6 +15,7 @@ import org.primefaces.PrimeFaces;
 
 import projetotcc.enums.PesoEnum;
 import projetotcc.enums.StatusEnum;
+import projetotcc.exception.CadastrarException;
 import projetotcc.model.Projeto;
 import projetotcc.model.Tag;
 import projetotcc.model.Tarefa;
@@ -60,11 +62,10 @@ public class ProjetoMB implements Serializable {
 		
 		carregaProjetoSelecionado();
 		validaTarefas();
-		carregaTarefas();
 		carregaTags();
+		carregaTarefas();
 		preenchePesos();
-		preencheStatus();
-		
+		preencheStatus();		
 
 	}
 	
@@ -118,15 +119,10 @@ public class ProjetoMB implements Serializable {
 				
 				tarefaService.salvar(tarefa);
 				
-				Message.info("Nova tarefa adicionada com sucesso!");
+				Message.info("Tarefa '" + tarefa.getNome() + "' criada com sucesso!");
 			} else {
-				
-				Tarefa tarefaEx = tarefaService.buscarPorId(tarefa.getId());
-				
-				if (tarefaEx != null) {
-					
-					
-				}
+								
+				tarefaService.atualizar(tarefa);
 				
 				// setar novas tags caso hajam
 				
@@ -134,18 +130,20 @@ public class ProjetoMB implements Serializable {
 				
 				// atualizar o projeto.
 				
-				Message.info("Tarefa " + tarefa.getNome() + " atualizada com sucesso!");
+				Message.info("Tarefa '" + tarefa.getNome() + "' atualizada com sucesso!");
 			}			
 			
 			
+		} catch (CadastrarException e) {
+			Message.erro("Ocorreu um erro ao salvar a tarefa - " + e.getMessage());
 		} catch (Exception e) {
-			Message.erro("Ocorreu um erro ao salvar a tarefa: " + e.getMessage());
+			e.printStackTrace();
 		}
 		
 		carregaTarefas();
 		
 		PrimeFaces.current().executeScript("PF('gerenciaCriarTarefaDialog').hide()");
-		PrimeFaces.current().ajax().update("f-projeto:messages", "f-projeto:dt-tarefas-projeto");
+		PrimeFaces.current().ajax().update("f-projeto:messages", "f-projeto:ds-tarefas-projeto-aberta");
 		
 	}
 	
@@ -160,8 +158,10 @@ public class ProjetoMB implements Serializable {
 			tagService.salvar(tag);
 			
 			Message.info("Nova tag adicionada com sucesso!");
+		} catch (CadastrarException e) {
+			Message.erro("Ocorreu um erro ao salvar a tag - " + e.getMessage());
 		} catch (Exception e) {
-			Message.erro("Ocorreu um erro ao salvar a tag: " + e.getMessage());
+			e.printStackTrace();
 		}		
 		
 		// atualizar a lista de tags do banco
@@ -169,6 +169,20 @@ public class ProjetoMB implements Serializable {
 		
 		PrimeFaces.current().executeScript("PF('gerenciaCriarTagDialog').hide()");
 		PrimeFaces.current().ajax().update("f-projeto:messages", "f-projetoTarefa-dialog:tags");
+	}
+	
+	public void redirecionarDashboard() {
+		
+		try {
+			String url = "/restricted/dashboard.xhtml";
+			
+			String contextPath = FacesContext.getCurrentInstance().getExternalContext().getRequestContextPath();
+			FacesContext.getCurrentInstance().getExternalContext().redirect(contextPath + url);
+			
+		} catch (Exception e) {
+			Message.erro("Ocorreu um problema ao redirecionar");
+			e.printStackTrace();
+		}
 	}
 	
 	public void preenchePesos() {
@@ -179,7 +193,7 @@ public class ProjetoMB implements Serializable {
 		listaStatus = Arrays.asList(StatusEnum.values());
 	}
 	
-
+	
 	public Projeto getProjeto() {
 		return projeto;
 	}

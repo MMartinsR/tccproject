@@ -6,7 +6,10 @@ import java.util.List;
 import javax.inject.Inject;
 
 import projetotcc.dao.DAO;
+import projetotcc.exception.CadastrarException;
+import projetotcc.exception.DatabaseException;
 import projetotcc.model.Tarefa;
+import projetotcc.utility.Message;
 
 public class TarefaService implements Serializable {
 
@@ -18,37 +21,74 @@ public class TarefaService implements Serializable {
 
 	public void salvar(Tarefa tarefa) {
 
-		// TODO - Validações
-
-		if (tarefa != null) {
-			tarefaDao.salvar(tarefa);
+		if (tarefa == null) {
+			System.out.println("A tarefa está nula");
+			throw new CadastrarException("Ocorreu um erro ao salvar a tarefa");
 		}
+
+		try {
+			
+			tarefaDao.salvar(tarefa);
+			
+		} catch (DatabaseException e) {
+			Message.erro(e.getMessage());
+		}		
 	}
 
 	public void atualizar(Tarefa tarefa) {
-
-		// TODO - Validações
-
-		if (tarefa != null) {
-			tarefaDao.atualizar(tarefa);
+		
+		if (tarefa == null) {
+			System.out.println("A tarefa está nula");
+			throw new CadastrarException("Ocorreu um erro ao atualizar a tarefa");
 		}
+
+		try {
+			
+			tarefaDao.atualizar(tarefa);
+			
+		} catch (DatabaseException e) {
+			Message.erro(e.getMessage());
+		}		
 	}
 	
 	public void remover(Tarefa tarefa) {
 
-		// TODO - Validações
-
-		if (tarefa != null) {
-			tarefaDao.remover(Tarefa.class, tarefa.getId());
+		if (tarefa == null) {
+			System.out.println("A tarefa está nula");
+			throw new CadastrarException("Ocorreu um erro ao remover a tarefa");
 		}
+
+		try {
+			
+			tarefaDao.remover(Tarefa.class, tarefa.getId());
+			
+		} catch (DatabaseException e) {
+			Message.erro(e.getMessage());
+		}	
 	}
 	
 	public List<Tarefa> listarTodos() {
-		return tarefaDao.buscarTodos(Tarefa.class);
+		
+		try {
+			
+			return tarefaDao.buscarTodos(Tarefa.class);
+			
+		} catch (DatabaseException e) {
+			Message.erro(e.getMessage() + " as tarefas.");
+			return null;
+		}	
 	}
 	
 	public Tarefa buscarPorId(Long id) {
-		return tarefaDao.buscarPorId(Tarefa.class, id);
+		
+		try {
+			
+			return tarefaDao.buscarPorId(Tarefa.class, id);
+			
+		} catch (DatabaseException e) {
+			Message.erro(e.getMessage() + " a tarefa.");
+			return null;
+		}
 	}
 
 }

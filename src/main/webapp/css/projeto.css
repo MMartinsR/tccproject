@@ -1,0 +1,350 @@
+@charset "UTF-8";
+
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600;700&display=swap');
+
+* {
+	margin: 0px;
+	padding: 0px;	
+}
+
+body {
+	height: 100vh;
+	background: black url("../img/bg.jpg") center center no-repeat fixed;
+	background-size: cover;
+}
+
+::-webkit-scrollbar {
+    width: 0px;
+    height: 0px;
+}
+
+body .ui-panel .ui-panel-content {
+	max-width: 1200px; 
+	min-height: 400px;
+	margin: 0px auto 20px auto;
+	padding: 0px;
+	
+}
+
+body .ui-panel>div:last-of-type {	
+	border-radius: 10px;
+	box-shadow: 2px 6px 10px #bdc4ca;
+}
+
+ .container-p-projeto {
+	padding-top: 70px;
+}
+
+.title_projeto { 
+	background-color: #89c156; 
+	color: white; 
+	padding: 15px 35px 5px 10px; 
+	margin: 15px 5px 5px 20px; 
+	border-radius: 15px 0px 15px 0px; 
+	font-family: 'Open Sans', sans-serif;
+	font-size: 2rem;
+	font-weight: 400;
+	box-shadow: 1px 3px 5px #bdc4ca;
+}
+
+.container-descricao {	
+	margin: 0px 20px 40px 20px;
+	padding: 30px 35px;
+	text-align: center;
+	box-shadow: 1px 3px 8px #bdc4ca;
+	border-radius: 5px;
+	background: #fbfef3;
+	
+}
+
+.descricao {
+	display: block;
+	font-size: 1.4rem;
+	text-indent: 3em;
+	text-align: justify;
+}
+
+body .ui-fieldset .ui-fieldset-legend {
+	background: #89c156;
+	border-radius: 5px;
+	color: #fff;
+	text-align: center;
+	font-size: 1.3rem;
+	padding: 10px 35px;
+}
+
+body .ui-fieldset-toggleable .ui-fieldset-legend {	 
+	text-align: left;
+	padding: 5px 10px;
+	background: #aed18d;
+}
+
+body .ui-fieldset-toggleable {
+	box-shadow: none !important;
+	min-height: 10px !important; 
+	margin: 20px 0px 0px 15px !important; 
+	background: #fff !important;
+}
+
+body .ui-fieldset .ui-fieldset-legend.ui-state-hover {
+	background: #89c156;
+    border-color: #b5e38b;
+    color: #fff;	
+}
+
+body .ui-fieldset .ui-fieldset-legend.ui-state-hover .ui-icon {	
+    color: #fff;
+}
+
+body .ui-fieldset {
+	border-radius: 5px;
+	min-height: 650px;
+	border: none;
+	margin: 0px;
+	background: #f2fee8 url("../img/dashboard-bemvindo-fundo.png") center center no-repeat scroll;
+	box-shadow: 2px 6px 10px #bdc4ca;
+	padding: 5px 5px 15px 5px;
+}
+
+body .ui-toolbar {
+	margin: 0px 5px;
+	border: none;
+	background: #f2fee8;
+	color: #fff;
+}
+
+.button-novo {
+	margin-right: 10px;
+}
+
+body .ui-datascroller .ui-datascroller-header {
+	background-color: #aed18d;
+	margin: 0px 5px;
+	border-radius: 5px 5px 0px 0px;
+	font-size: 1.3rem;
+	color: #fff;	
+	padding: 5px;
+}
+
+body .ui-datascroller .ui-datascroller-content {
+	padding: 15px 5px 5px 5px;
+	border-radius: 0px 0px 5px 5px;
+	margin: 0px 5px;
+	background-color: #F7F8F9;		
+}
+
+body .ui-panelgrid .ui-panelgrid-cell {
+	background: #f2fee8;
+}
+
+body .ui-card .ui-card-body {
+	padding: 10px 5px 5px 5px;
+}
+
+body .ui-card .ui-card-content {
+	padding: 0px 5px;
+}
+
+.container-tag {	
+	margin-bottom: 7px;	
+	min-width: 10px;
+}
+
+.tag-style {
+	background-color: #b5e38b;
+	padding: 2px 15px 2px 15px;
+	border-radius: 5px;
+	margin-right: 5px;
+}
+
+body .ui-commandlink {
+	text-decoration: none;
+}
+
+body .ui-commandlink .ui-state-hover {
+	text-decoration: none;
+	background: #b5e38b;
+}
+
+a:-webkit-any-link {
+	text-decoration: none;
+}
+
+
+a:-webkit-any-link:hover{
+	text-decoration: none;
+}
+
+.card-title {
+	margin-top: 20px;
+}
+
+.title-tarefa {
+	font-size: 1.1rem;
+	text-align: justify;
+}
+
+body .ui-button {	
+	background-color: #89c156;
+	border: 1px solid #89c156;
+}
+
+body .ui-button.ui-state-hover {
+    background: #b5e38b;
+    border-color: #b5e38b;
+    color: #fff;
+}
+
+body .ui-button.ui-state-active {
+    background: #b5e38b;
+    border-color: #b5e38b;
+    color: #fff;
+}
+
+.ui-button .ui-button-text {
+	font-weight: 600;
+	font-family: 'Open Sans', sans-serif;
+}
+
+
+.cb-projeto-dashboard {
+	position: relative;
+	float: right;
+	margin: 15px 15px 0px 0px !important;
+	
+}
+
+span.ui-button-icon-left.ui-icon.ui-c.pi.pi-chevron-left {
+	font-weight: bold;
+}
+
+.pg-ds-tamanho-coluna {
+	width: 100%;
+}
+
+body .ui-panelgrid .ui-panelgrid-cell {
+	border: none;
+	padding: 0px;	
+}
+
+body .ui-card {
+	margin-bottom: 8px;
+}
+
+div.field {
+	margin-bottom: 15px;
+}
+
+body .ui-dialog .ui-dialog-titlebar .ui-dialog-title {
+	font-family: 'Open Sans', sans-serif;
+	font-size: 1.3rem;
+}
+
+.ui-fluid .ui-inputtext {
+	margin-top: 5px;
+}
+
+.ui-fluid .ui-inputtextarea {
+	margin-top: 5px;
+	margin-bottom: 5px;
+}
+
+div.botao-tag {	
+	display: inline-block;
+}
+
+div.botoes-confirmar-cancelar-separar-projeto {
+	margin-right: 145px;
+	display: inline-block;
+}
+
+div.botoes-confirmar-cancelar-separar-tag {
+	margin-right: 145px;
+	display: inline-block;
+}
+
+div.botoes-confirmar-exclusao-separar {
+	margin-right: 25px;
+	display: inline-block;
+}
+
+body .ui-dialog .ui-dialog-footer button{
+	margin: 0px;
+}
+body .ui-widget {
+	font-family: 'Open Sans', sans-serif;
+}
+
+body .ui-widget .negrito {
+	font-weight: bold;
+}
+
+.coluna-botoes {
+	width: 7rem;
+	text-align: center; 
+}
+
+td {
+	vertical-align: top;
+}
+
+.ui-outputlabel .ui-outputlabel-rfi {
+	margin: 0px;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

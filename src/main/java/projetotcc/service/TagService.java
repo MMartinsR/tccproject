@@ -6,7 +6,10 @@ import java.util.List;
 import javax.inject.Inject;
 
 import projetotcc.dao.DAO;
+import projetotcc.exception.CadastrarException;
+import projetotcc.exception.DatabaseException;
 import projetotcc.model.Tag;
+import projetotcc.utility.Message;
 
 public class TagService implements Serializable {
 
@@ -19,37 +22,75 @@ public class TagService implements Serializable {
 
 	public void salvar(Tag tag) {
 
-		// TODO - Validações
-
-		if (tag != null) {
-			tagDao.salvar(tag);
+		if (tag == null) {
+			System.out.println("A tag está nula");
+			throw new CadastrarException("Ocorreu um erro ao salvar a tag");
 		}
 
+		try {
+			
+			tagDao.salvar(tag);
+			
+		} catch (DatabaseException e) {
+			Message.erro(e.getMessage());
+		}
 	}
 
 	public void atualizar(Tag tag) {
 
-		// TODO - Validações
-
-		if (tag != null) {
-			tagDao.atualizar(tag);
+		if (tag == null) {
+			System.out.println("A tag está nula");
+			throw new CadastrarException("Ocorreu um erro ao atualizar a tag");
 		}
 
+		try {
+			
+			tagDao.atualizar(tag);
+			
+		} catch (DatabaseException e) {
+			Message.erro(e.getMessage());
+		}
 	}
 
 	public void remover(Tag tag) {
 
-		// TODO - Validações
+		if (tag == null) {
+			System.out.println("A tag está nula");
+			throw new CadastrarException("Ocorreu um erro ao remover a tag");
+		}
 
-		tagDao.remover(Tag.class, tag.getId());
+		try {
+			
+			tagDao.remover(Tag.class, tag.getId());
+			
+		} catch (DatabaseException e) {
+			Message.erro(e.getMessage());
+		}
 	}
 
 	public List<Tag> listarTodos() {
-		return tagDao.buscarTodos(Tag.class);
+		
+		try {
+			
+			return tagDao.buscarTodos(Tag.class);
+			
+		} catch (DatabaseException e) {
+			Message.erro(e.getMessage() + " as tags.");
+			return null;
+		}		
 	}
 	
 	public Tag buscarPorId(Long id) {
-		return tagDao.buscarPorId(Tag.class, id);
+		
+		try {
+			
+			return tagDao.buscarPorId(Tag.class, id);
+			
+		} catch (DatabaseException e) {
+			Message.erro(e.getMessage() + " as tags.");
+			return null;
+		}
+		
 	}
 
 }
