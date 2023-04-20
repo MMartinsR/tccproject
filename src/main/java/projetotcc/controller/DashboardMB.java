@@ -76,21 +76,22 @@ public class DashboardMB implements Serializable {
 		List<Usuario> usuariosEx = new ArrayList<Usuario>();
 		usuariosEx.add(usuarioEx);
 		
-		validarNomeProjeto(projetoSelecionadoProprio.getNome());
+		
 		
 		try {
+			validarNomeProjeto(projetoSelecionadoProprio.getNome());
 			
 			if (projetoSelecionadoProprio.getId() == null) {
 				
 				projetoSelecionadoProprio.setUsuarios(usuariosEx);
 				
 				projetoService.salvar(projetoSelecionadoProprio);
-				Message.info("Projeto salvo com sucesso!");
+				Message.info("Projeto '" + projetoSelecionadoProprio.getNome() + "' salvo com sucesso!");
 				
 			} else {
 				
 				projetoService.atualizar(projetoSelecionadoProprio);
-				Message.info("Projeto atualizado com sucesso!");
+				Message.info("Projeto '" + projetoSelecionadoProprio.getNome() + "' atualizado com sucesso!");
 			}
 			
 			carregaProjetosProprios();
@@ -141,7 +142,7 @@ public class DashboardMB implements Serializable {
 	private void carregaProjetosProprios() {
 		this.projetosProprios = projetoService.buscarPorCriador(usuario.getNomeExibicao());
 		
-		if (this.projetosProprios.isEmpty() || this.projetosProprios == null) {
+		if (this.projetosProprios == null) {
 			Message.erro("Ocorreu um erro ao carregar os projetos");
 		}
 
@@ -180,13 +181,13 @@ public class DashboardMB implements Serializable {
 	
 	public void linhaSelecionada(SelectEvent<Projeto> event) {
 		setMensagemBotaoExcluir("1 projeto selecionado");
-		Message.info("Projeto " + event.getObject().getNome() + " foi selecionado!");
+		Message.info("Projeto '" + event.getObject().getNome() + "' foi selecionado!");
 		setExisteProjetoSelecionado(true);
 	}
 	
 	public void linhaDeselecionada(UnselectEvent<Projeto> event) {
 		setMensagemBotaoExcluir("Excluir");
-		Message.info("Projeto " + event.getObject().getNome() + " não está mais selecionado!");
+		Message.info("Projeto '" + event.getObject().getNome() + "' não está mais selecionado!");
 		setExisteProjetoSelecionado(false);
 	}	
 

@@ -104,8 +104,7 @@ public class DAO<T extends Base> implements Serializable {
 	@SuppressWarnings("unchecked")
 	public List<T> buscarTodos(Class<T> clazz) {
 		
-		EntityManager manager = ConnectionFactory.getEntityManager();
-		
+		EntityManager manager = ConnectionFactory.getEntityManager();		
 		
 		try {
 			String sql = " select object(o) from " + clazz.getName() + " as o ";

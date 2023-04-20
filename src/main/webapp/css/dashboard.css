@@ -27,7 +27,7 @@ body .ui-panel .ui-panel-content {
 }
 
 body .ui-panel>div:last-of-type {	
-	border-radius: 20px;
+	border-radius: 10px;
 	box-shadow: 2px 6px 10px #bdc4ca;
 }
 
@@ -35,8 +35,7 @@ body .ui-panel>div:last-of-type {
 	padding-top: 70px;
 }
 
-.title_dashboard {
-	font-size: 30px; 
+.title_dashboard { 
 	background-color: #89c156; 
 	color: white; 
 	padding: 15px 35px 5px 10px; 
@@ -186,7 +185,7 @@ body .ui-dialog .ui-dialog-titlebar .ui-dialog-title {
 }
 
 div.botoes-confirmar-cancelar-separar {
-	margin-right: 36px;
+	margin-right: 67px;
 	display: inline-block;
 }
 
