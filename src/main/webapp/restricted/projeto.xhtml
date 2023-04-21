@@ -7,7 +7,13 @@
 	xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
 
 <h:head>
-	<title>Projeto</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<title>Teamwork Tasks</title>
+
+	<link rel="shortcut icon" href="./../img/favicon.png" type="image/x-icon"/>
+	<link rel="shortcut icon" href="../img/favicon.ico" type="image/x-icon"/>
+	
+	<link rel="StyleSheet" href="../css/projeto.css" type="text/css" media="all"/>	
 </h:head>
 
 <f:metadata>
@@ -16,381 +22,371 @@
 </f:metadata>
 
 <h:body>
+<h:form id="f-projeto">
+	<p:growl id="messages">
+		<p:autoUpdate />
+	</p:growl>
 
-	<ui:composition template="/templates/template.xhtml">
-	
-		<ui:define name="content">
+	<div class="container-p-projeto">
+		<p:panel id="pg-projeto"
+			styleClass="p_projeto">
+			<h:outputLabel id="title-projeto" 
+				value="#{projetoMB.projeto.nome}"
+				styleClass="title_projeto"/>
+				<!-- action deve redirecionar para a dashboard -->
+			<p:commandButton action="#{projetoMB.redirecionarDashboard()}"
+							 icon="pi pi-chevron-left"
+							 title="Voltar a dashboard"
+							 styleClass="cb-projeto-dashboard"/>
+			
+			<p:fieldset legend="Descrição" 
+				toggleable="true" 
+				toggleSpeed="500"
+				collapsed="true">
+         				<p:ajax event="toggle"
+         					update="messages"/>
+				<div class="container-descricao">
+					<h:outputLabel id="descricao" 
+								   value="#{projetoMB.projeto.descricao}"
+								   styleClass="descricao" />
+				</div>
+			</p:fieldset>			   
+					<p:fieldset legend="Tarefas">
+						<p:toolbar>
+							<p:toolbarGroup>
+								<span class="button-novo">
+									<p:commandButton id="cb-criarNovaTarefa-projeto"											  
+										 icon="pi pi-plus"
+										 value="Novo"
+										 actionListener="#{projetoMB.criarNova()}"
+										 update=":f-projetoTarefa-dialog:gerencia-criarTarefa-projeto"
+										 oncomplete="PF('gerenciaCriarTarefaDialog').show()"
+										 alt="Criar Nova Tarefa"
+										 title="Nova Tarefa"
+										 styleClass="button-novo">
+										<p:resetInput target=":f-projetoTarefa-dialog:gerencia-criarTarefa-projeto"/>
+									</p:commandButton>
+								</span>
+								<span>							
+									<p:commandButton id="cb-excluirTarefa-projeto"											  
+										 icon="pi pi-trash"
+										 value="#{projetoMB.mensagemBotaoExcluir}"
+										 oncomplete="PF('excluirTarefaDialog').show()"
+										 disabled="#{!dashboardMB.existeProjetoSelecionado}"
+										 update="@this"												 
+										 alt="Excluir Projeto"
+										 title="Excluir Projeto">
+									</p:commandButton>
+								</span>							
+							</p:toolbarGroup>
+						</p:toolbar>
+						<p:panelGrid id="pg-ds-container" 
+							columns="4" 
+							styleClass="pg-ds-tamanho-coluna" 
+							layout="grid">
+							
+							<p:dataScroller id="ds-tarefas-projeto-aberta" 
+								value="#{projetoMB.tarefas}"
+								var="tarefa"
+								rows="6">
+								
+								<f:facet name="header">
+									Abertas
+								</f:facet>
+								
+								<p:commandLink id="cl-abrir-tarefa-editar-aberta"
+									update=":f-projetoTarefa-dialog:gerencia-criarTarefa-projeto"
+									oncomplete="PF('gerenciaCriarTarefaDialog').show()"
+									process="@this"
+									title="Abrir tarefa">
+									<f:setPropertyActionListener value="#{tarefa}"
+                                                 target="#{projetoMB.tarefa}"/>
+									<p:card>
+										<ui:repeat var="tag" value="#{tarefa.tags}">
+											<div class="container-tag">
+											<h:outputLabel value="#{tag.nome}"
+												 styleClass="tag-style"/>
+											</div>
+										</ui:repeat>												
+										<div class="card-title">
+											<h:outputLabel value="#{tarefa.nome}"
+											styleClass="title-tarefa"/>
+										</div>												
+									</p:card>												
+                                	<p:resetInput target=":f-projetoTarefa-dialog:gerencia-criarTarefa-projeto"/>
+								</p:commandLink>					
+							</p:dataScroller>	
+							
+							<p:dataScroller id="ds-tarefas-projeto-em-andamento" 
+								value="#{projetoMB.tarefas}"
+								var="tarefa"
+								rows="6">
+								
+								<f:facet name="header">
+									Em andamento
+								</f:facet>
+								
+								<p:commandLink id="cl-abrir-tarefa-editar-emAndamento"
+									update=":f-projetoTarefa-dialog:gerencia-criarTarefa-projeto"
+									oncomplete="PF('gerenciaCriarTarefaDialog').show()"
+									process="@this"
+									title="Abrir tarefa">
+									<f:setPropertyActionListener value="#{tarefa}"
+                                                 target="#{projetoMB.tarefa}"/>
+									<p:card>
+										<ui:repeat var="tag" value="#{tarefa.tags}">
+											<div class="container-tag">
+											<h:outputLabel value="#{tag.nome}"
+												 styleClass="tag-style"/>
+											</div>
+										</ui:repeat>												
+										<div class="card-title">
+											<h:outputLabel value="#{tarefa.nome}"
+											styleClass="title-tarefa"/>
+										</div>												
+									</p:card>												
+                                	<p:resetInput target=":f-projetoTarefa-dialog:gerencia-criarTarefa-projeto"/>
+								</p:commandLink>									
+							</p:dataScroller>
+							
+							<p:dataScroller id="ds-tarefas-projeto-atrasada" 
+								value="#{projetoMB.tarefas}"
+								var="tarefa"
+								rows="6">
+								
+								<f:facet name="header">
+									Atrasadas
+								</f:facet>
+								
+								<p:commandLink id="cl-abrir-tarefa-editar-atrasada"
+									update=":f-projetoTarefa-dialog:gerencia-criarTarefa-projeto"
+									oncomplete="PF('gerenciaCriarTarefaDialog').show()"
+									process="@this"
+									title="Abrir tarefa">
+									<f:setPropertyActionListener value="#{tarefa}"
+                                                 target="#{projetoMB.tarefa}"/>
+									<p:card>
+										<ui:repeat var="tag" value="#{tarefa.tags}">
+											<div class="container-tag">
+											<h:outputLabel value="#{tag.nome}"
+												 styleClass="tag-style"/>
+											</div>
+										</ui:repeat>												
+										<div class="card-title">
+											<h:outputLabel value="#{tarefa.nome}"
+											styleClass="title-tarefa"/>
+										</div>												
+									</p:card>												
+                                	<p:resetInput target=":f-projetoTarefa-dialog:gerencia-criarTarefa-projeto"/>
+								</p:commandLink>
+							</p:dataScroller>
+							
+							<p:dataScroller id="ds-tarefas-projeto-concluida" 
+								value="#{projetoMB.tarefas}"
+								var="tarefa"
+								rows="6">
+								
+								<f:facet name="header">
+									Concluídas
+								</f:facet>
+								
+								<p:commandLink id="cl-abrir-tarefa-editar-concluída"
+									update=":f-projetoTarefa-dialog:gerencia-criarTarefa-projeto"
+									oncomplete="PF('gerenciaCriarTarefaDialog').show()"
+									process="@this"
+									title="Abrir tarefa">
+									<f:setPropertyActionListener value="#{tarefa}"
+                                                 target="#{projetoMB.tarefa}"/>
+									<p:card>
+										<ui:repeat var="tag" value="#{tarefa.tags}">
+											<div class="container-tag">
+											<h:outputLabel value="#{tag.nome}"
+												 styleClass="tag-style"/>
+											</div>
+										</ui:repeat>												
+										<div class="card-title">
+											<h:outputLabel value="#{tarefa.nome}"
+											styleClass="title-tarefa"/>
+										</div>												
+									</p:card>												
+                                	<p:resetInput target=":f-projetoTarefa-dialog:gerencia-criarTarefa-projeto"/>
+								</p:commandLink>
+							</p:dataScroller>								
+						</p:panelGrid>									
+			    	</p:fieldset>
+			</p:panel>
+		</div>
+	</h:form>
+
+	<h:form id="f-projetoTarefa-dialog">
+
+		<p:dialog header="Adicionar Tarefa"
+				  showEffect="fade"
+				  modal="true"
+				  widgetVar="gerenciaCriarTarefaDialog"
+				  responsive="true"
+				  resizable="false">
+				  
+			<p:outputPanel id="gerencia-criarTarefa-projeto" 
+						   class="ui-fluid">
+				<p:outputPanel>
+					<div class="field">
+                        <p:outputLabel for="nome_tarefa"
+                        	styleClass="negrito">Nome: </p:outputLabel>
+                        <p:inputText id="nome_tarefa" 
+                        			 value="#{projetoMB.tarefa.nome}" 
+                        			 required="true" 
+                        			 requiredMessage="Defina o nome da tarefa"
+                        			 maxlength="1000"/>
+                    </div>
+                    <div class="field">
+                        <p:outputLabel for="descricao"
+                        	styleClass="negrito">Descrição: </p:outputLabel>
+                        <p:inputTextarea id="descricao" 
+                        				 value="#{projetoMB.tarefa.descricao}" 
+                        				 maxlength="3000"/>
+                    </div>
+                    <div class="field">
+                        <p:outputLabel for="peso"
+                        	styleClass="negrito">Peso: </p:outputLabel>
+                        <p:selectOneMenu id="peso"
+                        				 value="#{projetoMB.tarefa.peso}"			 				 
+										 requiredMessage="Escolha o peso da tarefa"
+										 autoWidth="true"
+										 required="true">
+							<f:selectItem itemLabel="SELECIONE UM PESO"
+										  noSelectionOption="true"/>
+							<f:selectItems value="#{projetoMB.listaPesos}"
+										   var="peso"
+										   itemValue="#{peso}"
+										   itemLabel="#{peso.nomePeso}"/>									
+						</p:selectOneMenu>		
+                    </div>
+                    <div class="field">
+                        <p:outputLabel for="data_entrega"
+                        	styleClass="negrito">Data de entrega: </p:outputLabel>
+                        <p:datePicker id="data_entrega" 
+                        			  value="#{projetoMB.tarefa.dataEntrega}"
+                        			  pattern="dd/MM/yyyy"
+                        			  timeZone="GMT-3"
+                        			  required="true"
+                        			  requiredMessage="Defina uma data para a entrega da tarefa"/>
+                    </div>
+                    
+                    <div class="field">
+                        <p:outputLabel for="tags"
+                        	styleClass="negrito">Tags: </p:outputLabel>
+                        <p:selectManyMenu id="tags"
+                        				 value="#{projetoMB.tarefa.tags}"
+                        				 converter="objectConverter"
+                        				 items="#{projetoMB.tags}"
+										 autoWidth="true">
+							<f:selectItem itemLabel="SELECIONE TAGS"
+										  noSelectionOption="true"/>
+							<f:selectItems value="#{projetoMB.tags}"
+										   var="tag"
+										   itemValue="#{tag}"
+										   itemLabel="#{tag.nome}"/>
+							<f:attribute name="collectionType" value="java.util.ArrayList"/>									
+						</p:selectManyMenu>
+                    </div>
+                    
+                    <div class="field">
+                    	<div class="botao-tag">
+							<p:commandButton id="cb-tag-tarefa"											  
+											 icon="pi pi-plus"
+											 value="Criar Tag"
+											 actionListener="#{projetoMB.criarNovaTag()}"
+											 update="gerencia-criarTag-tarefa f-projeto:messages"
+											 process="@this"
+											 oncomplete="PF('gerenciaCriarTagDialog').show()"
+											 alt="Criar Nova Tag"
+											 title="Nova Tag">
+								<p:resetInput target="gerencia-criarTag-tarefa"/>
+							</p:commandButton>
+						</div>							
+                    </div>
+                    
+				</p:outputPanel>
+			</p:outputPanel>
+			
+			<f:facet name="footer">
+				<div class="botoes-confirmar-cancelar-separar-projeto">
+	                <p:commandButton id="cb-criar-tarefa"
+	                				 value="Criar" 
+	                				 icon="pi pi-check" 
+	                				 actionListener="#{projetoMB.adicionarTarefa()}"
+	                    			 update="gerencia-criarTarefa-projeto" 
+	                    			 process="gerencia-criarTarefa-projeto @this" />
+                </div>
+                <p:commandButton id="cb-cancelar-criar-tarefa"
+                				 value="Cancelar" 
+                				 icon="pi pi-times" 
+                				 onclick="PF('gerenciaCriarTarefaDialog').hide()"
+                    			 class="ui-button-secondary" 
+                    			 type="button" />
+            </f:facet>		
 		
-			<h:form id="f-projeto">
-				<p:growl id="messages">
-					<p:autoUpdate />
-				</p:growl>
-			
-				<div class="container-p-projeto">
-					<p:panel id="pg-projeto"
-						styleClass="p_projeto">
-						<h:outputLabel id="title-projeto" 
-							value="#{projetoMB.projeto.nome}"
-							styleClass="title_projeto"/>
-							<!-- action deve redirecionar para a dashboard -->
-						<p:commandButton action="#{projetoMB.redirecionarDashboard()}"
-										 icon="pi pi-chevron-left"
-										 title="Voltar a dashboard"
-										 styleClass="cb-projeto-dashboard"/>
-						
-						<p:fieldset legend="Descrição" 
-							toggleable="true" 
-							toggleSpeed="500"
-							collapsed="true">
-            				<p:ajax event="toggle"
-            					update="messages"/>
-							<div class="container-descricao">
-								<h:outputLabel id="descricao" 
-											   value="#{projetoMB.projeto.descricao}"
-											   styleClass="descricao" />
-							</div>
-						</p:fieldset>			   
-								<p:fieldset legend="Tarefas">
-									<p:toolbar>
-										<p:toolbarGroup>
-											<span class="button-novo">
-												<p:commandButton id="cb-criarNovaTarefa-projeto"											  
-													 icon="pi pi-plus"
-													 value="Novo"
-													 actionListener="#{projetoMB.criarNova()}"
-													 update=":f-projetoTarefa-dialog:gerencia-criarTarefa-projeto"
-													 oncomplete="PF('gerenciaCriarTarefaDialog').show()"
-													 alt="Criar Nova Tarefa"
-													 title="Nova Tarefa"
-													 styleClass="button-novo">
-													<p:resetInput target=":f-projetoTarefa-dialog:gerencia-criarTarefa-projeto"/>
-												</p:commandButton>
-											</span>
-											<span>							
-												<p:commandButton id="cb-excluirTarefa-projeto"											  
-													 icon="pi pi-trash"
-													 value="#{projetoMB.mensagemBotaoExcluir}"
-													 oncomplete="PF('excluirTarefaDialog').show()"
-													 disabled="#{!dashboardMB.existeProjetoSelecionado}"
-													 update="@this"												 
-													 alt="Excluir Projeto"
-													 title="Excluir Projeto">
-												</p:commandButton>
-											</span>							
-										</p:toolbarGroup>
-									</p:toolbar>
-									<p:panelGrid id="pg-ds-container" 
-										columns="4" 
-										styleClass="pg-ds-tamanho-coluna" 
-										layout="grid">
-										
-										<p:dataScroller id="ds-tarefas-projeto-aberta" 
-											value="#{projetoMB.tarefas}"
-											var="tarefa"
-											rows="6">
-											
-											<f:facet name="header">
-												Abertas
-											</f:facet>
-											
-											<p:commandLink id="cl-abrir-tarefa-editar-aberta"
-												update=":f-projetoTarefa-dialog:gerencia-criarTarefa-projeto"
-												oncomplete="PF('gerenciaCriarTarefaDialog').show()"
-												process="@this"
-												title="Abrir tarefa">
-												<f:setPropertyActionListener value="#{tarefa}"
-			                                                 target="#{projetoMB.tarefa}"/>
-												<p:card>
-													<ui:repeat var="tag" value="#{tarefa.tags}">
-														<div class="container-tag">
-														<h:outputLabel value="#{tag.nome}"
-															 styleClass="tag-style"/>
-														</div>
-													</ui:repeat>												
-													<div class="card-title">
-														<h:outputLabel value="#{tarefa.nome}"
-														styleClass="title-tarefa"/>
-													</div>												
-												</p:card>												
-			                                	<p:resetInput target=":f-projetoTarefa-dialog:gerencia-criarTarefa-projeto"/>
-											</p:commandLink>					
-										</p:dataScroller>	
-										
-										<p:dataScroller id="ds-tarefas-projeto-em-andamento" 
-											value="#{projetoMB.tarefas}"
-											var="tarefa"
-											rows="6">
-											
-											<f:facet name="header">
-												Em andamento
-											</f:facet>
-											
-											<p:commandLink id="cl-abrir-tarefa-editar-emAndamento"
-												update=":f-projetoTarefa-dialog:gerencia-criarTarefa-projeto"
-												oncomplete="PF('gerenciaCriarTarefaDialog').show()"
-												process="@this"
-												title="Abrir tarefa">
-												<f:setPropertyActionListener value="#{tarefa}"
-			                                                 target="#{projetoMB.tarefa}"/>
-												<p:card>
-													<ui:repeat var="tag" value="#{tarefa.tags}">
-														<div class="container-tag">
-														<h:outputLabel value="#{tag.nome}"
-															 styleClass="tag-style"/>
-														</div>
-													</ui:repeat>												
-													<div class="card-title">
-														<h:outputLabel value="#{tarefa.nome}"
-														styleClass="title-tarefa"/>
-													</div>												
-												</p:card>												
-			                                	<p:resetInput target=":f-projetoTarefa-dialog:gerencia-criarTarefa-projeto"/>
-											</p:commandLink>									
-										</p:dataScroller>
-										
-										<p:dataScroller id="ds-tarefas-projeto-atrasada" 
-											value="#{projetoMB.tarefas}"
-											var="tarefa"
-											rows="6">
-											
-											<f:facet name="header">
-												Atrasadas
-											</f:facet>
-											
-											<p:commandLink id="cl-abrir-tarefa-editar-atrasada"
-												update=":f-projetoTarefa-dialog:gerencia-criarTarefa-projeto"
-												oncomplete="PF('gerenciaCriarTarefaDialog').show()"
-												process="@this"
-												title="Abrir tarefa">
-												<f:setPropertyActionListener value="#{tarefa}"
-			                                                 target="#{projetoMB.tarefa}"/>
-												<p:card>
-													<ui:repeat var="tag" value="#{tarefa.tags}">
-														<div class="container-tag">
-														<h:outputLabel value="#{tag.nome}"
-															 styleClass="tag-style"/>
-														</div>
-													</ui:repeat>												
-													<div class="card-title">
-														<h:outputLabel value="#{tarefa.nome}"
-														styleClass="title-tarefa"/>
-													</div>												
-												</p:card>												
-			                                	<p:resetInput target=":f-projetoTarefa-dialog:gerencia-criarTarefa-projeto"/>
-											</p:commandLink>
-										</p:dataScroller>
-										
-										<p:dataScroller id="ds-tarefas-projeto-concluida" 
-											value="#{projetoMB.tarefas}"
-											var="tarefa"
-											rows="6">
-											
-											<f:facet name="header">
-												Concluídas
-											</f:facet>
-											
-											<p:commandLink id="cl-abrir-tarefa-editar-concluída"
-												update=":f-projetoTarefa-dialog:gerencia-criarTarefa-projeto"
-												oncomplete="PF('gerenciaCriarTarefaDialog').show()"
-												process="@this"
-												title="Abrir tarefa">
-												<f:setPropertyActionListener value="#{tarefa}"
-			                                                 target="#{projetoMB.tarefa}"/>
-												<p:card>
-													<ui:repeat var="tag" value="#{tarefa.tags}">
-														<div class="container-tag">
-														<h:outputLabel value="#{tag.nome}"
-															 styleClass="tag-style"/>
-														</div>
-													</ui:repeat>												
-													<div class="card-title">
-														<h:outputLabel value="#{tarefa.nome}"
-														styleClass="title-tarefa"/>
-													</div>												
-												</p:card>												
-			                                	<p:resetInput target=":f-projetoTarefa-dialog:gerencia-criarTarefa-projeto"/>
-											</p:commandLink>
-										</p:dataScroller>								
-									</p:panelGrid>									
-						    	</p:fieldset>
-						</p:panel>
-					</div>
-				</h:form>
-			
-				<h:form id="f-projetoTarefa-dialog">
-			
-					<p:dialog header="Adicionar Tarefa"
-							  showEffect="fade"
-							  modal="true"
-							  widgetVar="gerenciaCriarTarefaDialog"
-							  responsive="true"
-							  resizable="false">
-							  
-						<p:outputPanel id="gerencia-criarTarefa-projeto" 
-									   class="ui-fluid">
-							<p:outputPanel>
-								<div class="field">
-			                        <p:outputLabel for="nome_tarefa"
-			                        	styleClass="negrito">Nome: </p:outputLabel>
-			                        <p:inputText id="nome_tarefa" 
-			                        			 value="#{projetoMB.tarefa.nome}" 
-			                        			 required="true" 
-			                        			 requiredMessage="Defina o nome da tarefa"
-			                        			 maxlength="1000"/>
-			                    </div>
-			                    <div class="field">
-			                        <p:outputLabel for="descricao"
-			                        	styleClass="negrito">Descrição: </p:outputLabel>
-			                        <p:inputTextarea id="descricao" 
-			                        				 value="#{projetoMB.tarefa.descricao}" 
-			                        				 maxlength="3000"/>
-			                    </div>
-			                    <div class="field">
-			                        <p:outputLabel for="peso"
-			                        	styleClass="negrito">Peso: </p:outputLabel>
-			                        <p:selectOneMenu id="peso"
-			                        				 value="#{projetoMB.tarefa.peso}"			 				 
-													 requiredMessage="Escolha o peso da tarefa"
-													 autoWidth="true"
-													 required="true">
-										<f:selectItem itemLabel="SELECIONE UM PESO"
-													  noSelectionOption="true"/>
-										<f:selectItems value="#{projetoMB.listaPesos}"
-													   var="peso"
-													   itemValue="#{peso}"
-													   itemLabel="#{peso.nomePeso}"/>									
-									</p:selectOneMenu>		
-			                    </div>
-			                    <div class="field">
-			                        <p:outputLabel for="data_entrega"
-			                        	styleClass="negrito">Data de entrega: </p:outputLabel>
-			                        <p:datePicker id="data_entrega" 
-			                        			  value="#{projetoMB.tarefa.dataEntrega}"
-			                        			  pattern="dd/MM/yyyy"
-			                        			  timeZone="GMT-3"
-			                        			  required="true"
-			                        			  requiredMessage="Defina uma data para a entrega da tarefa"/>
-			                    </div>
-			                    
-			                    <div class="field">
-			                        <p:outputLabel for="tags"
-			                        	styleClass="negrito">Tags: </p:outputLabel>
-			                        <p:selectManyMenu id="tags"
-			                        				 value="#{projetoMB.tarefa.tags}"
-			                        				 converter="objectConverter"
-			                        				 items="#{projetoMB.tags}"
-													 autoWidth="true">
-										<f:selectItem itemLabel="SELECIONE TAGS"
-													  noSelectionOption="true"/>
-										<f:selectItems value="#{projetoMB.tags}"
-													   var="tag"
-													   itemValue="#{tag}"
-													   itemLabel="#{tag.nome}"/>
-										<f:attribute name="collectionType" value="java.util.ArrayList"/>									
-									</p:selectManyMenu>
-			                    </div>
-			                    
-			                    <div class="field">
-			                    	<div class="botao-tag">
-										<p:commandButton id="cb-tag-tarefa"											  
-														 icon="pi pi-plus"
-														 value="Criar Tag"
-														 actionListener="#{projetoMB.criarNovaTag()}"
-														 update="gerencia-criarTag-tarefa f-projeto:messages"
-														 process="@this"
-														 oncomplete="PF('gerenciaCriarTagDialog').show()"
-														 alt="Criar Nova Tag"
-														 title="Nova Tag">
-											<p:resetInput target="gerencia-criarTag-tarefa"/>
-										</p:commandButton>
-									</div>							
-			                    </div>
-			                    
-							</p:outputPanel>
-						</p:outputPanel>
-						
-						<f:facet name="footer">
-							<div class="botoes-confirmar-cancelar-separar-projeto">
-				                <p:commandButton id="cb-criar-tarefa"
-				                				 value="Criar" 
-				                				 icon="pi pi-check" 
-				                				 actionListener="#{projetoMB.adicionarTarefa()}"
-				                    			 update="gerencia-criarTarefa-projeto" 
-				                    			 process="gerencia-criarTarefa-projeto @this" />
-			                </div>
-			                <p:commandButton id="cb-cancelar-criar-tarefa"
-			                				 value="Cancelar" 
-			                				 icon="pi pi-times" 
-			                				 onclick="PF('gerenciaCriarTarefaDialog').hide()"
-			                    			 class="ui-button-secondary" 
-			                    			 type="button" />
-			            </f:facet>		
-					
-					</p:dialog>
-					
-					<p:dialog header="Nova Tag"
-							  showEffect="fade"
-							  modal="true"
-							  widgetVar="gerenciaCriarTagDialog"
-							  responsive="true">
-							  
-						<p:outputPanel id="gerencia-criarTag-tarefa" 
-									   class="ui-fluid">
-							<p:outputPanel>
-								<div class="field">
-			                        <p:outputLabel for="nome_tag"
-			                        	styleClass="negrito">Nome: </p:outputLabel>
-			                        <p:inputText id="nome_tag" 
-			                        			 value="#{projetoMB.tag.nome}" 
-			                        			 required="true"
-			                        			 requiredMessage="Defina o nome da tag" />
-			                    </div>
-			                </p:outputPanel>
-			           </p:outputPanel>
-			           
-			           <f:facet name="footer">
-			           		<div class="botoes-confirmar-cancelar-separar-tag">
-				                <p:commandButton id="cb-criar-tag"
-				                				 value="Criar" 
-				                				 icon="pi pi-check" 
-				                				 actionListener="#{projetoMB.adicionarTag()}"
-				                    			 update="gerencia-criarTag-tarefa" 
-				                    			 process="gerencia-criarTag-tarefa @this" />
-			                </div>
-			                <p:commandButton id="cb-cancelar-criar-tag"
-			                				 value="Cancelar" 
-			                				 icon="pi pi-times" 
-			                				 onclick="PF('projeto').hide()"
-			                    			 class="ui-button-secondary" 
-			                    			 type="button" />
-			            </f:facet>	  
-					</p:dialog>
-					
-					<p:confirmDialog id="excluir-tarefa-dialog"
-								     widgetVar="excluirTarefaDialog" 
-									 showEffect="fade"
-									 width="300"
-									 message="Deseja excluir esta tarefa?"
-									 header="Confirm"
-									 severity="warn">
-									 
-						 <p:commandButton value="Sim" 
-						 				  icon="pi pi-check" 
-						 				  actionListener="#{projetoMB.removerTarefa()}"
-			                			  process="@this" 
-			                			  update="f-projeto"
-			                			  oncomplete="PF('excluirTarefaDialog').hide()" />
-			            <p:commandButton value="Não" 
-			            				 type="button" 
-			            				 styleClass="ui-button-secondary" 
-			            				 icon="pi pi-times"
-			                			 onclick="PF('excluirTarefaDialog').hide()" />		
-					</p:confirmDialog>	
-				</h:form>				
-		</ui:define>
-	</ui:composition>
-
-
-	
+		</p:dialog>
+		
+		<p:dialog header="Nova Tag"
+				  showEffect="fade"
+				  modal="true"
+				  widgetVar="gerenciaCriarTagDialog"
+				  responsive="true">
+				  
+			<p:outputPanel id="gerencia-criarTag-tarefa" 
+						   class="ui-fluid">
+				<p:outputPanel>
+					<div class="field">
+                        <p:outputLabel for="nome_tag"
+                        	styleClass="negrito">Nome: </p:outputLabel>
+                        <p:inputText id="nome_tag" 
+                        			 value="#{projetoMB.tag.nome}" 
+                        			 required="true"
+                        			 requiredMessage="Defina o nome da tag" />
+                    </div>
+                </p:outputPanel>
+           </p:outputPanel>
+           
+           <f:facet name="footer">
+           		<div class="botoes-confirmar-cancelar-separar-tag">
+	                <p:commandButton id="cb-criar-tag"
+	                				 value="Criar" 
+	                				 icon="pi pi-check" 
+	                				 actionListener="#{projetoMB.adicionarTag()}"
+	                    			 update="gerencia-criarTag-tarefa" 
+	                    			 process="gerencia-criarTag-tarefa @this" />
+                </div>
+                <p:commandButton id="cb-cancelar-criar-tag"
+                				 value="Cancelar" 
+                				 icon="pi pi-times" 
+                				 onclick="PF('projeto').hide()"
+                    			 class="ui-button-secondary" 
+                    			 type="button" />
+            </f:facet>	  
+		</p:dialog>
+		
+		<p:confirmDialog id="excluir-tarefa-dialog"
+					     widgetVar="excluirTarefaDialog" 
+						 showEffect="fade"
+						 width="300"
+						 message="Deseja excluir esta tarefa?"
+						 header="Confirm"
+						 severity="warn">
+						 
+			 <p:commandButton value="Sim" 
+			 				  icon="pi pi-check" 
+			 				  actionListener="#{projetoMB.removerTarefa()}"
+                			  process="@this" 
+                			  update="f-projeto"
+                			  oncomplete="PF('excluirTarefaDialog').hide()" />
+            <p:commandButton value="Não" 
+            				 type="button" 
+            				 styleClass="ui-button-secondary" 
+            				 icon="pi pi-times"
+                			 onclick="PF('excluirTarefaDialog').hide()" />		
+		</p:confirmDialog>	
+	</h:form>				
 </h:body>
 </html>
