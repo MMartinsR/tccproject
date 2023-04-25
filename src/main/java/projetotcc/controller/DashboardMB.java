@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.faces.context.FacesContext;
 import javax.faces.view.ViewScoped;
@@ -15,10 +16,12 @@ import org.primefaces.event.SelectEvent;
 import org.primefaces.event.UnselectEvent;
 
 import projetotcc.exception.CadastrarException;
+import projetotcc.exception.DatabaseException;
 import projetotcc.model.Projeto;
 import projetotcc.model.Usuario;
 import projetotcc.service.ProjetoService;
 import projetotcc.service.UsuarioService;
+import projetotcc.utility.GeradorCodigo;
 import projetotcc.utility.Message;
 import projetotcc.utility.RegexUtil;
 
@@ -45,9 +48,9 @@ public class DashboardMB implements Serializable {
 	
 	private String dataCriada;
 	private Usuario usuario = new Usuario();
-	private boolean participando = false;
 	private String mensagemBotaoExcluir = "Excluir";
 	private boolean existeProjetoSelecionado;
+	private String codigoParticipacao;
 	
 	
 
@@ -66,7 +69,6 @@ public class DashboardMB implements Serializable {
 		this.projetoSelecionadoProprio = new Projeto();
 		projetoSelecionadoProprio.setDataCriacao(new Date());
 		projetoSelecionadoProprio.setCriador(usuario.getNomeExibicao());
-		setParticipando(false);
 	}
 	
 	public void salvarProjeto() {
@@ -76,17 +78,17 @@ public class DashboardMB implements Serializable {
 		List<Usuario> usuariosEx = new ArrayList<Usuario>();
 		usuariosEx.add(usuarioEx);
 		
-		
-		
 		try {
 			validarNomeProjeto(projetoSelecionadoProprio.getNome());
-			
+
 			if (projetoSelecionadoProprio.getId() == null) {
+				String codigo = gerarCodigo();
 				
 				projetoSelecionadoProprio.setUsuarios(usuariosEx);
+				projetoSelecionadoProprio.setCodigo(codigo);
 				
 				projetoService.salvar(projetoSelecionadoProprio);
-				Message.info("Projeto '" + projetoSelecionadoProprio.getNome() + "' salvo com sucesso!");
+				Message.info("Projeto '" + projetoSelecionadoProprio.getNome() + "' criado com sucesso!");
 				
 			} else {
 				
@@ -95,17 +97,16 @@ public class DashboardMB implements Serializable {
 			}
 			
 			carregaProjetosProprios();
-			filtraProjetosParticipados();
 			
 			PrimeFaces.current().executeScript("PF('gerenciaProjetoDashboardDialog').hide()");
 			PrimeFaces.current().ajax().update("f-dashboard:messages", 
 					"f-dashboard:dt-meusProjetos-dashboard");
 
+		}  catch (DatabaseException e) {
+			Message.erro("Ocorreu um erro ao salvar este projeto");
 		} catch (CadastrarException e) {
 			Message.erro("Não foi possível cadastrar o projeto - " + e.getMessage());
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		} 
 		
 	}
 
@@ -114,6 +115,24 @@ public class DashboardMB implements Serializable {
 			
 			throw new CadastrarException("Nome inválido.");
 		}
+	}
+	
+	private String gerarCodigo() {
+		
+		String codigo;
+		
+		Projeto projetoExisteCodigo = null;
+				
+		do {
+			codigo = GeradorCodigo.geraCodigoProjeto();			
+
+			projetoExisteCodigo = projetoService.buscarPorCodigo(codigo);
+		
+		} while (projetoExisteCodigo != null);		
+		
+		return codigo;
+		
+		
 	}
 	
 	public void removerProjeto() {
@@ -126,12 +145,13 @@ public class DashboardMB implements Serializable {
 			setExisteProjetoSelecionado(false);
 			
 			carregaProjetosProprios();
-			filtraProjetosParticipados();
 			
 			PrimeFaces.current().ajax().update("f-dashboard:messages", 
 					"f-dashboard:dt-meusProjetos-dashboard");
 			
 		} catch (CadastrarException e) {
+			Message.erro(e.getMessage());
+		} catch (DatabaseException e) {
 			Message.erro(e.getMessage());
 		} catch (Exception e) {
 			Message.erro(e.getMessage());
@@ -145,7 +165,6 @@ public class DashboardMB implements Serializable {
 		if (this.projetosProprios == null) {
 			Message.erro("Ocorreu um erro ao carregar os projetos");
 		}
-
 
 	}
 	
@@ -168,15 +187,74 @@ public class DashboardMB implements Serializable {
 	}
 	
 	public void filtraProjetosParticipados() {
+		List<Projeto> projetos = usuarioService.buscarProjetosPorUsuarioId(this.usuario.getId());
 		
-	}
-	
-	public void participarProjeto() {
-		participando = true;
+		if(projetos == null) {
+			Message.erro("Ocorreu um erro ao carregar os projetos");
+		}
+		
+		this.projetosParticipados = projetos.stream()
+				.filter(p -> !p.getCriador().equals(this.usuario.getNomeExibicao()) )
+				.collect(Collectors.toList());		
 	}
 	
 	public void participar() {
 		
+		try {
+			Projeto projetoExiste = projetoService.buscarPorCodigo(codigoParticipacao);
+			
+			Projeto projetoComParticipantes = validaParticipacaoUsuario(projetoExiste);
+			
+			if (projetoComParticipantes == null) {
+				return;
+			}
+			
+			List<Usuario> usuariosNovos = projetoComParticipantes.getUsuarios();
+			usuariosNovos.add(this.usuario);
+			projetoComParticipantes.setUsuarios(usuariosNovos);
+			
+			projetoService.atualizar(projetoComParticipantes);
+			
+			Message.info(this.usuario.getNomeExibicao() 
+					+ " está agora participando do projeto " + projetoComParticipantes.getNome() + "!");			
+
+			filtraProjetosParticipados();
+			
+			PrimeFaces.current().executeScript("PF('gerenciaProjetoParticiparDashboard').hide()");
+			PrimeFaces.current().ajax().update("f-dashboard:messages", 
+					"f-dashboard:dt-projetosParticipo-dashboard");			
+			
+		} catch (CadastrarException e) {
+			Message.erro("Não foi possível completar a participação.");
+		}  catch (DatabaseException e) {
+			Message.erro("Ocorreu um erro ao participar neste projeto.");
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+	}
+
+
+	private Projeto validaParticipacaoUsuario(Projeto projeto) {
+		
+		if (projeto == null) {
+			Message.erro("Este é um código inválido");
+			return null;
+		}
+		
+		Projeto projetoParticipantes = projetoService.buscarProjetoComParticipantesPorId(projeto.getId());
+		
+		boolean usuarioParticipanteExiste = projetoParticipantes.getUsuarios()
+			.stream()
+			.anyMatch(u -> u.getNomeExibicao()
+					.equals(this.usuario.getNomeExibicao()));
+		
+		if (usuarioParticipanteExiste) {
+			Message.erro("Este projeto consta em sua lista");
+			return null;
+		}
+		
+		return projetoParticipantes;
 	}
 	
 	public void linhaSelecionada(SelectEvent<Projeto> event) {
@@ -224,14 +302,6 @@ public class DashboardMB implements Serializable {
 		this.dataCriada = dataCriada;
 	}
 
-	public boolean isParticipando() {
-		return participando;
-	}
-
-	public void setParticipando(boolean participando) {
-		this.participando = participando;
-	}
-
 	public String getMensagemBotaoExcluir() {
 		return mensagemBotaoExcluir;
 	}
@@ -246,6 +316,16 @@ public class DashboardMB implements Serializable {
 
 	public void setExisteProjetoSelecionado(boolean existeProjetoSelecionado) {
 		this.existeProjetoSelecionado = existeProjetoSelecionado;
+	}
+
+
+	public String getCodigoParticipacao() {
+		return codigoParticipacao;
+	}
+
+
+	public void setCodigoParticipacao(String codigoParticipacao) {
+		this.codigoParticipacao = codigoParticipacao;
 	}
 	
 

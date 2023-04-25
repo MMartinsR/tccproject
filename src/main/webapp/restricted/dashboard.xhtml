@@ -37,6 +37,7 @@
 								 icon="pi pi-sign-out"
 								 title="Logout"
 								 styleClass="b-sign_out"/>
+								 
 				<div id="div-greet-dashboard"
 					 class="div-greet">
 					 <div class="div-greet-left">
@@ -146,9 +147,7 @@
 									 paginatorAlwaysVisible="false"
 									 rows="3"
 									 rowKey="#{projetosParticipo.id}"
-									 selection="#{dashboardMB.projetoSelecionadoParticipado}"
-									 selectionMode="single"
-									 styleClass="coluna-nome,coluna-botoes">
+									 styleClass="coluna-nome,coluna-botoes-part">
 									 
 							<f:facet name="header">
 								<span>
@@ -156,7 +155,6 @@
 													 icon="pi pi-users"
 													 value="Participar"
 													 update=":f-dashboard-dialog:gerencia-conteudo-projeto"
-													 actionListener="#{dashboardMB.participarProjeto()}"
 													 oncomplete="PF('gerenciaProjetoParticiparDashboard').show()"
 													 alt="Participar em Projeto"
 													 title="Participar">
@@ -166,23 +164,16 @@
 								
 							</f:facet>
 							
-							<p:ajax event="rowSelect" 
-									listener="#{dashboardMB.linhaSelecionada}"
-									update=" f-dashboard:messages" />
-	            			<p:ajax event="rowUnselect" 
-	            					listener="#{dashboardMB.linhaDeselecionada}"
-	            					update=" f-dashboard:messages" />
-							
 							<p:column>
 								<h:outputText value="#{projetosParticipo.nome}" 
 											  title="Para limpar a seleção: CTRL + Clique"/>
 							</p:column>
 							
-							<p:column style="width:3rem;text-align: center">
+							<p:column styleClass="coluna-botoes-part">
 	                			<p:commandButton icon="pi pi-folder-open" 
-	                                			 title="Abrir Projeto">
-	<!--                     			<f:setPropertyActionListener value="#{projeto}" -->
-	<!--                                                  target="#{dtSelectionView.selectedProduct}"/> -->
+	                                			 title="Abrir Projeto"
+	                                			 action="#{dashboardMB.redirecionarParaProjeto(projetosParticipo)}"
+	                                			 style="margin-right: 2px;">
 	                			</p:commandButton>
 	            			</p:column>					
 							</p:dataTable>
@@ -213,6 +204,8 @@
                         <p:tooltip for="nome" 
 							my="left center" 
 							at="right bottom"
+							showEvent="focus" 
+							hideEvent="blur"
 							showEffect="clip" 
 							hideEffect="fold">
 							<h:outputText value="Nome do projeto deve conter: " escape="false" />
@@ -286,7 +279,8 @@
                         			   styleClass="negrito">Código do projeto:</p:outputLabel>
                         <p:inputText id="codigo_projeto" 
                         			 title="Código do Projeto"
-                        			 placeholder="@Azult12825" 
+                        			 value="#{dashboardMB.codigoParticipacao}"
+                        			 placeholder="@Au9Gsi2oy" 
                         			 required="true" />
                     </div>
                     

@@ -13,6 +13,7 @@ import projetotcc.dao.UsuarioDAO;
 import projetotcc.exception.AutenticacaoException;
 import projetotcc.exception.CadastrarException;
 import projetotcc.exception.DatabaseException;
+import projetotcc.model.Projeto;
 import projetotcc.model.Usuario;
 import projetotcc.utility.Message;
 
@@ -118,7 +119,17 @@ public class UsuarioService implements Serializable {
 		}
 		
 	}
-
+	
+	public List<Projeto> buscarProjetosPorUsuarioId(Long id){
+		
+		try {
+			return usuarioDAO.findByUsuarioProjetos(id);
+		} catch (DatabaseException e) {
+			Message.erro(e.getMessage());
+			return null;
+		}
+		
+	}
 	
 	// Verifica se o usuário existe ou se pode logar
 	public Usuario usuarioPodeLogar(String email, String senha) {
@@ -135,7 +146,7 @@ public class UsuarioService implements Serializable {
 				
 				if (retorno != null) {
 					return retorno;
-				}
+				} 
 			} else {
 				throw new AutenticacaoException("Ocorreu um erro ao autenticar este usuário.");
 			}

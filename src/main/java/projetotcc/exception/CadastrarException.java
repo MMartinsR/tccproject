@@ -7,5 +7,9 @@ public class CadastrarException extends RuntimeException {
 	public CadastrarException(String msg) {
 		super(msg);
 	}
+	
+	public CadastrarException(Exception e) {
+		super(e);
+	}
 
 }

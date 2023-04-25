@@ -19,6 +19,7 @@ import projetotcc.exception.CadastrarException;
 import projetotcc.model.Projeto;
 import projetotcc.model.Tag;
 import projetotcc.model.Tarefa;
+import projetotcc.model.Usuario;
 import projetotcc.service.ProjetoService;
 import projetotcc.service.TagService;
 import projetotcc.service.TarefaService;
@@ -52,6 +53,7 @@ public class ProjetoMB implements Serializable {
 	private List<Tag> tags = new ArrayList<>();
 	private List<PesoEnum> listaPesos;
 	private List<StatusEnum> listaStatus;
+	private List<Usuario> participantes = new ArrayList<>();
 	
 	private Long projetoId;	
 	private String mensagemBotaoExcluir = "Excluir";
@@ -65,14 +67,16 @@ public class ProjetoMB implements Serializable {
 		carregaTags();
 		carregaTarefas();
 		preenchePesos();
-		preencheStatus();		
+		preencheStatus();
 
 	}
 	
 	private void carregaProjetoSelecionado() {
 		// Valida se id do projeto foi passado pela url e se foi, busca por esse projeto para popular a página do projeto.
+		// Busca usuarios do projeto através de um join fetch
 		if (projetoId != null) {
 			projeto = projetoService.buscarPorId(projetoId);
+			participantes = projetoService.buscarParticipantesPorProjetoId(projetoId);
 		}
 	}
 	
@@ -232,6 +236,14 @@ public class ProjetoMB implements Serializable {
 
 	public List<StatusEnum> getListaStatus() {
 		return listaStatus;
+	}
+
+	public List<Usuario> getParticipantes() {
+		return participantes;
+	}
+
+	public void setParticipantes(List<Usuario> participantes) {
+		this.participantes = participantes;
 	}
 
 	public Long getProjetoId() {

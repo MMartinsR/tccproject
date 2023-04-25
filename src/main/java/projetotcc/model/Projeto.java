@@ -25,7 +25,16 @@ import javax.persistence.TemporalType;
 @NamedQueries(value = {
 		@NamedQuery(name = "Projeto.findByCriador",
 				query = "SELECT p FROM Projeto p "
-				+ "WHERE p.criador = :criador")
+				+ "WHERE p.criador = :criador"),
+		@NamedQuery(name = "Projeto.findByCodigo",
+		query = "SELECT p FROM Projeto p "
+		+ "WHERE p.codigo = :codigo"),
+		@NamedQuery(name = "Projeto.findByProjeto",
+		query = "SELECT p FROM Projeto p "
+		+ "INNER JOIN FETCH p.usuarios "
+		+ "WHERE p.id = :id")
+		
+		
 })
 public class Projeto implements Serializable, Base {
 
@@ -41,6 +50,8 @@ public class Projeto implements Serializable, Base {
 	private Date dataCriacao;
 	@Column(nullable = false)
 	private String criador;
+	@Column(length = 10, unique = true, nullable = false)
+	private String codigo;
 	
 	@ManyToMany
 	@JoinTable(name = "tb_projeto_usuario",
@@ -93,6 +104,14 @@ public class Projeto implements Serializable, Base {
 		this.criador = criador;
 	}
 	
+	public String getCodigo() {
+		return codigo;
+	}
+
+	public void setCodigo(String codigo) {
+		this.codigo = codigo;
+	}
+
 	public List<Usuario> getUsuarios() {
 		return usuarios;
 	}

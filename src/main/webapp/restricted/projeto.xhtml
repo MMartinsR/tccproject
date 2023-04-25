@@ -39,7 +39,12 @@
 							 title="Voltar a dashboard"
 							 styleClass="cb-projeto-dashboard"/>
 			
-			<p:fieldset legend="Descrição" 
+			<p:commandButton oncomplete="PF('gerenciaExibirParticipantesDialog').show()"
+							 value="P"
+							 title="Participantes"
+							 styleClass="cb-projeto-dashboard"/>
+			
+			<p:fieldset legend="Detalhes" 
 				toggleable="true" 
 				toggleSpeed="500"
 				collapsed="true">
@@ -49,7 +54,22 @@
 					<h:outputLabel id="descricao" 
 								   value="#{projetoMB.projeto.descricao}"
 								   styleClass="descricao" />
+				
+				<br/>
+				
+					<div class="text-align: right !important">			   
+						<h:outputLabel id="codigo" 
+										   value="#{projetoMB.projeto.codigo}"/>
+					</div>
+					
+					<div>
+						<h:outputLabel id="criador" 
+										   value="#{projetoMB.projeto.criador}"/>
+					</div>	
 				</div>
+				
+				
+				
 			</p:fieldset>			   
 					<p:fieldset legend="Tarefas">
 						<p:toolbar>
@@ -333,7 +353,8 @@
 				  showEffect="fade"
 				  modal="true"
 				  widgetVar="gerenciaCriarTagDialog"
-				  responsive="true">
+				  responsive="true"
+				  resizable="false">
 				  
 			<p:outputPanel id="gerencia-criarTag-tarefa" 
 						   class="ui-fluid">
@@ -365,6 +386,35 @@
                     			 class="ui-button-secondary" 
                     			 type="button" />
             </f:facet>	  
+		</p:dialog>
+		
+		<p:dialog header="Participantes"
+				  showEffect="fade"
+				  modal="true"
+				  widgetVar="gerenciaExibirParticipantesDialog"
+				  responsive="true"
+				  resizable="false"
+				  width="500">
+				  
+			<p:dataTable id="dt-participantes"
+				widgetVar="datatableParticipantes"
+				value="#{projetoMB.participantes}"
+				var="participante"
+				lazy="false"
+				reflow="true">
+				
+				<!-- 
+				value="#{projetoMB.projeto.usuarios}" -->
+			
+				<p:column>
+					<h:outputText value="#{participante.nomeExibicao}" />
+				</p:column>
+				
+				<p:column>
+					<p:commandButton value="Remover" icon="pi pi-minus" />
+				</p:column>
+			
+			</p:dataTable>
 		</p:dialog>
 		
 		<p:confirmDialog id="excluir-tarefa-dialog"

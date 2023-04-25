@@ -9,7 +9,9 @@ import projetotcc.dao.DAO;
 import projetotcc.dao.ProjetoDAO;
 import projetotcc.exception.CadastrarException;
 import projetotcc.exception.DatabaseException;
+import projetotcc.exception.SemResultadoException;
 import projetotcc.model.Projeto;
+import projetotcc.model.Usuario;
 import projetotcc.utility.Message;
 
 public class ProjetoService implements Serializable {
@@ -34,7 +36,7 @@ public class ProjetoService implements Serializable {
 			projetoDao.salvar(projeto);
 			
 		} catch (DatabaseException e) {
-			Message.erro(e.getMessage());
+			throw new DatabaseException(e);
 		}			
 		
 	}
@@ -51,7 +53,7 @@ public class ProjetoService implements Serializable {
 			projetoDao.atualizar(projeto);
 			
 		} catch (DatabaseException e) {
-			Message.erro(e.getMessage());
+			throw new DatabaseException(e);
 		}
 
 	}
@@ -69,7 +71,7 @@ public class ProjetoService implements Serializable {
 			projetoDao.remover(Projeto.class, projeto.getId());
 			
 		} catch (DatabaseException e) {
-			Message.erro(e.getMessage());
+			throw new DatabaseException(e);
 		}	
 		
 	}
@@ -113,8 +115,37 @@ public class ProjetoService implements Serializable {
 		
 	}
 	
+	public List<Usuario> buscarParticipantesPorProjetoId(Long id) {
+		
+		try {
+			return projetoDAO.findByProjeto(id);
+		} catch (DatabaseException e) {
+			Message.erro(e.getMessage());
+			return null;
+		}
+		
+	}
 	
+	public Projeto buscarProjetoComParticipantesPorId(Long id) {
+		
+		try {
+			return projetoDAO.findByProjetoParticipantes(id);
+		} catch (DatabaseException e) {
+			Message.erro(e.getMessage());
+			return null;
+		}
+		
+	}
 	
-	
-
+	public Projeto buscarPorCodigo(String codigo) {
+		
+		try {
+			return projetoDAO.findByCodigo(codigo);
+		} catch (DatabaseException e) {
+			throw new DatabaseException(e);
+		} catch (SemResultadoException e) {
+			System.out.println("Código gerado é válido");
+			return null;
+		}
+	}
 }

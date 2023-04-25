@@ -7,6 +7,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
 import projetotcc.exception.DatabaseException;
+import projetotcc.model.Projeto;
 import projetotcc.model.Usuario;
 
 public class UsuarioDAO implements Serializable {
@@ -101,9 +102,27 @@ public class UsuarioDAO implements Serializable {
 			throw new DatabaseException("Ocorreu um erro ao buscar este nome de exibição");
 		} finally {
 			manager.close();
-		}
+		}		
 		
+	}
+	
+	public List<Projeto> findByUsuarioProjetos(Long id) {
 		
+		EntityManager manager = ConnectionFactory.getEntityManager();
+		
+		try {
+			Query query = manager.createNamedQuery("Projeto.findByUsuario");
+			query.setParameter("id", id);
+			
+			List<Projeto> objetos = ((Usuario) query.getSingleResult()).getProjetos();
+			
+			return objetos;			
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new DatabaseException("Ocorreu um erro ao buscar os projetos deste usuário");
+		} finally {
+			manager.close();
+		}		
 	}
 	
 }
