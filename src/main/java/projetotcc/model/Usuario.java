@@ -28,7 +28,13 @@ import javax.persistence.Table;
 				+ "WHERE c.email = :email"),
 		@NamedQuery(name = "Usuario.findByNomeExibicao",
 				query = "SELECT c FROM Usuario c "
-				+ "WHERE c.nomeExibicao = :nomeExibicao")})
+				+ "WHERE c.nomeExibicao = :nomeExibicao"),
+		@NamedQuery(name = "Projeto.findByUsuario",
+				query = "SELECT u FROM Usuario u "
+				+ "INNER JOIN FETCH u.projetos "
+				+ "WHERE u.id = :id")
+})
+
 public class Usuario implements Serializable, Base {
 
 	private static final long serialVersionUID = 1L;
@@ -46,7 +52,7 @@ public class Usuario implements Serializable, Base {
 	@ManyToMany(mappedBy = "usuarios")
 	private List<Projeto> projetos = new ArrayList<Projeto>();
 	
-	
+
 	public Long getId() {
 		return id;
 	}
@@ -77,6 +83,14 @@ public class Usuario implements Serializable, Base {
 	
 	public void setSenha(String senha) {
 		this.senha = senha;
+	}
+	
+	public List<Projeto> getProjetos() {
+		return projetos;
+	}
+
+	public void setProjetos(List<Projeto> projetos) {
+		this.projetos = projetos;
 	}
 	
 

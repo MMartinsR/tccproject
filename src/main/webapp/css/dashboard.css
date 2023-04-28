@@ -215,6 +215,15 @@ body .ui-widget .negrito {
 	text-align: center; 
 }
 
+.coluna-nome {
+	width: 50%;	
+}	
+
+.coluna-botoes-part {
+	width: 4.50rem;
+	text-align: center; 
+}
+
 td {
 	vertical-align: top;
 }

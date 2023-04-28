@@ -9,6 +9,7 @@ public class Message {
 
 		FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, msg, null);
 		FacesContext.getCurrentInstance().addMessage(null, message);
+		FacesContext.getCurrentInstance().getExternalContext().getFlash().setKeepMessages(true);
 
 	}
 
@@ -16,6 +17,7 @@ public class Message {
 
 		FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR, msg, null);
 		FacesContext.getCurrentInstance().addMessage(null, message);
+		FacesContext.getCurrentInstance().getExternalContext().getFlash().setKeepMessages(true);
 
 	}
 
@@ -23,6 +25,7 @@ public class Message {
 
 		FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_WARN, msg, null);
 		FacesContext.getCurrentInstance().addMessage(null, message);
+		FacesContext.getCurrentInstance().getExternalContext().getFlash().setKeepMessages(true);
 
 	}
 	
@@ -30,6 +33,7 @@ public class Message {
 		
 		FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, msg, detail);
 		FacesContext.getCurrentInstance().addMessage(null, message);
+		FacesContext.getCurrentInstance().getExternalContext().getFlash().setKeepMessages(true);
 	}
 
 }

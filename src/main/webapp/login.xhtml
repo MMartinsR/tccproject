@@ -20,7 +20,7 @@
 <h:body>
 	
 	<h:form id="f-login">
-		<p:growl id="messages" sticky="true">
+		<p:growl id="messages">
 			<p:autoUpdate/>
 		</p:growl>
 		
@@ -62,7 +62,9 @@
 								    toggleMask="true" />						
 						<p:tooltip for="senha" 
 							my="left center" 
-							at="right bottom"
+							at="right bottom"							
+							showEvent="focus" 
+							hideEvent="blur"
 							showEffect="clip" 
 							hideEffect="fold">
 							<h:outputText value="A senha deve conter: " escape="false" />
@@ -146,6 +148,8 @@
 					<p:tooltip for="senha-cadastro" 
 							my="left center" 
 							at="right bottom"
+							showEvent="focus" 
+							hideEvent="blur"
 							showEffect="clip" 
 							hideEffect="fold">
 							<h:outputText value="A senha deve conter: " escape="false" />
@@ -178,6 +182,8 @@
 					<p:tooltip for="nome-exibicao-cadastro" 
 							my="left center" 
 							at="right bottom"
+							showEvent="focus" 
+							hideEvent="blur"
 							showEffect="clip" 
 							hideEffect="fold">
 							<h:outputText value="Nome de usuário deve conter: " escape="false" />
@@ -246,6 +252,8 @@
 						<p:tooltip for="senha-resetar" 
 							my="left center" 
 							at="right bottom"
+							showEvent="focus" 
+							hideEvent="blur"
 							showEffect="clip" 
 							hideEffect="fold">
 							<h:outputText value="A senha deve conter: " escape="false" />

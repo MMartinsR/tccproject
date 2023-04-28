@@ -7,6 +7,7 @@ import javax.mail.Session;
 import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
+import javax.mail.internet.MimeMultipart;
 
 import projetotcc.exception.EmailException;
 
@@ -18,7 +19,7 @@ public class EmailUtil {
 	 * Porta para SSL: 465
 	 */
 	
-	public static void enviarEmail(Session sessao, String paraEmail, String assunto, String corpo) {
+	public static void enviarEmail(Session sessao, String paraEmail, String assunto, MimeMultipart corpo) {
 		
 		try {
 			
@@ -35,7 +36,7 @@ public class EmailUtil {
 			
 			msg.setSubject(assunto, "UTF-8");
 			
-			msg.setText(corpo, "UTF-8");
+			msg.setContent(corpo, "UTF-8");
 			
 			msg.setSentDate(new Date());
 			

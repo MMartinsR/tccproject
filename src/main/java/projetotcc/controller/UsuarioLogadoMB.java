@@ -1,5 +1,7 @@
 package projetotcc.controller;
 
+import java.io.File;
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -10,14 +12,18 @@ import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.mail.Authenticator;
+import javax.mail.MessagingException;
 import javax.mail.PasswordAuthentication;
 import javax.mail.Session;
+import javax.mail.internet.MimeBodyPart;
+import javax.mail.internet.MimeMultipart;
+import javax.servlet.ServletContext;
 
 import org.primefaces.PrimeFaces;
 
+import projetotcc.exception.AutenticacaoException;
 import projetotcc.exception.CadastrarException;
 import projetotcc.exception.EmailException;
-import projetotcc.exception.AutenticacaoException;
 import projetotcc.model.Usuario;
 import projetotcc.service.UsuarioService;
 import projetotcc.utility.EmailUtil;
@@ -239,7 +245,8 @@ public class UsuarioLogadoMB implements Serializable{
 			System.out.println("Sessao criada");
 			
 			EmailUtil.enviarEmail(sessao, email, "Redefinição de Credenciais", corpoEmail(novaSenha));
-		} catch (EmailException e) {
+			
+		} catch (IOException |MessagingException | EmailException e) {
 			Message.erro("Ocorreu um erro ao enviar o email");
 			e.printStackTrace();
 		}
@@ -247,18 +254,49 @@ public class UsuarioLogadoMB implements Serializable{
 		
 	}
 	
-	private String corpoEmail(String senha) {
+	private MimeMultipart corpoEmail(String senha) throws MessagingException, IOException {
 		
-		String corpoEmail = "Olá!\n\n";
+		MimeMultipart mimeCorpo = new MimeMultipart();
 		
-		corpoEmail += "Foi feito um pedido de redefinição de senha para o email " 
-				   + this.usuario.getEmail() + "! Segue a nova credencial solicitada!!" + "\n\n";
+		ServletContext context = (ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext();		
+		String imgPath = context.getRealPath("/img/logoEmail.png");
 		
-		corpoEmail += "Nova senha: " + senha + "\n\n\n";
+		MimeBodyPart imgPart = new MimeBodyPart();
+		imgPart.attachFile(new File(imgPath));
+		imgPart.setContentID("<logoEmail>");
 		
-		corpoEmail += "Atenciosamente, equipe Teamwork Tasks";
+		String htmlCorpo = "<div>";
+			   htmlCorpo += "<div style='display: flex; justify-content: center; margin: 50px 0px 0px 0px;'>";
+			   htmlCorpo += "<h2 style='background-color: #f2fee8; padding: 30px 0px 10px 0px; width: 500px; margin: 0px; "
+			   		+ "border-radius: 10px 10px 0px 0px; font-family: Arial, sans-serif; text-align: center;'>Olá!</h2></div>"; 
+			   htmlCorpo += "<div style='display: flex; justify-content: center; margin-bottom: 0px;'>";
+			   htmlCorpo += "<p style='background-color: #f2fee8; padding: 20px 0px 10px 0px; width: 500px; margin: 0px; "
+			   		+ "font-family: Arial, sans-serif; font-size: 20px; text-align: center;'>"
+			   		+ "Foi feito um pedido de redefinição de senha para o email " + this.usuario.getEmail() + "! </p> <br/></div>";			   
+			   htmlCorpo += "<div style='display: flex; justify-content: center; margin-bottom: 0px;'>";			   
+			   htmlCorpo += "<p style='background-color: #f2fee8; padding: 20px 0px 10px 0px; width: 500px; margin: 0px; font-family: Arial, "
+			   		+ "sans-serif; font-size: 20px; text-align: center;'>Segue a nova credencial solicitada!!</p> <br/></div>";			   
+			   htmlCorpo += "<div style='display: flex; justify-content: center;'>";			   
+			   htmlCorpo += "<p style='background-color: #f2fee8; padding: 20px 0px 10px 0px; width: 500px; margin: 0px; font-family: Arial, "
+			   		+ "sans-serif; font-size: 20px; text-align: center;'>Nova senha: " + senha + "</p><br/><br/></div>";			   
+			   htmlCorpo += "<div style='display: flex; justify-content: center;'>";			   
+			   htmlCorpo += "<p style='background-color: #f2fee8; padding: 20px 0px 10px 0px; width: 500px; margin: 0px; font-family: Arial, sans-serif; "
+			   		+ "font-size: 20px; text-align: center;'>Atenciosamente, equipe Teamwork Tasks</p></div>";		 	   
+			   htmlCorpo += "<div style='display: flex; justify-content: center;'>";
+			   htmlCorpo += "<div style='background-color: #f2fee8; padding: 20px 0px 10px 0px; width: 500px; margin: 0px; text-align: center;'>";
+			   htmlCorpo += "<img style='width: 200px;' src='cid:logoEmail' />";
+			   htmlCorpo += "</div>";
+			   htmlCorpo += "</div>";
+			   htmlCorpo += "</div>";
 		
-		return corpoEmail;		
+		MimeBodyPart htmlPart = new MimeBodyPart();
+		
+		htmlPart.setContent(htmlCorpo, "text/html");
+		
+		mimeCorpo.addBodyPart(htmlPart);
+		mimeCorpo.addBodyPart(imgPart);
+		
+		return mimeCorpo;		
 	}
 	
 

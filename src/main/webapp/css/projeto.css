@@ -268,6 +268,11 @@ div.botoes-confirmar-exclusao-separar {
 	display: inline-block;
 }
 
+div.botoes-confirmar-exclusao-participante {
+	margin-right: 172px;
+	display: inline-block;
+}
+
 body .ui-dialog .ui-dialog-footer button{
 	margin: 0px;
 }
@@ -291,6 +296,47 @@ td {
 .ui-outputlabel .ui-outputlabel-rfi {
 	margin: 0px;
 }
+
+body .ui-datatable thead th {
+	color: #fff;
+	background: #fff;
+	padding: 0rem;
+	border: none;
+}
+
+body .ui-datatable .ui-datatable-data .ui-datatable-even {
+	background-color: #fff;
+}
+
+body .ui-datatable .ui-datatable-data>tr>td {	
+	text-align: left;
+	vertical-align: middle;	
+	border: none;	
+	padding: 10px 5px 10px 5px;
+}
+
+.ui-datatable-tablewrapper {
+	border-radius: 8px;
+}
+
+body .ui-dialog .ui-dialog-content {
+	padding: 15px;
+}
+
+.coluna-tipo-p {
+	width: 110px;
+}
+
+.coluna-botao-p {
+	width: 55px;
+}
+
+.botoes-inserir-cancelar-adicionar-participados {
+	margin-right: 134px;
+	display: inline-block;
+}
+
+
 
 
 
