@@ -33,16 +33,21 @@
 			<h:outputLabel id="title-projeto" 
 				value="#{projetoMB.projeto.nome}"
 				styleClass="title_projeto"/>
-				<!-- action deve redirecionar para a dashboard -->
 			<p:commandButton action="#{projetoMB.redirecionarDashboard()}"
 							 icon="pi pi-chevron-left"
 							 title="Voltar a dashboard"
 							 styleClass="cb-projeto-dashboard"/>
 			
-			<p:commandButton oncomplete="PF('gerenciaExibirParticipantesDialog').show()"
+			<p:commandButton id="botao-participantes"
+				oncomplete="PF('gerenciaExibirParticipantesDialog').show()"
 							 value="P"
 							 title="Participantes"
 							 styleClass="cb-projeto-dashboard"/>
+				
+			<p:tooltip for="botao-participantes"				
+				showEvent="mouseover"
+				hideEvent="blur"
+				position="left">Visualizar participantes</p:tooltip>
 			
 			<p:fieldset legend="Detalhes" 
 				toggleable="true" 
@@ -53,8 +58,7 @@
 				<div class="container-descricao">
 					<h:outputLabel id="descricao" 
 								   value="#{projetoMB.projeto.descricao}"
-								   styleClass="descricao" />
-				
+								   styleClass="descricao" />				
 				<br/>
 				
 					<div class="text-align: right !important">			   
@@ -67,8 +71,6 @@
 										   value="#{projetoMB.projeto.criador}"/>
 					</div>	
 				</div>
-				
-				
 				
 			</p:fieldset>			   
 					<p:fieldset legend="Tarefas">
@@ -300,7 +302,8 @@
                         				 value="#{projetoMB.tarefa.tags}"
                         				 converter="objectConverter"
                         				 items="#{projetoMB.tags}"
-										 autoWidth="true">
+										 autoWidth="true"
+										 metaKeySelection="false">
 							<f:selectItem itemLabel="SELECIONE TAGS"
 										  noSelectionOption="true"/>
 							<f:selectItems value="#{projetoMB.tags}"
@@ -388,35 +391,6 @@
             </f:facet>	  
 		</p:dialog>
 		
-		<p:dialog header="Participantes"
-				  showEffect="fade"
-				  modal="true"
-				  widgetVar="gerenciaExibirParticipantesDialog"
-				  responsive="true"
-				  resizable="false"
-				  width="500">
-				  
-			<p:dataTable id="dt-participantes"
-				widgetVar="datatableParticipantes"
-				value="#{projetoMB.participantes}"
-				var="participante"
-				lazy="false"
-				reflow="true">
-				
-				<!-- 
-				value="#{projetoMB.projeto.usuarios}" -->
-			
-				<p:column>
-					<h:outputText value="#{participante.nomeExibicao}" />
-				</p:column>
-				
-				<p:column>
-					<p:commandButton value="Remover" icon="pi pi-minus" />
-				</p:column>
-			
-			</p:dataTable>
-		</p:dialog>
-		
 		<p:confirmDialog id="excluir-tarefa-dialog"
 					     widgetVar="excluirTarefaDialog" 
 						 showEffect="fade"
@@ -436,7 +410,127 @@
             				 styleClass="ui-button-secondary" 
             				 icon="pi pi-times"
                 			 onclick="PF('excluirTarefaDialog').hide()" />		
-		</p:confirmDialog>	
+		</p:confirmDialog>
+	</h:form>
+	
+	<h:form id="f-projetoParticipante-dialog">
+		<p:dialog header="Participantes"
+				  showEffect="fade"
+				  modal="true"
+				  widgetVar="gerenciaExibirParticipantesDialog"
+				  responsive="true"
+				  resizable="false"
+				  width="420"
+				  draggable="false">
+				  
+			<p:dataTable id="dt-participantes"
+				widgetVar="datatableParticipantes"
+				value="#{projetoMB.projeto.usuarios}"
+				var="participante"
+				lazy="false"
+				reflow="true"
+				styleClass="coluna-nome-p">
+				
+				<p:column styleClass="coluna-botao-p">
+					<p:commandButton id="botao-adicionar-participantes-criador"
+						icon="pi pi-plus"
+						rendered="#{projetoMB.validarPermissaoAdicionarParticipante(participante)}"
+						update="f-projetoParticipante-dialog f-projeto:messages"
+						process="@this"
+						oncomplete="PF('gerenciaAdicionarParticipantesDialog').show()">
+						<p:resetInput target="dt-participantes"/>	
+					</p:commandButton>					
+					<p:tooltip for="botao-adicionar-participantes-criador">Adicionar participante</p:tooltip>
+					
+					<p:commandButton id="botao-remover-criador"
+						style="color: red; background-color: white; border-color: red;"
+						icon="pi pi-minus"
+						rendered="#{projetoMB.validarPermissaoRemoverUsuarios(participante)}"
+						actionListener="#{projetoMB.removerParticipante(participante)}"
+						process="@this">
+						<p:confirm header="Confirmação" 
+							message="Confirma a remoção deste participante?" 
+							icon="pi pi-exclamation-triangle" />
+					</p:commandButton>
+					<p:tooltip for="botao-remover-criador" 
+						rendered="#{projetoMB.filtrarTooltipParticipantes(participante)}">Remover Participante</p:tooltip>
+						
+					<p:commandButton id="botao-remover-participante"
+						style="color: red; background-color: white; border-color: red;"
+						icon="pi pi-minus"
+						rendered="#{projetoMB.validarPermissaoSairProjeto(participante)}"
+						actionListener="#{projetoMB.removerParticipante(participante)}"
+						process="@this">
+						<p:confirm header="Confirmação" 
+							message="Confirma saída deste projeto?" 
+							icon="pi pi-exclamation-triangle" />
+					</p:commandButton>					
+					<p:tooltip for="botao-remover-participante" 
+						rendered="#{!projetoMB.filtrarTooltipParticipantes(participante)}">Sair do Projeto</p:tooltip>
+				</p:column>
+			
+				<p:column>
+					<h:outputText value="#{participante.nomeExibicao}" />
+				</p:column>
+				
+				<p:column styleClass="coluna-tipo-p">
+					<p:outputLabel value="Proprietário"
+						rendered="#{projetoMB.validarTipoParticipanteCriador(participante)}"/>
+					<p:outputLabel value="Participante"
+						rendered="#{!projetoMB.validarTipoParticipanteCriador(participante)}"/>
+				</p:column>
+			
+			</p:dataTable>
+		</p:dialog>
+		
+		<p:confirmDialog global="true" showEffect="fade" hideEffect="fade" responsive="true" width="350">
+			<div class="botoes-confirmar-exclusao-participante">
+				<p:commandButton value="Sim" type="button" styleClass="ui-confirmdialog-yes"/>
+			</div>
+			<p:commandButton value="Não" type="button" styleClass="ui-confirmdialog-no ui-button-secondary"/>
+		</p:confirmDialog>
+		
+		<p:dialog header="Adicionar participante"
+				  showEffect="fade"
+				  modal="true"
+				  widgetVar="gerenciaAdicionarParticipantesDialog"
+				  responsive="true"
+				  resizable="false"
+				  width="400"
+				  draggable="false">
+			
+			<p:outputPanel id="gerencia-adicionar-participantes" 
+						   class="ui-fluid">
+				<p:outputPanel>
+					 <div class="field">
+                        <p:outputLabel for="email_participante"
+                        			   styleClass="negrito">Email do usuário:</p:outputLabel>
+                        <p:inputText id="email_participante" 
+                        			 title="Email do novo participante"
+                        			 value="#{projetoMB.emailParticipante}"
+                        			 placeholder="exemplo@exemplo.com" 
+                        			 required="true"
+                        			 requiredMessage="Deve inserir o email do participante para adiciona-lo." /> 
+                    </div>                    
+				</p:outputPanel>
+			</p:outputPanel>
+			<f:facet name="footer">
+				<div class="botoes-inserir-cancelar-adicionar-participados">
+	                <p:commandButton value="Inserir" 
+	                				 icon="pi pi-check" 	                				 
+	                				 actionListener="#{projetoMB.adicionarParticipante()}"
+	                    			 update="gerencia-adicionar-participantes f-projeto:messages" 
+	                    			 process="gerencia-adicionar-participantes @this"/>	                    			 
+	            </div>
+                <p:commandButton value="Cancelar" 
+                				 icon="pi pi-times"
+                				 onmousedown="PF('gerenciaExibirParticipantesDialog').show()" 
+                				 onclick="PF('gerenciaAdicionarParticipantesDialog').hide()"
+                    			 process="@this"
+                    			 class="ui-button-secondary" 
+                    			 type="button" />
+            </f:facet>		
+		</p:dialog>
 	</h:form>				
 </h:body>
 </html>

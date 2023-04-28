@@ -77,7 +77,8 @@
 									 rowKey="#{meuProjeto.id}"
 									 selection="#{dashboardMB.projetoSelecionadoProprio}"
 									 selectionMode="single" 
-									 styleClass="coluna-nome,coluna-botoes">
+									 styleClass="coluna-nome,coluna-botoes"
+									 rowSelectMode="add">
 									 
 							<f:facet name="header">
 								<span>
@@ -281,7 +282,8 @@
                         			 title="Código do Projeto"
                         			 value="#{dashboardMB.codigoParticipacao}"
                         			 placeholder="@Au9Gsi2oy" 
-                        			 required="true" />
+                        			 required="true"
+                        			 requiredMessage="Deve inserir o código do projeto" />
                     </div>
                     
 				</p:outputPanel>
@@ -307,7 +309,8 @@
 					     widgetVar="excluirProjetoDialog" 
 						 showEffect="fade"
 						 width="320"
-						 message="Deseja excluir este projeto?"
+						 message="Todos os participantes perderão suas contribuições caso confirme a exlusão. 
+						 Deseja excluir este projeto?"
 						 header="Excluir"
 						 severity="warn">
 			

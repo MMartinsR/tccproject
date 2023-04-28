@@ -17,6 +17,7 @@ import org.primefaces.event.UnselectEvent;
 
 import projetotcc.exception.CadastrarException;
 import projetotcc.exception.DatabaseException;
+import projetotcc.exception.SemResultadoException;
 import projetotcc.model.Projeto;
 import projetotcc.model.Usuario;
 import projetotcc.service.ProjetoService;
@@ -187,15 +188,23 @@ public class DashboardMB implements Serializable {
 	}
 	
 	public void filtraProjetosParticipados() {
-		List<Projeto> projetos = usuarioService.buscarProjetosPorUsuarioId(this.usuario.getId());
 		
-		if(projetos == null) {
-			Message.erro("Ocorreu um erro ao carregar os projetos");
+		try {
+			List<Projeto> projetos = usuarioService.buscarProjetosPorUsuarioId(this.usuario.getId());
+			
+			if(projetos == null) {
+				Message.erro("Ocorreu um erro ao carregar os projetos");
+				return;
+			} 
+			
+			this.projetosParticipados = projetos.stream()
+					.filter(p -> !p.getCriador().equals(this.usuario.getNomeExibicao()) )
+					.collect(Collectors.toList());
+			
+		} catch (SemResultadoException e) {
+				return;
 		}
-		
-		this.projetosParticipados = projetos.stream()
-				.filter(p -> !p.getCriador().equals(this.usuario.getNomeExibicao()) )
-				.collect(Collectors.toList());		
+				
 	}
 	
 	public void participar() {
@@ -209,9 +218,7 @@ public class DashboardMB implements Serializable {
 				return;
 			}
 			
-			List<Usuario> usuariosNovos = projetoComParticipantes.getUsuarios();
-			usuariosNovos.add(this.usuario);
-			projetoComParticipantes.setUsuarios(usuariosNovos);
+			projetoComParticipantes.getUsuarios().add(this.usuario);
 			
 			projetoService.atualizar(projetoComParticipantes);
 			

@@ -16,6 +16,8 @@ import org.primefaces.PrimeFaces;
 import projetotcc.enums.PesoEnum;
 import projetotcc.enums.StatusEnum;
 import projetotcc.exception.CadastrarException;
+import projetotcc.exception.DatabaseException;
+import projetotcc.exception.SemResultadoException;
 import projetotcc.model.Projeto;
 import projetotcc.model.Tag;
 import projetotcc.model.Tarefa;
@@ -23,7 +25,9 @@ import projetotcc.model.Usuario;
 import projetotcc.service.ProjetoService;
 import projetotcc.service.TagService;
 import projetotcc.service.TarefaService;
+import projetotcc.service.UsuarioService;
 import projetotcc.utility.Message;
+import projetotcc.utility.RegexUtil;
 
 @Named
 @ViewScoped
@@ -49,6 +53,9 @@ public class ProjetoMB implements Serializable {
 	@Inject
 	private TagService tagService;
 	
+	@Inject
+	private UsuarioService usuarioService;
+	
 	private List<Tarefa> tarefas = new ArrayList<>();
 	private List<Tag> tags = new ArrayList<>();
 	private List<PesoEnum> listaPesos;
@@ -58,9 +65,16 @@ public class ProjetoMB implements Serializable {
 	private Long projetoId;	
 	private String mensagemBotaoExcluir = "Excluir";
 	private boolean tarefasValidadas;
+	private boolean participante;
+	private boolean criador;
+	private Usuario usuario = new Usuario();
+	private String emailParticipante;
 	
 	
 	public void init() {		
+		System.out.println("Carregando Projeto");
+		this.usuario = (Usuario) FacesContext.getCurrentInstance()
+				.getExternalContext().getSessionMap().get("usuarioLogado");
 		
 		carregaProjetoSelecionado();
 		validaTarefas();
@@ -75,14 +89,111 @@ public class ProjetoMB implements Serializable {
 		// Valida se id do projeto foi passado pela url e se foi, busca por esse projeto para popular a página do projeto.
 		// Busca usuarios do projeto através de um join fetch
 		if (projetoId != null) {
-			projeto = projetoService.buscarPorId(projetoId);
-			participantes = projetoService.buscarParticipantesPorProjetoId(projetoId);
+			projeto = projetoService.buscarProjetoComParticipantesPorId(projetoId);
 		}
 	}
 	
-	private void carregaTarefas() {
-		tarefas = tarefaService.listarTodos();
+	// Valida se o usuário passado é o criador desse projeto
+	public boolean validarTipoParticipanteCriador(Usuario participante) {
+		return participante.getNomeExibicao().equals(projeto.getCriador());
+	}
+	
+	// Valida se o usuario é criador e logo tem permissao de adicionar participante
+	public boolean validarPermissaoAdicionarParticipante(Usuario participante) {
+		return participante.getNomeExibicao().equals(projeto.getCriador()) 
+				&& participante.getNomeExibicao().equals(this.usuario.getNomeExibicao());
+	}
+	
+	public void adicionarParticipante() {
 		
+		try {
+			if (RegexUtil.emailInvalido(emailParticipante)) {
+				Message.erro("E-mail inválido. Verifique se o e-mail informado está correto e tente novamente.");
+				return;
+			}
+			
+			Usuario usuarioCadastrado = usuarioService.buscarPorEmail(emailParticipante);
+			
+			if (usuarioCadastrado == null) {				
+				return;
+			}
+			
+			if (projeto.getUsuarios().stream().anyMatch(u -> 
+				u.getNomeExibicao().equals(usuarioCadastrado.getNomeExibicao()))) {
+				Message.erro("O usuário informado já participa neste projeto.");
+				return;
+			}
+			
+			projeto.getUsuarios().add(usuarioCadastrado);
+			
+			projetoService.atualizar(projeto);		
+			
+			Message.info("O usuário '" + usuarioCadastrado.getNomeExibicao() 
+				+ "' foi adicionado como participante no projeto '" + projeto.getNome() + "'.");
+			
+			PrimeFaces.current().executeScript("PF('gerenciaAdicionarParticipantesDialog').hide()");
+			PrimeFaces.current().executeScript("PF('gerenciaExibirParticipantesDialog').show()");
+			PrimeFaces.current().ajax().update("f-projeto:messages", "f-projetoParticipante-dialog:dt-participantes");
+		} catch (SemResultadoException e) {
+			Message.erro("Este usuário não está cadastrado em nosso sistema. Verifique o email informado.");
+		}
+	}
+
+	// Valida se o usuario é participante no projeto, logo apenas pode retirar seu próprio usuário.
+	public boolean validarPermissaoSairProjeto(Usuario participante) {			
+		return !projeto.getCriador().equals(this.usuario.getNomeExibicao()) 
+				&& participante.getNomeExibicao().equals(this.usuario.getNomeExibicao());
+	}
+	
+	// Valida se usuario é criador, logo pode remover qualquer personagem menos ele mesmo.
+	public boolean validarPermissaoRemoverUsuarios(Usuario participante) {
+		return projeto.getCriador().equals(this.usuario.getNomeExibicao()) 
+				&& !participante.getNomeExibicao().equals(this.usuario.getNomeExibicao());
+	}
+	
+	// Permite configurar qual tooltip será exibido.
+	public boolean filtrarTooltipParticipantes(Usuario participante) {
+		return this.usuario.getNomeExibicao().equals(projeto.getCriador());
+	}
+	
+	public void removerParticipante(Usuario participante) {
+		
+		try {
+			
+			if (projeto.getCriador().equals(this.usuario.getNomeExibicao())) {
+				
+				projeto.getUsuarios().remove(participante);
+				
+				projetoService.atualizar(projeto);
+				
+				Message.info("Participante removido com sucesso!");
+
+				PrimeFaces.current().ajax().update("f-projeto:messages", "f-projetoParticipante-dialog:dt-participantes");
+			} else {
+				if (!participante.getNomeExibicao().equals(this.usuario.getNomeExibicao())) {
+					Message.erro("Apenas o criador do projeto tem permissão para remover qualquer participante.");
+					return;
+				}
+				projeto.getUsuarios().remove(participante);
+				
+				projetoService.atualizar(projeto);
+				
+				Message.info("Deixou de participar no projeto '" + projeto.getNome() + "'!");
+				
+				redirecionarDashboard();				
+			}
+			
+		} catch (CadastrarException e) {
+			Message.erro(e.getMessage());
+		} catch (DatabaseException e) {
+			Message.erro(e.getMessage());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	private void carregaTarefas() {
+		tarefas = tarefaService.listarTodos();		
 	}
 	
 	private void carregaTags() {
@@ -270,6 +381,28 @@ public class ProjetoMB implements Serializable {
 		this.tarefasValidadas = tarefasValidadas;
 	}
 
+	public boolean isParticipante() {
+		return participante;
+	}
 
+	public void setParticipante(boolean participante) {
+		this.participante = participante;
+	}
+
+	public boolean isCriador() {
+		return criador;
+	}
+
+	public void setCriador(boolean criador) {
+		this.criador = criador;
+	}
+
+	public String getEmailParticipante() {
+		return emailParticipante;
+	}
+
+	public void setEmailParticipante(String emailParticipante) {
+		this.emailParticipante = emailParticipante;
+	}
 
 }
