@@ -13,6 +13,7 @@ import projetotcc.dao.UsuarioDAO;
 import projetotcc.exception.AutenticacaoException;
 import projetotcc.exception.CadastrarException;
 import projetotcc.exception.DatabaseException;
+import projetotcc.exception.SemResultadoException;
 import projetotcc.model.Projeto;
 import projetotcc.model.Usuario;
 import projetotcc.utility.Message;
@@ -56,24 +57,29 @@ public class UsuarioService implements Serializable {
 	
 	private void validarUsuarioEmailExiste(Usuario usuario) throws CadastrarException {
 		
-		Usuario usuarioExiste;
-
-		usuarioExiste = usuarioDAO.findByEmail(usuario.getEmail());
+			try {
+				
+				Usuario usuarioExiste;
 		
-		if (usuarioExiste != null) {
-			usuario.setEmail(null);
-			
-			throw new CadastrarException("Este e-mail já se encontra cadastrado.");
-		} else {
-			Message.info("Este e-mail é valido.");
-		}
+				usuarioExiste = usuarioDAO.findByEmail(usuario.getEmail());
+				
+				if (usuarioExiste != null) {
+					usuario.setEmail(null);
+					
+					throw new CadastrarException("Este e-mail já se encontra cadastrado.");
+				}
+
+			} catch (SemResultadoException e) {
+				System.out.println("Este e-mail é valido.");
+			} catch (DatabaseException e) {
+				Message.erro(e.getMessage());
+			}
 
 	}
 	
 	private void validarUsuarioNomeExiste(Usuario usuario) throws CadastrarException {		
-
 		Usuario nomeUsuarioDisponivel;
-			
+		
 		nomeUsuarioDisponivel = usuarioDAO.findByNomeExibicao(usuario.getNomeExibicao());
 		
 		if (nomeUsuarioDisponivel != null) {
@@ -81,7 +87,7 @@ public class UsuarioService implements Serializable {
 			
 			throw new CadastrarException("Este nome de usuário não está disponível.");
 		} else {
-			Message.info("Este nome de usuário é valido.");
+			System.out.println("Este nome de usuário é valido.");
 		}
 
 	}
@@ -116,14 +122,27 @@ public class UsuarioService implements Serializable {
 		} catch (DatabaseException e) {
 			Message.erro(e.getMessage() + " o usuário.");
 			return null;
-		}
+		}		
+	}
+	
+	public Usuario buscarPorEmail(String email){
 		
+		try {
+			return usuarioDAO.findByEmail(email);
+		} catch (SemResultadoException e) {
+			throw new SemResultadoException(e);
+		} catch (DatabaseException e) {
+			Message.erro(e.getMessage() + " o usuário.");
+			return null;
+		}		
 	}
 	
 	public List<Projeto> buscarProjetosPorUsuarioId(Long id){
 		
 		try {
 			return usuarioDAO.findByUsuarioProjetos(id);
+		} catch (SemResultadoException e) {
+			throw new SemResultadoException(e);
 		} catch (DatabaseException e) {
 			Message.erro(e.getMessage());
 			return null;

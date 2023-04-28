@@ -4,9 +4,11 @@ import java.io.Serializable;
 import java.util.List;
 
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
 import projetotcc.exception.DatabaseException;
+import projetotcc.exception.SemResultadoException;
 import projetotcc.model.Projeto;
 import projetotcc.model.Usuario;
 
@@ -70,11 +72,10 @@ public class UsuarioDAO implements Serializable {
 			Query query = manager.createNamedQuery("Usuario.findByEmail");
 			query.setParameter("email", email);
 
-			@SuppressWarnings("unchecked")
-			List<Usuario> listObjetos = query.getResultList();
-			return listObjetos.get(0);
-		} catch (IndexOutOfBoundsException e) {
-			return null;
+			Usuario objeto = (Usuario) query.getSingleResult();
+			return objeto;
+		} catch (NoResultException e) {
+			throw new SemResultadoException(e);
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new DatabaseException("Ocorreu um erro ao buscar este email");
@@ -117,6 +118,8 @@ public class UsuarioDAO implements Serializable {
 			List<Projeto> objetos = ((Usuario) query.getSingleResult()).getProjetos();
 			
 			return objetos;			
+		} catch (NoResultException e) {
+			throw new SemResultadoException(e);
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new DatabaseException("Ocorreu um erro ao buscar os projetos deste usuário");
