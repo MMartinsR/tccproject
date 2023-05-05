@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.faces.context.FacesContext;
 import javax.faces.view.ViewScoped;
@@ -13,7 +14,8 @@ import javax.inject.Named;
 
 import org.primefaces.PrimeFaces;
 
-import projetotcc.enums.PesoEnum;
+import projetotcc.enums.CorEnum;
+import projetotcc.enums.PrioridadeEnum;
 import projetotcc.enums.StatusEnum;
 import projetotcc.exception.CadastrarException;
 import projetotcc.exception.DatabaseException;
@@ -58,9 +60,15 @@ public class ProjetoMB implements Serializable {
 	
 	private List<Tarefa> tarefas = new ArrayList<>();
 	private List<Tag> tags = new ArrayList<>();
-	private List<PesoEnum> listaPesos;
+	private List<PrioridadeEnum> listaPrioridades;
 	private List<StatusEnum> listaStatus;
 	private List<Usuario> participantes = new ArrayList<>();
+	
+	private List<Tarefa> abertas;
+	private List<Tarefa> emDesenvolvimento;
+	private List<Tarefa> atrasadas;
+	private List<Tarefa> concluidas;
+	private List<CorEnum> cores;	
 	
 	private Long projetoId;	
 	private String mensagemBotaoExcluir = "Excluir";
@@ -69,6 +77,7 @@ public class ProjetoMB implements Serializable {
 	private boolean criador;
 	private Usuario usuario = new Usuario();
 	private String emailParticipante;
+	private String corSelecionada;
 	
 	
 	public void init() {		
@@ -132,6 +141,7 @@ public class ProjetoMB implements Serializable {
 				+ "' foi adicionado como participante no projeto '" + projeto.getNome() + "'.");
 			
 			PrimeFaces.current().executeScript("PF('gerenciaAdicionarParticipantesDialog').hide()");
+			setEmailParticipante(null);
 			PrimeFaces.current().executeScript("PF('gerenciaExibirParticipantesDialog').show()");
 			PrimeFaces.current().ajax().update("f-projeto:messages", "f-projetoParticipante-dialog:dt-participantes");
 		} catch (SemResultadoException e) {
@@ -193,11 +203,37 @@ public class ProjetoMB implements Serializable {
 	}
 
 	private void carregaTarefas() {
-		tarefas = tarefaService.listarTodos();		
+		tarefas = tarefaService.listarTodos();
+		
+		abertas = tarefas.stream()
+				.filter(ta -> ta.getStatus() == StatusEnum.ABERTA).collect(Collectors.toList());
+		emDesenvolvimento = tarefas.stream()
+				.filter(te -> te.getStatus() == StatusEnum.EM_DESENVOLVIMENTO).collect(Collectors.toList());
+		atrasadas = tarefas.stream()
+				.filter(tat -> tat.getStatus() == StatusEnum.ATRASADA).collect(Collectors.toList());
+		concluidas = tarefas.stream()
+				.filter(tc -> tc.getStatus() == StatusEnum.CONCLUIDA).collect(Collectors.toList());
+		
+		for (Tarefa ab : abertas) {
+			System.out.println("Aberta: " + ab.getNome());
+		}
+		
+		for (Tarefa ed : emDesenvolvimento) {
+			System.out.println("Em Desenvolvimento: " + ed.getNome());
+		}
+		
+		for (Tarefa at : atrasadas) {
+			System.out.println("Atrasada: " + at.getNome());
+		}
+		
+		for (Tarefa c : concluidas) {
+			System.out.println("Concluída: " + c.getNome());
+		}
 	}
 	
 	private void carregaTags() {
 		tags = tagService.listarTodos();
+		cores = Arrays.asList(CorEnum.values());
 	}
 	
 	private void validaTarefas() {
@@ -269,6 +305,22 @@ public class ProjetoMB implements Serializable {
 	public void adicionarTag() {
 		
 		try {
+			if (nomeVazio()) {
+				Message.erro("O nome da tag deve estar preenchido.");
+				return;
+			}
+		
+			if (RegexUtil.nomeTagInvalida(tag.getNome())) {
+				Message.erro("O nome escolhido tem caracteres inválidos.");
+				return;
+			}
+			
+			if(corSelecionada == null) {
+				Message.erro("Selecione uma cor para a nova tag");
+				return;
+			}
+			
+			tag.setCor(corSelecionada);
 			
 			tagService.salvar(tag);
 			
@@ -286,6 +338,10 @@ public class ProjetoMB implements Serializable {
 		PrimeFaces.current().ajax().update("f-projeto:messages", "f-projetoTarefa-dialog:tags");
 	}
 	
+	private boolean nomeVazio() {
+		return (tag.getNome().trim().isEmpty() || tag.getNome() == null);
+	}
+	
 	public void redirecionarDashboard() {
 		
 		try {
@@ -301,13 +357,12 @@ public class ProjetoMB implements Serializable {
 	}
 	
 	public void preenchePesos() {
-		listaPesos = Arrays.asList(PesoEnum.values());
+		listaPrioridades = Arrays.asList(PrioridadeEnum.values());
 	}
 	
 	public void preencheStatus() {
 		listaStatus = Arrays.asList(StatusEnum.values());
-	}
-	
+	}	
 	
 	public Projeto getProjeto() {
 		return projeto;
@@ -341,8 +396,8 @@ public class ProjetoMB implements Serializable {
 		return tags;
 	}
 
-	public List<PesoEnum> getListaPesos() {
-		return listaPesos;
+	public List<PrioridadeEnum> getListaPrioridades() {
+		return listaPrioridades;
 	}
 
 	public List<StatusEnum> getListaStatus() {
@@ -355,6 +410,46 @@ public class ProjetoMB implements Serializable {
 
 	public void setParticipantes(List<Usuario> participantes) {
 		this.participantes = participantes;
+	}
+
+	public List<Tarefa> getAbertas() {
+		return abertas;
+	}
+
+	public void setAbertas(List<Tarefa> abertas) {
+		this.abertas = abertas;
+	}
+
+	public List<Tarefa> getEmDesenvolvimento() {
+		return emDesenvolvimento;
+	}
+
+	public void setEmDesenvolvimento(List<Tarefa> emDesenvolvimento) {
+		this.emDesenvolvimento = emDesenvolvimento;
+	}
+
+	public List<Tarefa> getAtrasadas() {
+		return atrasadas;
+	}
+
+	public void setAtrasadas(List<Tarefa> atrasadas) {
+		this.atrasadas = atrasadas;
+	}
+
+	public List<Tarefa> getConcluidas() {
+		return concluidas;
+	}
+
+	public void setConcluidas(List<Tarefa> concluidas) {
+		this.concluidas = concluidas;
+	}
+
+	public List<CorEnum> getCores() {
+		return cores;
+	}
+
+	public void setCores(List<CorEnum> cores) {
+		this.cores = cores;
 	}
 
 	public Long getProjetoId() {
@@ -396,6 +491,10 @@ public class ProjetoMB implements Serializable {
 	public void setCriador(boolean criador) {
 		this.criador = criador;
 	}
+	
+	public Usuario getUsuario() {
+		return usuario;
+	}
 
 	public String getEmailParticipante() {
 		return emailParticipante;
@@ -403,6 +502,14 @@ public class ProjetoMB implements Serializable {
 
 	public void setEmailParticipante(String emailParticipante) {
 		this.emailParticipante = emailParticipante;
+	}
+
+	public String getCorSelecionada() {
+		return corSelecionada;
+	}
+
+	public void setCorSelecionada(String corSelecionada) {
+		this.corSelecionada = corSelecionada;
 	}
 
 }

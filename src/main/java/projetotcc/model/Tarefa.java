@@ -23,7 +23,7 @@ import javax.persistence.TemporalType;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 
-import projetotcc.enums.PesoEnum;
+import projetotcc.enums.PrioridadeEnum;
 import projetotcc.enums.StatusEnum;
 
 @Entity
@@ -40,7 +40,7 @@ public class Tarefa implements Serializable, Base{
 	@Column(length = 3000)
 	private String descricao;
 	@Enumerated(EnumType.ORDINAL)
-	private PesoEnum peso;
+	private PrioridadeEnum prioridade;
 	@Temporal(TemporalType.DATE)
 	private Date dataEntrega;
 	@Enumerated(EnumType.ORDINAL)
@@ -82,12 +82,12 @@ public class Tarefa implements Serializable, Base{
 		this.descricao = descricao;
 	}
 
-	public PesoEnum getPeso() {
-		return peso;
+	public PrioridadeEnum getPrioridade() {
+		return prioridade;
 	}
 
-	public void setPeso(PesoEnum peso) {
-		this.peso = peso;
+	public void setPrioridade(PrioridadeEnum prioridade) {
+		this.prioridade = prioridade;
 	}
 
 	public Date getDataEntrega() {

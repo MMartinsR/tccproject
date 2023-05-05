@@ -336,6 +336,84 @@ body .ui-dialog .ui-dialog-content {
 	display: inline-block;
 }
 
+.ui-growl {
+	z-index: 999999 !important;
+}
+
+div.container-descricao .descricao-codigo-criador {
+	text-align: right !important; 
+	font-weight: bold;
+}
+
+ .ui-panelgrid .ui-grid-responsive .ui-panelgrid-cell {
+ 	min-height: 10px;
+ }
+ 
+ .ui-panelgrid-cell .ui-g-12 .ui-md-3 {
+ 	min-height: 10px;
+ }
+ 
+.tamanho {
+	height: 30px; 
+    width: 50px;    
+	border-radius: 5px;  
+	margin: 1px; 
+}
+
+.tamanho-display {
+	height: 40px; 
+    width: 250px;    
+	border-radius: 5px;  
+	margin: 1px;
+}
+
+.border {
+	display: inline-block;
+	border-radius: 5px;
+	border: 2px solid white;	
+}
+
+.border-display {
+	display: inline-block;
+	background-color: white;
+	border-radius: 5px;	
+}
+
+.border:focus {
+	border: 2px solid black;
+	border-radius: 5px;	
+}
+
+.container-display-cor {
+	text-align: center;
+	height: 80px;
+	padding: 19px;
+}
+
+.container-cores {
+	padding: 2px;
+}
+
+.ui-md-4 {
+	text-align: center;
+	width: 16%;
+	padding: 0px 5px;
+}
+
+body .ui-dataview .ui-dataview-header {
+	display: none;
+}
+
+.ui-dataview-column .ui-g-12 .ui-md-4 {
+	padding: 2px 5px;
+}
+
+
+
+
+ 
+ 
+
 
 
 

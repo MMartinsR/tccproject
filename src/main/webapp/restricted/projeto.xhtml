@@ -46,7 +46,7 @@
 				
 			<p:tooltip for="botao-participantes"				
 				showEvent="mouseover"
-				hideEvent="blur"
+				hideDelay="2"
 				position="left">Visualizar participantes</p:tooltip>
 			
 			<p:fieldset legend="Detalhes" 
@@ -61,14 +61,16 @@
 								   styleClass="descricao" />				
 				<br/>
 				
-					<div class="text-align: right !important">			   
+					<div class="descricao-codigo-criador">			   
 						<h:outputLabel id="codigo" 
-										   value="#{projetoMB.projeto.codigo}"/>
-					</div>
-					
-					<div>
+							value="#{projetoMB.projeto.codigo}"
+							title="Código do projeto"
+							rendered="#{projetoMB.validarTipoParticipanteCriador(projetoMB.usuario)}"/>
+					</div>					
+					<div class="descricao-codigo-criador">
 						<h:outputLabel id="criador" 
-										   value="#{projetoMB.projeto.criador}"/>
+							value="#{projetoMB.projeto.criador}"
+							title="Usuário criador"/>
 					</div>	
 				</div>
 				
@@ -108,7 +110,7 @@
 							layout="grid">
 							
 							<p:dataScroller id="ds-tarefas-projeto-aberta" 
-								value="#{projetoMB.tarefas}"
+								value="#{projetoMB.abertas}"
 								var="tarefa"
 								rows="6">
 								
@@ -140,12 +142,12 @@
 							</p:dataScroller>	
 							
 							<p:dataScroller id="ds-tarefas-projeto-em-andamento" 
-								value="#{projetoMB.tarefas}"
+								value="#{projetoMB.emDesenvolvimento}"
 								var="tarefa"
 								rows="6">
 								
 								<f:facet name="header">
-									Em andamento
+									Em desenvolvimento
 								</f:facet>
 								
 								<p:commandLink id="cl-abrir-tarefa-editar-emAndamento"
@@ -172,7 +174,7 @@
 							</p:dataScroller>
 							
 							<p:dataScroller id="ds-tarefas-projeto-atrasada" 
-								value="#{projetoMB.tarefas}"
+								value="#{projetoMB.atrasadas}"
 								var="tarefa"
 								rows="6">
 								
@@ -204,7 +206,7 @@
 							</p:dataScroller>
 							
 							<p:dataScroller id="ds-tarefas-projeto-concluida" 
-								value="#{projetoMB.tarefas}"
+								value="#{projetoMB.concluidas}"
 								var="tarefa"
 								rows="6">
 								
@@ -212,7 +214,7 @@
 									Concluídas
 								</f:facet>
 								
-								<p:commandLink id="cl-abrir-tarefa-editar-concluída"
+								<p:commandLink id="cl-abrir-tarefa-editar-concluida"
 									update=":f-projetoTarefa-dialog:gerencia-criarTarefa-projeto"
 									oncomplete="PF('gerenciaCriarTarefaDialog').show()"
 									process="@this"
@@ -242,7 +244,7 @@
 
 	<h:form id="f-projetoTarefa-dialog">
 
-		<p:dialog header="Adicionar Tarefa"
+		<p:dialog header="Adicionar tarefa"
 				  showEffect="fade"
 				  modal="true"
 				  widgetVar="gerenciaCriarTarefaDialog"
@@ -357,19 +359,70 @@
 				  modal="true"
 				  widgetVar="gerenciaCriarTagDialog"
 				  responsive="true"
-				  resizable="false">
+				  resizable="false"
+				  width="400">
 				  
 			<p:outputPanel id="gerencia-criarTag-tarefa" 
 						   class="ui-fluid">
-				<p:outputPanel>
+				<p:outputPanel id="op-gerencia-tag">
 					<div class="field">
                         <p:outputLabel for="nome_tag"
-                        	styleClass="negrito">Nome: </p:outputLabel>
+                        	styleClass="negrito">Nome: *</p:outputLabel>
                         <p:inputText id="nome_tag" 
-                        			 value="#{projetoMB.tag.nome}" 
-                        			 required="true"
-                        			 requiredMessage="Defina o nome da tag" />
+                        			 value="#{projetoMB.tag.nome}"/>
+                        <p:tooltip for="nome_tag" 
+							my="left center" 
+							at="right bottom"
+							showEvent="focus" 
+							hideEvent="blur"
+							showEffect="clip" 
+							hideEffect="fold">
+							<h:outputText value="Nome da tag deve conter: " escape="false" />
+							<br/>
+							<h:outputText value="* até 20 caracteres; " escape="false" />
+							<br/>
+							<h:outputText value=" * primeira letra maiúscula;" escape="false" />
+							<br/>
+							<h:outputText value="Pode ainda conter: " escape="false" />
+							<br/>
+							<h:outputText value=" * acentos, números e espaço." escape="false" />							
+						</p:tooltip>
+                    </div>                    
+                    
+                    <div class="container-display-cor">
+                    	<h:panelGroup id="display-cor">
+	                    	<div class="border-display" tabindex="1">
+	                    		<div class="tamanho-display" style="background-color: #{projetoMB.corSelecionada}"></div>
+	                    	</div>
+                    	</h:panelGroup>
                     </div>
+                    
+                    <div class="field">
+                        <p:outputLabel styleClass="negrito">Cor: *</p:outputLabel>
+                    </div>
+                    <div class="container-cores">
+                    
+                    	<p:dataView id="dv-cores"
+                    		widgetVar="dataviewCores"
+                    		rows="12" 
+                    		rowsPerPageTemplate="6,12"                  		
+							value="#{projetoMB.cores}"
+							layout="grid"
+							var="cor">
+							
+							<p:dataViewGridItem>
+								<p:commandLink type="button" id="cl-cores"
+									update="f-projetoTarefa-dialog:display-cor">
+									<div class="border" tabindex="1" role="button">
+			                    		<div class="tamanho" style="background-color: #{cor.hexaCor}"></div>
+			                    	</div>
+			                    	<f:setPropertyActionListener value="#{cor.hexaCor}" target="#{projetoMB.corSelecionada}"/>
+		                    	</p:commandLink>
+		                    	<p:tooltip for="cl-cores">#{cor.nomeCor}</p:tooltip>
+							</p:dataViewGridItem>                    	
+                    	</p:dataView>
+                    </div>
+
                 </p:outputPanel>
            </p:outputPanel>
            
@@ -421,7 +474,7 @@
 				  responsive="true"
 				  resizable="false"
 				  width="420"
-				  draggable="false">
+				  draggable="false">			
 				  
 			<p:dataTable id="dt-participantes"
 				widgetVar="datatableParticipantes"
@@ -437,8 +490,8 @@
 						rendered="#{projetoMB.validarPermissaoAdicionarParticipante(participante)}"
 						update="f-projetoParticipante-dialog f-projeto:messages"
 						process="@this"
-						oncomplete="PF('gerenciaAdicionarParticipantesDialog').show()">
-						<p:resetInput target="dt-participantes"/>	
+						oncomplete="PF('gerenciaAdicionarParticipantesDialog').show()">	
+						<p:resetInput target="dt-participantes"/>						
 					</p:commandButton>					
 					<p:tooltip for="botao-adicionar-participantes-criador">Adicionar participante</p:tooltip>
 					
@@ -531,6 +584,11 @@
                     			 type="button" />
             </f:facet>		
 		</p:dialog>
-	</h:form>				
+	</h:form>
+	<script>
+		window.onclick = e => {
+		    console.log(e.target.id);
+		}
+	</script>				
 </h:body>
 </html>

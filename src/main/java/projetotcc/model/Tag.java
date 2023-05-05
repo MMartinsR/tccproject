@@ -21,8 +21,11 @@ public class Tag implements Serializable, Base {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-	@Column(length = 50)
+	@Column(length = 20)
 	private String nome;
+	@Column(length = 7)
+	private String cor;
+	
 	
 	@ManyToMany(mappedBy = "tags")
 	private List<Tarefa> tarefas = new ArrayList<Tarefa>();
@@ -41,6 +44,14 @@ public class Tag implements Serializable, Base {
 
 	public void setNome(String nome) {
 		this.nome = nome;
+	}
+
+	public String getCor() {
+		return cor;
+	}
+
+	public void setCor(String cor) {
+		this.cor = cor;
 	}
 
 	public List<Tarefa> getTarefas() {

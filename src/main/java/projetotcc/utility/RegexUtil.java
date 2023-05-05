@@ -51,13 +51,27 @@ public class RegexUtil {
 	 * permite acentos e espaço.
 	 * @param nomeProjeto
 	 * @return
-	 */
-	
+	 */	
 	public static boolean nomeProjetoInvalido(String nomeProjeto) {
 		String nomeProjetoRegex = "^[A-Z]{1}[a-zA-Z0-9À-ú ]{1,28}[A-Za-z0-9À-ú]{1}$";
 		
 		Pattern pattern = Pattern.compile(nomeProjetoRegex);
 		Matcher matcher = pattern.matcher(nomeProjeto);
+		
+		return !matcher.matches();
+	}
+	
+	/**
+	 * Permite nomes de tag com a primeira letra maiuscula, até 20 caracteres,
+	 * além de caracteres acentuados, números e espaço.
+	 * @param nomeTag
+	 * @return
+	 */
+	public static boolean nomeTagInvalida(String nomeTag) {
+		String nomeTagRegex = "^[A-Z]{1}[a-zA-ZÀ-ú0-9 ]{1,48}[A-Za-z0-9À-ú]{1}$";
+		
+		Pattern pattern = Pattern.compile(nomeTagRegex);
+		Matcher matcher = pattern.matcher(nomeTag);
 		
 		return !matcher.matches();
 	}
