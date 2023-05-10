@@ -24,6 +24,7 @@ import org.primefaces.PrimeFaces;
 import projetotcc.exception.AutenticacaoException;
 import projetotcc.exception.CadastrarException;
 import projetotcc.exception.EmailException;
+import projetotcc.exception.SemResultadoException;
 import projetotcc.model.Usuario;
 import projetotcc.service.UsuarioService;
 import projetotcc.utility.EmailUtil;
@@ -39,6 +40,9 @@ public class UsuarioLogadoMB implements Serializable{
 	@Inject 
 	private Usuario usuario;
 	
+	@Inject 
+	private Usuario usuarioCadastro;
+	
 	@Inject
 	private UsuarioService usuarioService;
 	
@@ -51,6 +55,7 @@ public class UsuarioLogadoMB implements Serializable{
 	
 	public void init() {
 		usuario = new Usuario();
+		usuarioCadastro = new Usuario();
 		System.out.println("Carregando Login");
 	}
 	
@@ -112,7 +117,10 @@ public class UsuarioLogadoMB implements Serializable{
 			Message.erro(e.getMessage());
 			FacesContext.getCurrentInstance().validationFailed();			
 			return "";
-		} 
+		} catch (SemResultadoException e) {
+			Message.erro(e.getMessage());
+			return "";
+		}
 	}
 	
 	private boolean validaCampos(Usuario usuario) {
@@ -131,17 +139,18 @@ public class UsuarioLogadoMB implements Serializable{
 	
 	public void limpar() {
 		usuario = new Usuario();
+		usuarioCadastro = new Usuario();
 	}
 	
 	public void cadastrarUsuario() {
 		
 		try {
 			
-			this.usuario.setEmail(this.usuario.getEmail().toLowerCase().trim());
+			this.usuarioCadastro.setEmail(this.usuarioCadastro.getEmail().toLowerCase().trim());
 			
 			validarCamposCadastro();
 			
-			usuarioService.salvar(usuario);
+			usuarioService.salvar(usuarioCadastro);
 			Message.info("Seja bem-vindo! Cadastro realizado com sucesso.");
 			
 			limpar();
@@ -158,18 +167,18 @@ public class UsuarioLogadoMB implements Serializable{
 	
 	private void validarCamposCadastro() {
 		
-		if (RegexUtil.emailInvalido(usuario.getEmail())) {
-			usuario.setEmail(null);
+		if (RegexUtil.emailInvalido(usuarioCadastro.getEmail())) {
+			usuarioCadastro.setEmail(null);
 			
 			throw new CadastrarException("E-mail inválido.");
 		}
 		
-		if (RegexUtil.senhaInvalida(usuario.getSenha())) {
+		if (RegexUtil.senhaInvalida(usuarioCadastro.getSenha())) {
 			throw new CadastrarException("Senha inválida");
 		}
 		
-		if (usuario.getNomeExibicao().length() < 3 || RegexUtil.nomeUsuarioInvalido(usuario.getNomeExibicao())) {
-			usuario.setNomeExibicao(null);
+		if (usuarioCadastro.getNomeExibicao().length() < 3 || RegexUtil.nomeUsuarioInvalido(usuarioCadastro.getNomeExibicao())) {
+			usuarioCadastro.setNomeExibicao(null);
 			
 			throw new CadastrarException("Nome de usuário inválido.");				
 		}
@@ -306,6 +315,14 @@ public class UsuarioLogadoMB implements Serializable{
 
 	public void setUsuario(Usuario usuario) {
 		this.usuario = usuario;
+	}
+
+	public Usuario getUsuarioCadastro() {
+		return usuarioCadastro;
+	}
+
+	public void setUsuarioCadastro(Usuario usuarioCadastro) {
+		this.usuarioCadastro = usuarioCadastro;
 	}
 
 	public List<Usuario> getUsuarios() {

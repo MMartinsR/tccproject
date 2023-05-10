@@ -158,10 +158,12 @@ public class UsuarioService implements Serializable {
 			System.out.println("Verificando login do usuário " + email);
 			
 			String senhaConvertida = converteStringParaMd5(senha);
-			
+
 			Usuario retorno;
+			retorno = usuarioDAO.findByEmail(email);
+			
 			if(senhaConvertida != null) {
-				retorno = usuarioDAO.findByNamedQuery(email, senhaConvertida);
+				retorno = usuarioDAO.findByNamedQuery(email, senhaConvertida);				
 				
 				if (retorno != null) {
 					return retorno;
@@ -175,7 +177,9 @@ public class UsuarioService implements Serializable {
 		} catch (DatabaseException e) {
 			Message.erro(e.getMessage());
 			return null;
-		} 		
+		} catch (SemResultadoException e) {
+			throw new SemResultadoException("As credenciais fornecidas não se encontram em nosso cadastro. Cadastra-se para ter acesso aos nossos serviços.");
+		}
 
 	}
 	
