@@ -68,7 +68,7 @@ public class RegexUtil {
 	 * @return
 	 */
 	public static boolean nomeTagInvalida(String nomeTag) {
-		String nomeTagRegex = "^[A-Z]{1}[a-zA-ZÀ-ú0-9 ]{1,48}[A-Za-z0-9À-ú]{1}$";
+		String nomeTagRegex = "^[A-Z]{1}[a-zA-ZÀ-ú0-9 ]{1,18}[A-Za-z0-9À-ú]{1}$";
 		
 		Pattern pattern = Pattern.compile(nomeTagRegex);
 		Matcher matcher = pattern.matcher(nomeTag);

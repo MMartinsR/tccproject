@@ -150,8 +150,7 @@ body .ui-card .ui-card-content {
 	min-width: 10px;
 }
 
-.tag-style {
-	background-color: #b5e38b;
+.tag-style {	
 	padding: 2px 15px 2px 15px;
 	border-radius: 5px;
 	margin-right: 5px;
@@ -251,10 +250,11 @@ body .ui-dialog .ui-dialog-titlebar .ui-dialog-title {
 
 div.botao-tag {	
 	display: inline-block;
+	margin-left: 5px;
 }
 
 div.botoes-confirmar-cancelar-separar-projeto {
-	margin-right: 145px;
+	margin-right: 237px;
 	display: inline-block;
 }
 
@@ -407,6 +407,95 @@ body .ui-dataview .ui-dataview-header {
 .ui-dataview-column .ui-g-12 .ui-md-4 {
 	padding: 2px 5px;
 }
+
+body .ui-inplace .ui-inplace-display {
+	padding: 0px;
+}
+
+.ui-fluid .ui-selectonemenu {
+	margin-top: 5px;
+	width: 53%;
+}
+
+.ui-fluid .ui-calendar {
+	margin-top: 5px;
+}
+
+.div-tamanho {
+	height: 34px;
+	width: 470px;
+	background: white;
+	display: flex;	
+	justify-content: center;
+	flex-direction: row;
+	flex-wrap: wrap;
+	padding: 2px;
+}
+
+.pg-tamanho-cell {
+	height: 50px;
+	width: 105px;
+	background: white;
+	display: inline-block;	
+}
+
+.cor-tag-esq {
+	height: 26px;
+	width: 200px;
+	background: black;
+	border-radius: 5px;
+}
+
+.ui-fluid .ui-selectonelistbox, .ui-fluid .ui-selectmanymenu {	
+	display: inline-block;
+}
+
+.ui-selectmanycheckbox.ui-widget td {
+	background: white;	
+    display: flex;
+    align-items: stretch;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-content: center;
+    justify-content: flex-start;
+}
+
+body .ui-chkbox {
+	height: 2.0rem;
+}
+
+.ui-fluid .ui-calendar {
+	width: 30%;
+}
+
+.ui-fluid .ui-calendar input {
+	width: 95%;
+}
+
+.block {
+	display: block;
+}
+
+.tarefaAtrasada {
+	background-color: #CA3521;
+	padding: 5px 10px;
+	border-radius: 5px;
+	color: white;
+}
+
+.container-atrasada {	
+	margin: 5px 0px;
+}
+
+.tarefaAtrasadaCard {
+	background-color: #CA3521;
+	padding: 2px 15px;
+	border-radius: 5px;
+	color: white;
+}
+
+
+
 
 
 
