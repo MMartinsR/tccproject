@@ -1,10 +1,12 @@
 package projetotcc.controller;
 
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.TimeZone;
 import java.util.stream.Collectors;
 
 import javax.faces.context.FacesContext;
@@ -66,7 +68,7 @@ public class ProjetoMB implements Serializable {
 	
 	private List<Tarefa> abertas;
 	private List<Tarefa> emDesenvolvimento;
-	private List<Tarefa> atrasadas;
+	private List<Tarefa> emValidacao;
 	private List<Tarefa> concluidas;
 	private List<CorEnum> cores;	
 	
@@ -86,10 +88,9 @@ public class ProjetoMB implements Serializable {
 				.getExternalContext().getSessionMap().get("usuarioLogado");
 		
 		carregaProjetoSelecionado();
-		validaTarefas();
-		carregaTags();
 		carregaTarefas();
-		preenchePesos();
+		carregaTags();
+		preenchePrioridades();
 		preencheStatus();
 
 	}
@@ -209,8 +210,8 @@ public class ProjetoMB implements Serializable {
 				.filter(ta -> ta.getStatus() == StatusEnum.ABERTA).collect(Collectors.toList());
 		emDesenvolvimento = tarefas.stream()
 				.filter(te -> te.getStatus() == StatusEnum.EM_DESENVOLVIMENTO).collect(Collectors.toList());
-		atrasadas = tarefas.stream()
-				.filter(tat -> tat.getStatus() == StatusEnum.ATRASADA).collect(Collectors.toList());
+		emValidacao = tarefas.stream()
+				.filter(tat -> tat.getStatus() == StatusEnum.EM_VALIDACAO).collect(Collectors.toList());
 		concluidas = tarefas.stream()
 				.filter(tc -> tc.getStatus() == StatusEnum.CONCLUIDA).collect(Collectors.toList());
 		
@@ -222,8 +223,8 @@ public class ProjetoMB implements Serializable {
 			System.out.println("Em Desenvolvimento: " + ed.getNome());
 		}
 		
-		for (Tarefa at : atrasadas) {
-			System.out.println("Atrasada: " + at.getNome());
+		for (Tarefa at : emValidacao) {
+			System.out.println("emValidacao: " + at.getNome());
 		}
 		
 		for (Tarefa c : concluidas) {
@@ -236,30 +237,24 @@ public class ProjetoMB implements Serializable {
 		cores = Arrays.asList(CorEnum.values());
 	}
 	
-	private void validaTarefas() {
+	public boolean validaTarefa(Tarefa tarefa) {	
 		
-		carregaTarefas();
-		
-		 // para cada tarefa se data de entrega for anterior a data atual, marcar status tarefa como atrasada
-		for (Tarefa tarefa : this.tarefas) {
-			if (tarefa.getDataEntrega().before(new Date())) {
-				tarefa.setStatus(StatusEnum.ATRASADA);
-				tarefaService.atualizar(tarefa);
-			}
+		 // caso a data de entrega for anterior a data atual, marcar como atrasada
+		if (tarefa.getDataEntrega().before(new Date())) {
+			return true;
 		}
-		setTarefasValidadas(true);	
+		return false;
 	}
 
 	public void criarNova() {
-		tarefa = new Tarefa();
-		
+		tarefa = new Tarefa();		
 	}
 	
 	public void criarNovaTag() {
 		tag = new Tag();
 	}
 	
-	public void adicionarTarefa() {
+	public void salvarTarefa() {
 		
 		try {
 			
@@ -274,12 +269,6 @@ public class ProjetoMB implements Serializable {
 			} else {
 								
 				tarefaService.atualizar(tarefa);
-				
-				// setar novas tags caso hajam
-				
-				// atualizar a tarefa
-				
-				// atualizar o projeto.
 				
 				Message.info("Tarefa '" + tarefa.getNome() + "' atualizada com sucesso!");
 			}			
@@ -298,6 +287,16 @@ public class ProjetoMB implements Serializable {
 		
 	}
 	
+	public boolean dataEntregaPassou() {
+		
+		if (tarefa != null && tarefa.getId() != null) {
+			if (tarefa.getDataEntrega().before(new Date())) {
+				return true;	
+			}
+		}		
+		return false;
+	}
+	
 	public void removerTarefa() {
 		
 	}
@@ -311,7 +310,7 @@ public class ProjetoMB implements Serializable {
 			}
 		
 			if (RegexUtil.nomeTagInvalida(tag.getNome())) {
-				Message.erro("O nome escolhido tem caracteres inválidos.");
+				Message.erro("O nome escolhido não cumpre as regras estabelecidas.");
 				return;
 			}
 			
@@ -356,7 +355,14 @@ public class ProjetoMB implements Serializable {
 		}
 	}
 	
-	public void preenchePesos() {
+	public String getDataEntregaFormatada(Tarefa tarefa) {
+	    SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+	    sdf.setTimeZone(TimeZone.getDefault());
+	    sdf.setLenient(false);
+	    return sdf.format(tarefa.getDataEntrega());
+	}
+	
+	public void preenchePrioridades() {
 		listaPrioridades = Arrays.asList(PrioridadeEnum.values());
 	}
 	
@@ -428,12 +434,12 @@ public class ProjetoMB implements Serializable {
 		this.emDesenvolvimento = emDesenvolvimento;
 	}
 
-	public List<Tarefa> getAtrasadas() {
-		return atrasadas;
+	public List<Tarefa> getEmValidacao() {
+		return emValidacao;
 	}
 
-	public void setAtrasadas(List<Tarefa> atrasadas) {
-		this.atrasadas = atrasadas;
+	public void setEmValidacao(List<Tarefa> emValidacao) {
+		this.emValidacao = emValidacao;
 	}
 
 	public List<Tarefa> getConcluidas() {
