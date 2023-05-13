@@ -79,7 +79,6 @@ public class ProjetoMB implements Serializable {
 	private boolean criador;
 	private Usuario usuario = new Usuario();
 	private String emailParticipante;
-	private String corSelecionada;
 	
 	
 	public void init() {		
@@ -204,36 +203,23 @@ public class ProjetoMB implements Serializable {
 	}
 
 	private void carregaTarefas() {
-		tarefas = tarefaService.listarTodos();
+		tarefas = projetoService.buscarTarefasPorProjetoId(projetoId);
 		
-		abertas = tarefas.stream()
-				.filter(ta -> ta.getStatus() == StatusEnum.ABERTA).collect(Collectors.toList());
-		emDesenvolvimento = tarefas.stream()
-				.filter(te -> te.getStatus() == StatusEnum.EM_DESENVOLVIMENTO).collect(Collectors.toList());
-		emValidacao = tarefas.stream()
-				.filter(tat -> tat.getStatus() == StatusEnum.EM_VALIDACAO).collect(Collectors.toList());
-		concluidas = tarefas.stream()
-				.filter(tc -> tc.getStatus() == StatusEnum.CONCLUIDA).collect(Collectors.toList());
+		if(tarefas  != null) {
+			abertas = tarefas.stream()
+					.filter(ta -> ta.getStatus() == StatusEnum.ABERTA).collect(Collectors.toList());
+			emDesenvolvimento = tarefas.stream()
+					.filter(te -> te.getStatus() == StatusEnum.EM_DESENVOLVIMENTO).collect(Collectors.toList());
+			emValidacao = tarefas.stream()
+					.filter(tat -> tat.getStatus() == StatusEnum.EM_VALIDACAO).collect(Collectors.toList());
+			concluidas = tarefas.stream()
+					.filter(tc -> tc.getStatus() == StatusEnum.CONCLUIDA).collect(Collectors.toList());
+		}	
 		
-		for (Tarefa ab : abertas) {
-			System.out.println("Aberta: " + ab.getNome());
-		}
-		
-		for (Tarefa ed : emDesenvolvimento) {
-			System.out.println("Em Desenvolvimento: " + ed.getNome());
-		}
-		
-		for (Tarefa at : emValidacao) {
-			System.out.println("emValidacao: " + at.getNome());
-		}
-		
-		for (Tarefa c : concluidas) {
-			System.out.println("Concluída: " + c.getNome());
-		}
 	}
 	
-	private void carregaTags() {
-		tags = tagService.listarTodos();
+	private void carregaTags() {		
+		tags = projetoService.buscarTagsPorProjetoId(projetoId);
 		cores = Arrays.asList(CorEnum.values());
 	}
 	
@@ -283,7 +269,7 @@ public class ProjetoMB implements Serializable {
 		carregaTarefas();
 		
 		PrimeFaces.current().executeScript("PF('gerenciaCriarTarefaDialog').hide()");
-		PrimeFaces.current().ajax().update("f-projeto:messages", "f-projeto:ds-tarefas-projeto-aberta");
+		PrimeFaces.current().ajax().update("f-projeto:messages", "f-projeto:pg-ds-container");
 		
 	}
 	
@@ -297,35 +283,57 @@ public class ProjetoMB implements Serializable {
 		return false;
 	}
 	
+	public boolean exibeCampoStatus() {
+		return this.tarefa != null && this.tarefa.getId() != null;
+	}
+	
 	public void removerTarefa() {
 		
 	}
 	
-	public void adicionarTag() {
+	public void salvarTag() {
 		
 		try {
+			
 			if (nomeVazio()) {
 				Message.erro("O nome da tag deve estar preenchido.");
 				return;
-			}
+			}			
 		
 			if (RegexUtil.nomeTagInvalida(tag.getNome())) {
 				Message.erro("O nome escolhido não cumpre as regras estabelecidas.");
 				return;
 			}
 			
-			if(corSelecionada == null) {
-				Message.erro("Selecione uma cor para a nova tag");
-				return;
+			// Validar se já existe uma tag com mesmo nome
+			
+			
+			if (tag.getId() == null) {
+				
+				if(this.tag.getCor() == null) {
+					Message.erro("Selecione uma cor para a nova tag");
+					return;
+				}
+				
+				tag.setProjeto(projeto);
+				
+				tagService.salvar(tag);
+				
+				Message.info("Tag '" + tag.getNome() + "' adicionada com sucesso!");
+			} else {				
+				
+				tagService.atualizar(tag);
+				
+				Message.info("Tag '" + tag.getNome() + "' atualizada com sucesso!");
+				
 			}
 			
-			tag.setCor(corSelecionada);
 			
-			tagService.salvar(tag);
-			
-			Message.info("Nova tag adicionada com sucesso!");
 		} catch (CadastrarException e) {
 			Message.erro("Ocorreu um erro ao salvar a tag - " + e.getMessage());
+		} catch (DatabaseException e) {
+			e.printStackTrace();
+			Message.erro("Ocorreu um problema ao salvar esta tag");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}		
@@ -508,14 +516,6 @@ public class ProjetoMB implements Serializable {
 
 	public void setEmailParticipante(String emailParticipante) {
 		this.emailParticipante = emailParticipante;
-	}
-
-	public String getCorSelecionada() {
-		return corSelecionada;
-	}
-
-	public void setCorSelecionada(String corSelecionada) {
-		this.corSelecionada = corSelecionada;
 	}
 
 }

@@ -101,7 +101,7 @@ body .ui-fieldset {
 	min-height: 650px;
 	border: none;
 	margin: 0px;
-	background: #f2fee8 url("../img/dashboard-bemvindo-fundo.png") center center no-repeat scroll;
+	background: #f2fee8;
 	box-shadow: 2px 6px 10px #bdc4ca;
 	padding: 5px 5px 15px 5px;
 }
@@ -259,7 +259,7 @@ div.botoes-confirmar-cancelar-separar-projeto {
 }
 
 div.botoes-confirmar-cancelar-separar-tag {
-	margin-right: 145px;
+	margin-right: 105px;
 	display: inline-block;
 }
 
@@ -414,7 +414,7 @@ body .ui-inplace .ui-inplace-display {
 
 .ui-fluid .ui-selectonemenu {
 	margin-top: 5px;
-	width: 53%;
+	width: 55%;
 }
 
 .ui-fluid .ui-calendar {
@@ -433,17 +433,31 @@ body .ui-inplace .ui-inplace-display {
 }
 
 .pg-tamanho-cell {
-	height: 50px;
+	height: 20px;
 	width: 105px;
 	background: white;
 	display: inline-block;	
 }
-
 .cor-tag-esq {
 	height: 26px;
 	width: 200px;
 	background: black;
 	border-radius: 5px;
+}
+
+.pg-column-dois {
+	width: 235px;
+}
+
+.pg-column-tres {
+	height: 20px;
+	width: 10px;
+}
+
+.editar-tag-botao {
+	margin-top: 3px !important;
+	width: 25px !important;
+	height: 25px;
 }
 
 .ui-fluid .ui-selectonelistbox, .ui-fluid .ui-selectmanymenu {	
@@ -458,6 +472,10 @@ body .ui-inplace .ui-inplace-display {
     flex-wrap: wrap;
     align-content: center;
     justify-content: flex-start;
+}
+
+body .ui-chkbox .ui-chkbox-box {
+	height: 1.6rem;
 }
 
 body .ui-chkbox {
@@ -493,6 +511,14 @@ body .ui-chkbox {
 	border-radius: 5px;
 	color: white;
 }
+
+body .ui-scrollpanel {
+	padding: 3px;	
+	border: none; 
+	height: 600px
+}
+
+
 
 
 

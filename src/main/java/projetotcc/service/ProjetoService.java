@@ -11,6 +11,8 @@ import projetotcc.exception.CadastrarException;
 import projetotcc.exception.DatabaseException;
 import projetotcc.exception.SemResultadoException;
 import projetotcc.model.Projeto;
+import projetotcc.model.Tag;
+import projetotcc.model.Tarefa;
 import projetotcc.model.Usuario;
 import projetotcc.utility.Message;
 
@@ -145,6 +147,28 @@ public class ProjetoService implements Serializable {
 			throw new DatabaseException(e);
 		} catch (SemResultadoException e) {
 			System.out.println("Código gerado é válido");
+			return null;
+		}
+	}
+	
+	public List<Tag> buscarTagsPorProjetoId(Long id) {
+		try {
+			return projetoDAO.findTagsByProjeto(id);
+		} catch (DatabaseException e) {
+			Message.erro(e.getMessage());
+			return null;
+		} catch (SemResultadoException e) {
+			return null;
+		}
+	}
+	
+	public List<Tarefa> buscarTarefasPorProjetoId(Long id) {
+		try {
+			return projetoDAO.findTarefasByProjeto(id);
+		} catch (DatabaseException e) {
+			Message.erro(e.getMessage());
+			return null;
+		} catch (SemResultadoException e) {
 			return null;
 		}
 	}

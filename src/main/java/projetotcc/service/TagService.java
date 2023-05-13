@@ -87,7 +87,7 @@ public class TagService implements Serializable {
 			return tagDao.buscarPorId(Tag.class, id);
 			
 		} catch (DatabaseException e) {
-			Message.erro(e.getMessage() + " as tags.");
+			Message.erro(e.getMessage() + " a tags.");
 			return null;
 		}
 		

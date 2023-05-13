@@ -287,7 +287,7 @@
 			<p:outputPanel id="gerencia-criarTarefa-projeto" 
 						   class="ui-fluid">
 				<p:outputPanel>
-					<p:scrollPanel mode="native" style="border: none; height: 600px">	
+				  <p:scrollPanel mode="native">	
 					<div class="field">
                         <p:outputLabel for="nome_tarefa"
                         	styleClass="negrito">Nome: </p:outputLabel>
@@ -355,15 +355,18 @@
                         <p:outputLabel for="tags"
                         	styleClass="negrito">Tags: </p:outputLabel>
 
-                       	<p:panelGrid columns="2" 
-                       		columnClasses="pg-tamanho-cell">
+                       	<p:panelGrid id="pg-tags"
+                       		columns="3" 
+                       		columnClasses="pg-tamanho-cell, pg-column-dois, pg-column-tres" 
+                       		rendered="#{projetoMB.tags != null}">
                         	<ui:repeat var="tag" value="#{projetoMB.tags}">
 								<div class="div-tamanho">
                         			<div class="cor-tag-esq" 
                         				style="background-color: #{tag.cor}">                        		
-                        		</div>                        	
-                        	</div>
+                        			</div>                        	
+                        		</div>
 							</ui:repeat>
+							
                       		<p:selectManyCheckbox id="tags" 
                       			value="#{projetoMB.tarefa.tags}" 
                       			layout="pageDirection"
@@ -377,6 +380,21 @@
 					                itemValue="#{tag}"/>
 					            <f:attribute name="collectionType" value="java.util.ArrayList"/>
 					        </p:selectManyCheckbox>
+
+				        	<ui:repeat var="tag" value="#{projetoMB.tags}">
+				        		<div>
+				        		<p:commandButton icon="pi pi-pencil"
+				        			styleClass="editar-tag-botao" 
+				        			update=":f-projetoTarefa-dialog:gerencia-criarTag-tarefa"
+									oncomplete="PF('gerenciaCriarTagDialog').show()"
+									process=":f-projetoTarefa-dialog:gerencia-criarTag-tarefa @this"
+									title="Editar tag">
+				        			<f:setPropertyActionListener value="#{tag}"
+                                                target="#{projetoMB.tag}"/>
+				        		</p:commandButton>
+				        		</div>
+							</ui:repeat>					        	
+
                        	</p:panelGrid>  
                     </div>
                     
@@ -419,7 +437,7 @@
 		
 		</p:dialog>
 		
-		<p:dialog header="Nova Tag"
+		<p:dialog header="Detalhes"
 				  showEffect="fade"
 				  modal="true"
 				  widgetVar="gerenciaCriarTagDialog"
@@ -457,7 +475,7 @@
                     <div class="container-display-cor">
                     	<h:panelGroup id="display-cor">
 	                    	<div class="border-display" tabindex="1">
-	                    		<div class="tamanho-display" style="background-color: #{projetoMB.corSelecionada}"></div>
+	                    		<div class="tamanho-display" style="background-color: #{projetoMB.tag.cor}"></div>
 	                    	</div>
                     	</h:panelGroup>
                     </div>
@@ -481,7 +499,7 @@
 									<div class="border" tabindex="1" role="button">
 			                    		<div class="tamanho" style="background-color: #{cor.hexaCor}"></div>
 			                    	</div>
-			                    	<f:setPropertyActionListener value="#{cor.hexaCor}" target="#{projetoMB.corSelecionada}"/>
+			                    	<f:setPropertyActionListener value="#{cor.hexaCor}" target="#{projetoMB.tag.cor}"/>
 		                    	</p:commandLink>
 		                    	<p:tooltip for="cl-cores">#{cor.nomeCor}</p:tooltip>
 							</p:dataViewGridItem>                    	
@@ -494,9 +512,9 @@
            <f:facet name="footer">
            		<div class="botoes-confirmar-cancelar-separar-tag">
 	                <p:commandButton id="cb-criar-tag"
-	                				 value="Criar" 
+	                				 value="Confirmar" 
 	                				 icon="pi pi-check" 
-	                				 actionListener="#{projetoMB.adicionarTag()}"
+	                				 actionListener="#{projetoMB.salvarTag()}"
 	                    			 update="gerencia-criarTag-tarefa gerencia-criarTarefa-projeto" 
 	                    			 process="gerencia-criarTag-tarefa @this" />
                 </div>

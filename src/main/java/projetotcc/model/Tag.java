@@ -9,7 +9,9 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 @Entity
@@ -29,6 +31,13 @@ public class Tag implements Serializable, Base {
 	
 	@ManyToMany(mappedBy = "tags")
 	private List<Tarefa> tarefas = new ArrayList<Tarefa>();
+	
+	// Cria uma relação entre projeto e tag, que permite o controle de quais tags foram criadas no escopo
+	// de um projeto específico.
+	@ManyToOne
+	@JoinColumn(name = "projeto_id")
+	private Projeto projeto;
+
 
 	public Long getId() {
 		return id;
@@ -60,6 +69,14 @@ public class Tag implements Serializable, Base {
 
 	public void setTarefas(List<Tarefa> tarefas) {
 		this.tarefas = tarefas;
+	}
+	
+	public Projeto getProjeto() {
+		return projeto;
+	}
+
+	public void setProjeto(Projeto projeto) {
+		this.projeto = projeto;
 	}
 
 	@Override
