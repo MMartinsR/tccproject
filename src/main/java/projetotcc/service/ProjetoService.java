@@ -117,6 +117,19 @@ public class ProjetoService implements Serializable {
 		
 	}
 	
+	public Projeto buscarProjetoPorNome(String nome) {
+		try {
+			
+			return projetoDAO.findByNomeProjeto(nome);
+			
+		} catch (SemResultadoException e) {
+			System.out.println("Nome de projeto válido");
+			return null;
+		} catch (DatabaseException e) {
+			throw new DatabaseException(e);
+		}
+	}
+	
 	public List<Usuario> buscarParticipantesPorProjetoId(Long id) {
 		
 		try {

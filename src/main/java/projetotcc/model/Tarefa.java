@@ -16,6 +16,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -28,7 +30,15 @@ import projetotcc.enums.StatusEnum;
 
 @Entity
 @Table(name = "tb_tarefa")
-public class Tarefa implements Serializable, Base{
+@NamedQueries(value = {
+		@NamedQuery(name = "Tarefa.findByNomeTarefa",
+				query = "SELECT ta FROM Tarefa ta "
+						+ "WHERE ta.nome = :nome AND ta.projeto.id = :projeto_id"),
+		@NamedQuery(name = "Tarefa.findTarefasByProjetoId",
+		query = "SELECT ta FROM Tarefa ta "
+				+ "WHERE ta.projeto.id = :projetoId")
+})
+public class Tarefa implements Serializable, Base {
 
 	private static final long serialVersionUID = 1L;
 	

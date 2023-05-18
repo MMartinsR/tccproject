@@ -29,6 +29,9 @@ import javax.persistence.TemporalType;
 		@NamedQuery(name = "Projeto.findByCodigo",
 		query = "SELECT p FROM Projeto p "
 		+ "WHERE p.codigo = :codigo"),
+		@NamedQuery(name = "Projeto.findByNomeProjeto",
+		query = "SELECT p FROM Projeto p "
+		+ "WHERE p.nome = :nome"),
 		@NamedQuery(name = "Projeto.findByProjeto",
 		query = "SELECT p FROM Projeto p "
 		+ "INNER JOIN FETCH p.usuarios "

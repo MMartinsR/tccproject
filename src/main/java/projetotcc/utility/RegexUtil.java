@@ -75,5 +75,21 @@ public class RegexUtil {
 		
 		return !matcher.matches();
 	}
+	
+	/**
+	 * Permite nomes de tarefas que comecem com a primeira letra maiúscula, tenham até
+	 * 500 caracteres, dentre eles acentos, números, os caracteres especiais [ e ] e { e } e #
+	 * além de espaços.
+	 * @param nomeTarefa
+	 * @return
+	 */
+	public static boolean nomeTarefaInvalida(String nomeTarefa) {
+		String nomeTarefaRegex = "^[A-Z]{1}[a-zA-ZÀ-ú0-9\\[\\]\\{\\}\\# ]{1,498}[A-Za-z0-9À-ú\\[\\]\\{\\}\\#]{1}$";
+		
+		Pattern pattern = Pattern.compile(nomeTarefaRegex);
+		Matcher matcher = pattern.matcher(nomeTarefa);
+		
+		return !matcher.matches();
+	}
 
 }

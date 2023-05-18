@@ -70,15 +70,17 @@ public class ProjetoMB implements Serializable {
 	private List<Tarefa> emDesenvolvimento;
 	private List<Tarefa> emValidacao;
 	private List<Tarefa> concluidas;
-	private List<CorEnum> cores;	
+	private List<CorEnum> cores;
+	private List<Integer> diasInvalidos;
+	private List<Date> datasInvalidas;
 	
-	private Long projetoId;	
-	private String mensagemBotaoExcluir = "Excluir";
+	private Long projetoId;
 	private boolean tarefasValidadas;
 	private boolean participante;
 	private boolean criador;
 	private Usuario usuario = new Usuario();
 	private String emailParticipante;
+	private Date minDate;
 	
 	
 	public void init() {		
@@ -91,6 +93,7 @@ public class ProjetoMB implements Serializable {
 		carregaTags();
 		preenchePrioridades();
 		preencheStatus();
+		preencheDatasInvalidas();
 
 	}
 	
@@ -214,7 +217,12 @@ public class ProjetoMB implements Serializable {
 					.filter(tat -> tat.getStatus() == StatusEnum.EM_VALIDACAO).collect(Collectors.toList());
 			concluidas = tarefas.stream()
 					.filter(tc -> tc.getStatus() == StatusEnum.CONCLUIDA).collect(Collectors.toList());
-		}	
+		} else {
+			abertas = null;
+			emDesenvolvimento = null;
+			emValidacao = null;
+			concluidas = null;
+		}
 		
 	}
 	
@@ -226,10 +234,18 @@ public class ProjetoMB implements Serializable {
 	public boolean validaTarefa(Tarefa tarefa) {	
 		
 		 // caso a data de entrega for anterior a data atual, marcar como atrasada
-		if (tarefa.getDataEntrega().before(new Date())) {
+		if (tarefa == null && this.tarefa != null && this.tarefa.getId() != null) {
+
+			if (this.tarefa.getDataEntrega().before(new Date())) {
+				return true;
+			}
+		
+			return false;
+		} else if (tarefa != null && tarefa.getDataEntrega().before(new Date())) {
 			return true;
+		} else {
+			return false;
 		}
-		return false;
 	}
 
 	public void criarNova() {
@@ -244,7 +260,26 @@ public class ProjetoMB implements Serializable {
 		
 		try {
 			
+			if (nomeVazio(tarefa.getNome())) {
+				Message.erro("O nome da tarefa deve estar preenchido.");
+				return;
+			}			
+		
+			if (RegexUtil.nomeTarefaInvalida(tarefa.getNome())) {
+				Message.erro("O nome escolhido não cumpre as regras estabelecidas.");
+				return;
+			}	
+
 			if(tarefa.getId() == null) {
+				
+				Tarefa tarefaExiste = tarefaService.buscarTarefaPorNome(this.tarefa.getNome(), projetoId);
+				
+				if(tarefaExiste != null) {
+					Message.erro("Já existe uma tarefa com o nome '" + tarefa.getNome() + "'."
+							+ " Insira outro nome para prosseguir.");
+					return;
+				}
+				
 				tarefa.setStatus(StatusEnum.ABERTA);
 				
 				tarefa.setProjeto(projeto);
@@ -252,7 +287,7 @@ public class ProjetoMB implements Serializable {
 				tarefaService.salvar(tarefa);
 				
 				Message.info("Tarefa '" + tarefa.getNome() + "' criada com sucesso!");
-			} else {
+			} else {				
 								
 				tarefaService.atualizar(tarefa);
 				
@@ -262,6 +297,9 @@ public class ProjetoMB implements Serializable {
 			
 		} catch (CadastrarException e) {
 			Message.erro("Ocorreu um erro ao salvar a tarefa - " + e.getMessage());
+		} catch (DatabaseException e) {
+			e.printStackTrace();
+			Message.erro("Ocorreu um problema ao salvar esta tarefa");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -273,14 +311,24 @@ public class ProjetoMB implements Serializable {
 		
 	}
 	
-	public boolean dataEntregaPassou() {
+	public void preencheDatasInvalidas() {
+		datasInvalidas = new ArrayList<Date>();
+		Date hoje = new Date();
+		long umDia = 24 * 60 * 60 * 1000;
 		
-		if (tarefa != null && tarefa.getId() != null) {
-			if (tarefa.getDataEntrega().before(new Date())) {
-				return true;	
-			}
-		}		
-		return false;
+		datasInvalidas.add(new Date(hoje.getTime() - umDia));	
+		
+		for (int i = 0; i < 365; i++) {
+			datasInvalidas.add(new Date(datasInvalidas.get(i).getTime() - umDia));
+		}
+		
+		minDate = new Date(hoje.getTime() - (365 * umDia));
+		
+		diasInvalidos = new ArrayList<Integer>();
+		// Primeiro dia da semana (Domingo)
+		diasInvalidos.add(0);
+		// Ultimo dia da semana (Sábado)
+		diasInvalidos.add(6);
 	}
 	
 	public boolean exibeCampoStatus() {
@@ -289,13 +337,33 @@ public class ProjetoMB implements Serializable {
 	
 	public void removerTarefa() {
 		
+		try {
+			
+			if (tarefa == null) {
+				Message.erro("Não é possível remover uma tarefa inexistente.");
+				return;
+			}
+			
+			tarefaService.remover(tarefa);
+			
+			Message.info("Tarefa removida com sucesso!");
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		carregaTarefas();
+		
+		PrimeFaces.current().executeScript("PF('gerenciaCriarTarefaDialog').hide()");
+		PrimeFaces.current().ajax().update("f-projeto:messages", "f-projeto:pg-ds-container");
+		
 	}
 	
 	public void salvarTag() {
 		
 		try {
 			
-			if (nomeVazio()) {
+			if (nomeVazio(tag.getNome())) {
 				Message.erro("O nome da tag deve estar preenchido.");
 				return;
 			}			
@@ -303,12 +371,17 @@ public class ProjetoMB implements Serializable {
 			if (RegexUtil.nomeTagInvalida(tag.getNome())) {
 				Message.erro("O nome escolhido não cumpre as regras estabelecidas.");
 				return;
-			}
-			
-			// Validar se já existe uma tag com mesmo nome
-			
+			}			
 			
 			if (tag.getId() == null) {
+				
+				Tag tagExiste = tagService.buscarPorNome(this.tag.getNome(), projetoId);
+				
+				if(tagExiste != null) {
+					Message.erro("Já existe uma tag com o nome '" + tag.getNome() + "'."
+							+ " Insira outro nome para prosseguir.");
+					return;
+				}
 				
 				if(this.tag.getCor() == null) {
 					Message.erro("Selecione uma cor para a nova tag");
@@ -345,8 +418,8 @@ public class ProjetoMB implements Serializable {
 		PrimeFaces.current().ajax().update("f-projeto:messages", "f-projetoTarefa-dialog:tags");
 	}
 	
-	private boolean nomeVazio() {
-		return (tag.getNome().trim().isEmpty() || tag.getNome() == null);
+	private boolean nomeVazio(String nome) {
+		return (nome.trim().isEmpty() || nome == null);
 	}
 	
 	public void redirecionarDashboard() {
@@ -466,20 +539,28 @@ public class ProjetoMB implements Serializable {
 		this.cores = cores;
 	}
 
+	public List<Integer> getDiasInvalidos() {
+		return diasInvalidos;
+	}
+
+	public void setDiasInvalidos(List<Integer> diasInvalidos) {
+		this.diasInvalidos = diasInvalidos;
+	}
+
+	public List<Date> getDatasInvalidas() {
+		return datasInvalidas;
+	}
+
+	public void setDatasInvalidas(List<Date> datasInvalidas) {
+		this.datasInvalidas = datasInvalidas;
+	}
+
 	public Long getProjetoId() {
 		return projetoId;
 	}
 
 	public void setProjetoId(Long projetoId) {
 		this.projetoId = projetoId;
-	}
-
-	public String getMensagemBotaoExcluir() {
-		return mensagemBotaoExcluir;
-	}
-
-	public void setMensagemBotaoExcluir(String mensagemBotaoExcluir) {
-		this.mensagemBotaoExcluir = mensagemBotaoExcluir;
 	}
 
 	public boolean isTarefasValidadas() {
@@ -516,6 +597,14 @@ public class ProjetoMB implements Serializable {
 
 	public void setEmailParticipante(String emailParticipante) {
 		this.emailParticipante = emailParticipante;
+	}
+
+	public Date getMinDate() {
+		return minDate;
+	}
+
+	public void setMinDate(Date minDate) {
+		this.minDate = minDate;
 	}
 
 }

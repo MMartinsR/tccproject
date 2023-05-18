@@ -12,10 +12,20 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 
 @Entity
 @Table(name = "tb_tag")
+@NamedQueries(value = {
+		@NamedQuery(name = "Tag.findByNome",
+				query = "SELECT t FROM Tag t "
+				+ "WHERE t.nome = :nome AND t.projeto.id = :projeto_id"),
+		@NamedQuery(name = "Tag.findTagsByProjetoId",
+		query = "SELECT t FROM Tag t "
+				+ "WHERE t.projeto.id = :projetoId")
+})
 public class Tag implements Serializable, Base {
 
 	private static final long serialVersionUID = 1L;

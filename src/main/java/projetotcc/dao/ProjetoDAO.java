@@ -66,6 +66,48 @@ public class ProjetoDAO implements Serializable {
 			
 		}
 	
+	public Projeto findByNomeProjeto(String nome) {
+		
+		EntityManager manager = ConnectionFactory.getEntityManager();
+		
+		try {
+			Query query = manager.createNamedQuery("Projeto.findByNomeProjeto");
+			query.setParameter("nome", nome);
+			
+			Projeto objeto = (Projeto) query.getSingleResult();
+			return objeto;
+		} catch (NoResultException e) {
+			throw new SemResultadoException(e);
+		}  catch (Exception e) {
+			e.printStackTrace();
+			throw new DatabaseException("Ocorreu um erro ao buscar");
+		} finally {
+			manager.close();
+		}
+		
+	}
+	
+	public Tarefa findByNomeTarefa(String nome, Long projeto_id) {
+		
+		EntityManager manager = ConnectionFactory.getEntityManager();
+		
+		try {
+			Query query = manager.createNamedQuery("Tarefa.findByNomeTarefa");
+			query.setParameter("nome", nome);
+			query.setParameter("projeto_id", projeto_id);
+			
+			Tarefa objeto = (Tarefa) query.getSingleResult();
+			return objeto;
+		} catch (NoResultException e) {
+			throw new SemResultadoException(e);
+		}  catch (Exception e) {
+			e.printStackTrace();
+			throw new DatabaseException("Ocorreu um erro ao buscar");
+		} finally {
+			manager.close();
+		}
+	}
+	
 	public List<Usuario> findByProjeto(Long id) {
 		
 		EntityManager manager = ConnectionFactory.getEntityManager();

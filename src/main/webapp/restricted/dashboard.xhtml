@@ -78,7 +78,8 @@
 									 selection="#{dashboardMB.projetoSelecionadoProprio}"
 									 selectionMode="single" 
 									 styleClass="coluna-nome,coluna-botoes"
-									 rowSelectMode="add">
+									 rowSelectMode="add"
+									 emptyMessage="Nenhum dado a ser mostrado.">
 									 
 							<f:facet name="header">
 								<span>
@@ -148,6 +149,7 @@
 									 paginatorAlwaysVisible="false"
 									 rows="3"
 									 rowKey="#{projetosParticipo.id}"
+									 emptyMessage="Nenhum dado a ser mostrado."
 									 styleClass="coluna-nome,coluna-botoes-part">
 									 
 							<f:facet name="header">

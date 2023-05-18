@@ -13,7 +13,39 @@
 	<link rel="shortcut icon" href="./../img/favicon.png" type="image/x-icon"/>
 	<link rel="shortcut icon" href="../img/favicon.ico" type="image/x-icon"/>
 	
-	<link rel="StyleSheet" href="../css/projeto.css" type="text/css" media="all"/>	
+	<link rel="StyleSheet" href="../css/projeto.css" type="text/css" media="all"/>
+	
+	<script>
+    PrimeFaces.locales['pt'] = {
+        closeText: 'Fechar',
+        prevText: 'Anterior',
+        nextText: 'Seguinte',
+        monthNames: ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'],
+        monthNamesShort: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'],
+        dayNames: ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'],
+        dayNamesShort: ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sab'],
+        dayNamesMin: ['D', 'S', 'T', 'Q', 'Q', 'S', 'S'],
+        weekHeader: 'Semana',
+        firstDay: 0,
+        isRTL: false,
+        showMonthAfterYear: false,
+        yearSuffix: '',
+        timeOnlyTitle: 'Apenas hora',
+        timeText: 'Tempo',
+        hourText: 'Hora',
+        minuteText: 'Minuto',
+        secondText: 'Segundo',
+        millisecondText: 'Milisegundo',
+        currentText: 'Fecha atual',
+        ampm: false,
+        month: 'Mês',
+        week: 'Semana',
+        day: 'Dia',
+        allDayText: 'Todo dia',
+        today: 'Hoje',
+        clear: 'Limpar'
+    };
+</script>	
 </h:head>
 
 <f:metadata>
@@ -22,6 +54,8 @@
 </f:metadata>
 
 <h:body>
+
+
 <h:form id="f-projeto">
 	<p:growl id="messages">
 		<p:autoUpdate />
@@ -90,18 +124,7 @@
 										 styleClass="button-novo">
 										<p:resetInput target=":f-projetoTarefa-dialog:gerencia-criarTarefa-projeto"/>
 									</p:commandButton>
-								</span>
-								<span>							
-									<p:commandButton id="cb-excluirTarefa-projeto"											  
-										 icon="pi pi-trash"
-										 value="#{projetoMB.mensagemBotaoExcluir}"
-										 oncomplete="PF('excluirTarefaDialog').show()"
-										 disabled="#{!dashboardMB.existeProjetoSelecionado}"
-										 update="@this"												 
-										 alt="Excluir Projeto"
-										 title="Excluir Projeto">
-									</p:commandButton>
-								</span>							
+								</span>						
 							</p:toolbarGroup>
 						</p:toolbar>
 						<p:panelGrid id="pg-ds-container" 
@@ -112,7 +135,9 @@
 							<p:dataScroller id="ds-tarefas-projeto-aberta" 
 								value="#{projetoMB.abertas}"
 								var="tarefa"
-								rows="6">
+								chunkSize="10"
+								mode="inline"
+								scrollHeight="500">
 								
 								<f:facet name="header">
 									Abertas
@@ -120,7 +145,7 @@
 								
 								<p:commandLink id="cl-abrir-tarefa-editar-aberta"
 									update=":f-projetoTarefa-dialog:gerencia-criarTarefa-projeto"
-									oncomplete="PF('gerenciaCriarTarefaDialog').show()"
+									onclick="PF('gerenciaCriarTarefaDialog').show()"
 									process="@this"
 									title="Abrir tarefa">
 									<f:setPropertyActionListener value="#{tarefa}"
@@ -138,12 +163,23 @@
 											styleClass="title-tarefa"/>
 										</div>
 										
+										<div class="card-excluir">
+											<p:commandButton icon="pi pi-trash"
+												id="cb-excluir-tarefa-aberta"										
+												oncomplete="PF('excluirTarefaDialog').show(), PF('gerenciaCriarTarefaDialog').hide()"
+												update="@this"
+												styleClass="botao-excluir-tarefa"
+												alt="Excluir Tarefa"
+												title="Excluir Tarefa">											
+											</p:commandButton>										
+										</div>
+										
 										<div class="container-atrasada">
 											<h:outputLabel styleClass="tarefaAtrasadaCard" 
 												rendered="#{projetoMB.validaTarefa(tarefa)}">
 												#{projetoMB.getDataEntregaFormatada(tarefa)}
 												</h:outputLabel>
-										</div>												
+										</div>																						
 									</p:card>												
                                 	<p:resetInput target=":f-projetoTarefa-dialog:gerencia-criarTarefa-projeto"/>
 								</p:commandLink>					
@@ -152,7 +188,9 @@
 							<p:dataScroller id="ds-tarefas-projeto-em-andamento" 
 								value="#{projetoMB.emDesenvolvimento}"
 								var="tarefa"
-								rows="6">
+								chunkSize="10"
+								mode="inline"
+								scrollHeight="500">
 								
 								<f:facet name="header">
 									Em desenvolvimento
@@ -160,7 +198,7 @@
 								
 								<p:commandLink id="cl-abrir-tarefa-editar-emAndamento"
 									update=":f-projetoTarefa-dialog:gerencia-criarTarefa-projeto"
-									oncomplete="PF('gerenciaCriarTarefaDialog').show()"
+									onclick="PF('gerenciaCriarTarefaDialog').show()"
 									process="@this"
 									title="Abrir tarefa">
 									<f:setPropertyActionListener value="#{tarefa}"
@@ -178,12 +216,25 @@
 											styleClass="title-tarefa"/>
 										</div>
 										
+										<div class="card-excluir">
+											<p:commandButton icon="pi pi-trash"
+												id="cb-excluir-tarefa-aberta"										
+												oncomplete="PF('excluirTarefaDialog').show()"
+												update="@this"
+												process="@this"
+												styleClass="botao-excluir-tarefa"
+												alt="Excluir Tarefa"
+												title="Excluir Tarefa">											
+											</p:commandButton>										
+										</div>
+										
 										<div class="container-atrasada">
 											<h:outputLabel styleClass="tarefaAtrasadaCard" 
 												rendered="#{projetoMB.validaTarefa(tarefa)}">
 												#{projetoMB.getDataEntregaFormatada(tarefa)}
 												</h:outputLabel>
-										</div>												
+										</div>
+																																
 									</p:card>												
                                 	<p:resetInput target=":f-projetoTarefa-dialog:gerencia-criarTarefa-projeto"/>
 								</p:commandLink>									
@@ -192,7 +243,9 @@
 							<p:dataScroller id="ds-tarefas-projeto-emValidacao" 
 								value="#{projetoMB.emValidacao}"
 								var="tarefa"
-								rows="6">
+								chunkSize="10"
+								mode="inline"
+								scrollHeight="500">
 								
 								<f:facet name="header">
 									Em validação
@@ -200,7 +253,7 @@
 								
 								<p:commandLink id="cl-abrir-tarefa-editar-atrasada"
 									update=":f-projetoTarefa-dialog:gerencia-criarTarefa-projeto"
-									oncomplete="PF('gerenciaCriarTarefaDialog').show()"
+									onclick="PF('gerenciaCriarTarefaDialog').show()"
 									process="@this"
 									title="Abrir tarefa">
 									<f:setPropertyActionListener value="#{tarefa}"
@@ -216,6 +269,18 @@
 										<div class="card-title">
 											<h:outputLabel value="#{tarefa.nome}"
 											styleClass="title-tarefa"/>
+										</div>
+										
+										<div class="card-excluir">
+											<p:commandButton icon="pi pi-trash"
+												id="cb-excluir-tarefa-emValid"										
+												oncomplete="PF('excluirTarefaDialog').show()"
+												update="@this"
+												process="@this"
+												styleClass="botao-excluir-tarefa"
+												alt="Excluir Tarefa"
+												title="Excluir Tarefa">											
+											</p:commandButton>										
 										</div>
 										
 										<div class="container-atrasada">
@@ -232,7 +297,9 @@
 							<p:dataScroller id="ds-tarefas-projeto-concluida" 
 								value="#{projetoMB.concluidas}"
 								var="tarefa"
-								rows="6">
+								chunkSize="10"
+								mode="inline"
+								scrollHeight="500">
 								
 								<f:facet name="header">
 									Concluídas
@@ -240,7 +307,7 @@
 								
 								<p:commandLink id="cl-abrir-tarefa-editar-concluida"
 									update=":f-projetoTarefa-dialog:gerencia-criarTarefa-projeto"
-									oncomplete="PF('gerenciaCriarTarefaDialog').show()"
+									onclick="PF('gerenciaCriarTarefaDialog').show()"
 									process="@this"
 									title="Abrir tarefa">
 									<f:setPropertyActionListener value="#{tarefa}"
@@ -256,6 +323,18 @@
 										<div class="card-title">
 											<h:outputLabel value="#{tarefa.nome}"
 											styleClass="title-tarefa"/>
+										</div>
+										
+										<div class="card-excluir">
+											<p:commandButton icon="pi pi-trash"
+												id="cb-excluir-tarefa-concl"										
+												oncomplete="PF('excluirTarefaDialog').show()"
+												update="@this"
+												process="@this"
+												styleClass="botao-excluir-tarefa"
+												alt="Excluir Tarefa"
+												title="Excluir Tarefa">											
+											</p:commandButton>										
 										</div>
 										
 										<div class="container-atrasada">
@@ -295,7 +374,28 @@
                         			 value="#{projetoMB.tarefa.nome}" 
                         			 required="true" 
                         			 requiredMessage="Defina o nome da tarefa"
-                        			 maxlength="1000"/>
+                        			 maxlength="500"/>
+                        <p:tooltip for="nome_tarefa" 
+							my="left center" 
+							at="right bottom"
+							showEvent="focus" 
+							hideEvent="blur"
+							showEffect="clip" 
+							hideEffect="fold">
+							<h:outputText value="Nome da tarefa deve conter: " escape="false" />
+							<br/>
+							<h:outputText value="* até 500 caracteres; " escape="false" />
+							<br/>
+							<h:outputText value=" * primeira letra maiúscula;" escape="false" />
+							<br/>
+							<h:outputText value="Pode ainda conter: " escape="false" />
+							<br/>
+							<h:outputText value=" * acentos, números, espaço e, " escape="false" />
+							<br/>
+							<h:outputText value="Caracteres especiais: " escape="false" />
+							<br/>
+							<h:outputText value=" * colchetes, chaves e hashtag " escape="false" />							
+						</p:tooltip>
                     </div>
                     <div class="field">
                         <p:outputLabel for="descricao"
@@ -344,10 +444,15 @@
                         			  value="#{projetoMB.tarefa.dataEntrega}"
                         			  pattern="dd/MM/yyyy"
                         			  required="true"
-                        			  requiredMessage="Defina uma data para a entrega da tarefa"/>
+                        			  requiredMessage="Defina uma data para a entrega da tarefa"
+                        			  disabledDays="#{projetoMB.diasInvalidos}"
+                        			  disabledDates="#{projetoMB.datasInvalidas}"
+                        			  readonlyInput="true"
+                        			  locale="pt"
+                        			  mindate="#{projetoMB.minDate}"/>
                         
                         <p:outputLabel styleClass="tarefaAtrasada" 
-                        	rendered="#{projetoMB.dataEntregaPassou()}">Atrasada</p:outputLabel>
+                        	rendered="#{projetoMB.validaTarefa(null)}">Atrasada</p:outputLabel>
                     </div>
                     
                     <div class="field">
@@ -521,7 +626,7 @@
                 <p:commandButton id="cb-cancelar-criar-tag"
                 				 value="Cancelar" 
                 				 icon="pi pi-times" 
-                				 onclick="PF('projeto').hide()"
+                				 onclick="PF('gerenciaCriarTagDialog').hide()"
                     			 class="ui-button-secondary" 
                     			 type="button" />
             </f:facet>	  
@@ -530,22 +635,24 @@
 		<p:confirmDialog id="excluir-tarefa-dialog"
 					     widgetVar="excluirTarefaDialog" 
 						 showEffect="fade"
-						 width="300"
-						 message="Deseja excluir esta tarefa?"
-						 header="Confirm"
+						 width="400"
+						 message="Todo progresso será perdido caso prossiga. Deseja excluir esta tarefa?"
+						 header="Excluir"
 						 severity="warn">
 						 
-			 <p:commandButton value="Sim" 
-			 				  icon="pi pi-check" 
-			 				  actionListener="#{projetoMB.removerTarefa()}"
-                			  process="@this" 
-                			  update="f-projeto"
-                			  oncomplete="PF('excluirTarefaDialog').hide()" />
+			<div class="botoes-confirmar-exclusao-tarefa">			 
+				 <p:commandButton value="Sim" 
+				 				  icon="pi pi-check" 
+				 				  actionListener="#{projetoMB.removerTarefa()}"
+	                			  process="@this" 
+	                			  update="@this"
+	                			  oncomplete="PF('excluirTarefaDialog').hide()" />
+            </div>
             <p:commandButton value="Não" 
             				 type="button" 
             				 styleClass="ui-button-secondary" 
             				 icon="pi pi-times"
-                			 onclick="PF('excluirTarefaDialog').hide()" />		
+                			 onclick="PF('excluirTarefaDialog').hide(), PF('gerenciaCriarTarefaDialog').hide()" />		
 		</p:confirmDialog>
 	</h:form>
 	

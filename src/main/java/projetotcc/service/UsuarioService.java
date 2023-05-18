@@ -229,7 +229,7 @@ public class UsuarioService implements Serializable {
 			if (usuario.getSenha().equals(converteStringParaMd5(senha))) {
 				senha = null;
 				
-				throw new AutenticacaoException("As senhas não podem ser iguais.");
+				throw new AutenticacaoException("A nova senha e a antiga não podem ser iguais.");
 			}
 		     
 		     usuario.setSenha(converteStringParaMd5(senha));

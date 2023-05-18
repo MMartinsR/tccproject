@@ -175,12 +175,27 @@ a:-webkit-any-link:hover{
 }
 
 .card-title {
-	margin-top: 20px;
+	margin-top: 15px;
+	display: inline-block;
+    width: 213px;
+}
+
+.card-excluir {
+	display: inline-block;
+	vertical-align: top;
+	margin-top: 15px;
 }
 
 .title-tarefa {
 	font-size: 1.1rem;
 	text-align: justify;
+}
+
+.botao-excluir-tarefa {
+	width: 30px !important; 
+	height: 30px !important;
+	background-color: #CA3521 !important;
+	border-color: #CA3521 !important;
 }
 
 body .ui-button {	
@@ -270,6 +285,11 @@ div.botoes-confirmar-exclusao-separar {
 
 div.botoes-confirmar-exclusao-participante {
 	margin-right: 172px;
+	display: inline-block;
+}
+
+.botoes-confirmar-exclusao-tarefa {
+	margin-right: 191px;
 	display: inline-block;
 }
 
