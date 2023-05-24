@@ -101,7 +101,7 @@ body .ui-fieldset {
 	min-height: 650px;
 	border: none;
 	margin: 0px;
-	background: #f2fee8 url("../img/dashboard-bemvindo-fundo.png") center center no-repeat scroll;
+	background: #f2fee8;
 	box-shadow: 2px 6px 10px #bdc4ca;
 	padding: 5px 5px 15px 5px;
 }
@@ -150,8 +150,7 @@ body .ui-card .ui-card-content {
 	min-width: 10px;
 }
 
-.tag-style {
-	background-color: #b5e38b;
+.tag-style {	
 	padding: 2px 15px 2px 15px;
 	border-radius: 5px;
 	margin-right: 5px;
@@ -176,12 +175,27 @@ a:-webkit-any-link:hover{
 }
 
 .card-title {
-	margin-top: 20px;
+	margin-top: 15px;
+	display: inline-block;
+    width: 213px;
+}
+
+.card-excluir {
+	display: inline-block;
+	vertical-align: top;
+	margin-top: 15px;
 }
 
 .title-tarefa {
 	font-size: 1.1rem;
 	text-align: justify;
+}
+
+.botao-excluir-tarefa {
+	width: 30px !important; 
+	height: 30px !important;
+	background-color: #CA3521 !important;
+	border-color: #CA3521 !important;
 }
 
 body .ui-button {	
@@ -251,15 +265,16 @@ body .ui-dialog .ui-dialog-titlebar .ui-dialog-title {
 
 div.botao-tag {	
 	display: inline-block;
+	margin-left: 5px;
 }
 
 div.botoes-confirmar-cancelar-separar-projeto {
-	margin-right: 145px;
+	margin-right: 237px;
 	display: inline-block;
 }
 
 div.botoes-confirmar-cancelar-separar-tag {
-	margin-right: 145px;
+	margin-right: 105px;
 	display: inline-block;
 }
 
@@ -270,6 +285,11 @@ div.botoes-confirmar-exclusao-separar {
 
 div.botoes-confirmar-exclusao-participante {
 	margin-right: 172px;
+	display: inline-block;
+}
+
+.botoes-confirmar-exclusao-tarefa {
+	margin-right: 191px;
 	display: inline-block;
 }
 
@@ -335,6 +355,199 @@ body .ui-dialog .ui-dialog-content {
 	margin-right: 134px;
 	display: inline-block;
 }
+
+.ui-growl {
+	z-index: 999999 !important;
+}
+
+div.container-descricao .descricao-codigo-criador {
+	text-align: right !important; 
+	font-weight: bold;
+}
+
+ .ui-panelgrid .ui-grid-responsive .ui-panelgrid-cell {
+ 	min-height: 10px;
+ }
+ 
+ .ui-panelgrid-cell .ui-g-12 .ui-md-3 {
+ 	min-height: 10px;
+ }
+ 
+.tamanho {
+	height: 30px; 
+    width: 50px;    
+	border-radius: 5px;  
+	margin: 1px; 
+}
+
+.tamanho-display {
+	height: 40px; 
+    width: 250px;    
+	border-radius: 5px;  
+	margin: 1px;
+}
+
+.border {
+	display: inline-block;
+	border-radius: 5px;
+	border: 2px solid white;	
+}
+
+.border-display {
+	display: inline-block;
+	background-color: white;
+	border-radius: 5px;	
+}
+
+.border:focus {
+	border: 2px solid black;
+	border-radius: 5px;	
+}
+
+.container-display-cor {
+	text-align: center;
+	height: 80px;
+	padding: 19px;
+}
+
+.container-cores {
+	padding: 2px;
+}
+
+.ui-md-4 {
+	text-align: center;
+	width: 16%;
+	padding: 0px 5px;
+}
+
+body .ui-dataview .ui-dataview-header {
+	display: none;
+}
+
+.ui-dataview-column .ui-g-12 .ui-md-4 {
+	padding: 2px 5px;
+}
+
+body .ui-inplace .ui-inplace-display {
+	padding: 0px;
+}
+
+.ui-fluid .ui-selectonemenu {
+	margin-top: 5px;
+	width: 55%;
+}
+
+.ui-fluid .ui-calendar {
+	margin-top: 5px;
+}
+
+.div-tamanho {
+	height: 34px;
+	width: 470px;
+	background: white;
+	display: flex;	
+	justify-content: center;
+	flex-direction: row;
+	flex-wrap: wrap;
+	padding: 2px;
+}
+
+.pg-tamanho-cell {
+	height: 20px;
+	width: 105px;
+	background: white;
+	display: inline-block;	
+}
+.cor-tag-esq {
+	height: 26px;
+	width: 200px;
+	background: black;
+	border-radius: 5px;
+}
+
+.pg-column-dois {
+	width: 235px;
+}
+
+.pg-column-tres {
+	height: 20px;
+	width: 10px;
+}
+
+.editar-tag-botao {
+	margin-top: 3px !important;
+	width: 25px !important;
+	height: 25px;
+}
+
+.ui-fluid .ui-selectonelistbox, .ui-fluid .ui-selectmanymenu {	
+	display: inline-block;
+}
+
+.ui-selectmanycheckbox.ui-widget td {
+	background: white;	
+    display: flex;
+    align-items: stretch;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-content: center;
+    justify-content: flex-start;
+}
+
+body .ui-chkbox .ui-chkbox-box {
+	height: 1.6rem;
+}
+
+body .ui-chkbox {
+	height: 2.0rem;
+}
+
+.ui-fluid .ui-calendar {
+	width: 30%;
+}
+
+.ui-fluid .ui-calendar input {
+	width: 95%;
+}
+
+.block {
+	display: block;
+}
+
+.tarefaAtrasada {
+	background-color: #CA3521;
+	padding: 5px 10px;
+	border-radius: 5px;
+	color: white;
+}
+
+.container-atrasada {	
+	margin: 5px 0px;
+}
+
+.tarefaAtrasadaCard {
+	background-color: #CA3521;
+	padding: 2px 15px;
+	border-radius: 5px;
+	color: white;
+}
+
+body .ui-scrollpanel {
+	padding: 3px;	
+	border: none; 
+	height: 600px
+}
+
+
+
+
+
+
+
+
+
+ 
+ 
 
 
 

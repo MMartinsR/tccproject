@@ -21,6 +21,8 @@ import projetotcc.exception.SemResultadoException;
 import projetotcc.model.Projeto;
 import projetotcc.model.Usuario;
 import projetotcc.service.ProjetoService;
+import projetotcc.service.TagService;
+import projetotcc.service.TarefaService;
 import projetotcc.service.UsuarioService;
 import projetotcc.utility.GeradorCodigo;
 import projetotcc.utility.Message;
@@ -43,6 +45,12 @@ public class DashboardMB implements Serializable {
 	
 	@Inject
 	private UsuarioService usuarioService;
+	
+	@Inject
+	private TarefaService tarefaService;
+	
+	@Inject
+	private TagService tagService;
 	
 	private List<Projeto> projetosParticipados = new ArrayList<>();
 	private List<Projeto> projetosProprios = new ArrayList<>();
@@ -83,6 +91,15 @@ public class DashboardMB implements Serializable {
 			validarNomeProjeto(projetoSelecionadoProprio.getNome());
 
 			if (projetoSelecionadoProprio.getId() == null) {
+				
+				Projeto nomeProjetoExiste = projetoService.buscarProjetoPorNome(projetoSelecionadoProprio.getNome().trim());
+				
+				if(nomeProjetoExiste != null) {
+					Message.erro("Já existe um projeto com o nome '" + projetoSelecionadoProprio.getNome() + "'."
+							+ " Insira outro nome para prosseguir.");
+					return;
+				}
+				
 				String codigo = gerarCodigo();
 				
 				projetoSelecionadoProprio.setUsuarios(usuariosEx);
@@ -100,8 +117,7 @@ public class DashboardMB implements Serializable {
 			carregaProjetosProprios();
 			
 			PrimeFaces.current().executeScript("PF('gerenciaProjetoDashboardDialog').hide()");
-			PrimeFaces.current().ajax().update("f-dashboard:messages", 
-					"f-dashboard:dt-meusProjetos-dashboard");
+			PrimeFaces.current().ajax().update("f-dashboard:dt-meusProjetos-dashboard");
 
 		}  catch (DatabaseException e) {
 			Message.erro("Ocorreu um erro ao salvar este projeto");
@@ -139,6 +155,11 @@ public class DashboardMB implements Serializable {
 	public void removerProjeto() {
 		
 		try {
+			
+			tarefaService.removerTodasTarefas(projetoSelecionadoProprio.getId());
+			tagService.removerTodasTags(projetoSelecionadoProprio.getId());
+			
+			
 			projetoService.remover(projetoSelecionadoProprio);
 
 			Message.info("Projeto excluído com sucesso");

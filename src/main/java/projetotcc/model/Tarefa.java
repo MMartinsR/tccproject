@@ -16,6 +16,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -23,12 +25,20 @@ import javax.persistence.TemporalType;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 
-import projetotcc.enums.PesoEnum;
+import projetotcc.enums.PrioridadeEnum;
 import projetotcc.enums.StatusEnum;
 
 @Entity
 @Table(name = "tb_tarefa")
-public class Tarefa implements Serializable, Base{
+@NamedQueries(value = {
+		@NamedQuery(name = "Tarefa.findByNomeTarefa",
+				query = "SELECT ta FROM Tarefa ta "
+						+ "WHERE ta.nome = :nome AND ta.projeto.id = :projeto_id"),
+		@NamedQuery(name = "Tarefa.findTarefasByProjetoId",
+		query = "SELECT ta FROM Tarefa ta "
+				+ "WHERE ta.projeto.id = :projetoId")
+})
+public class Tarefa implements Serializable, Base {
 
 	private static final long serialVersionUID = 1L;
 	
@@ -40,7 +50,7 @@ public class Tarefa implements Serializable, Base{
 	@Column(length = 3000)
 	private String descricao;
 	@Enumerated(EnumType.ORDINAL)
-	private PesoEnum peso;
+	private PrioridadeEnum prioridade;
 	@Temporal(TemporalType.DATE)
 	private Date dataEntrega;
 	@Enumerated(EnumType.ORDINAL)
@@ -82,12 +92,12 @@ public class Tarefa implements Serializable, Base{
 		this.descricao = descricao;
 	}
 
-	public PesoEnum getPeso() {
-		return peso;
+	public PrioridadeEnum getPrioridade() {
+		return prioridade;
 	}
 
-	public void setPeso(PesoEnum peso) {
-		this.peso = peso;
+	public void setPrioridade(PrioridadeEnum prioridade) {
+		this.prioridade = prioridade;
 	}
 
 	public Date getDataEntrega() {

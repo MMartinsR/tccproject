@@ -29,12 +29,21 @@ import javax.persistence.TemporalType;
 		@NamedQuery(name = "Projeto.findByCodigo",
 		query = "SELECT p FROM Projeto p "
 		+ "WHERE p.codigo = :codigo"),
+		@NamedQuery(name = "Projeto.findByNomeProjeto",
+		query = "SELECT p FROM Projeto p "
+		+ "WHERE p.nome = :nome"),
 		@NamedQuery(name = "Projeto.findByProjeto",
 		query = "SELECT p FROM Projeto p "
 		+ "INNER JOIN FETCH p.usuarios "
+		+ "WHERE p.id = :id"),
+		@NamedQuery(name = "Projeto.findTagsByProjeto",
+		query = "SELECT p FROM Projeto p "
+		+ "INNER JOIN FETCH p.tags "
+		+ "WHERE p.id = :id"),
+		@NamedQuery(name = "Projeto.findTarefasByProjeto",
+		query = "SELECT p FROM Projeto p "
+		+ "INNER JOIN FETCH p.tarefas "
 		+ "WHERE p.id = :id")
-		
-		
 })
 public class Projeto implements Serializable, Base {
 
@@ -62,7 +71,8 @@ public class Projeto implements Serializable, Base {
 	@OneToMany(mappedBy = "projeto")
 	private List<Tarefa> tarefas = new ArrayList<Tarefa>();
 	
-	
+	@OneToMany(mappedBy = "projeto")
+	private List<Tag> tags = new ArrayList<Tag>();
 	
 	public Long getId() {
 		return id;
@@ -126,6 +136,14 @@ public class Projeto implements Serializable, Base {
 
 	public void setTarefas(List<Tarefa> tarefas) {
 		this.tarefas = tarefas;
+	}
+
+	public List<Tag> getTags() {
+		return tags;
+	}
+
+	public void setTags(List<Tag> tags) {
+		this.tags = tags;
 	}
 
 	@Override

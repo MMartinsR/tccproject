@@ -51,13 +51,43 @@ public class RegexUtil {
 	 * permite acentos e espaço.
 	 * @param nomeProjeto
 	 * @return
-	 */
-	
+	 */	
 	public static boolean nomeProjetoInvalido(String nomeProjeto) {
 		String nomeProjetoRegex = "^[A-Z]{1}[a-zA-Z0-9À-ú ]{1,28}[A-Za-z0-9À-ú]{1}$";
 		
 		Pattern pattern = Pattern.compile(nomeProjetoRegex);
 		Matcher matcher = pattern.matcher(nomeProjeto);
+		
+		return !matcher.matches();
+	}
+	
+	/**
+	 * Permite nomes de tag com a primeira letra maiuscula, até 20 caracteres,
+	 * além de caracteres acentuados, números e espaço.
+	 * @param nomeTag
+	 * @return
+	 */
+	public static boolean nomeTagInvalida(String nomeTag) {
+		String nomeTagRegex = "^[A-Z]{1}[a-zA-ZÀ-ú0-9 ]{1,18}[A-Za-z0-9À-ú]{1}$";
+		
+		Pattern pattern = Pattern.compile(nomeTagRegex);
+		Matcher matcher = pattern.matcher(nomeTag);
+		
+		return !matcher.matches();
+	}
+	
+	/**
+	 * Permite nomes de tarefas que comecem com a primeira letra maiúscula, tenham até
+	 * 500 caracteres, dentre eles acentos, números, os caracteres especiais [ e ] e { e } e #
+	 * além de espaços.
+	 * @param nomeTarefa
+	 * @return
+	 */
+	public static boolean nomeTarefaInvalida(String nomeTarefa) {
+		String nomeTarefaRegex = "^[A-Z]{1}[a-zA-ZÀ-ú0-9\\[\\]\\{\\}\\# ]{1,498}[A-Za-z0-9À-ú\\[\\]\\{\\}\\#]{1}$";
+		
+		Pattern pattern = Pattern.compile(nomeTarefaRegex);
+		Matcher matcher = pattern.matcher(nomeTarefa);
 		
 		return !matcher.matches();
 	}

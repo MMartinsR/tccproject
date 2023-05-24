@@ -125,7 +125,7 @@
 					
 					<div>	   	   
 					<p:inputText id="email-cadastro" 
-							 	 value="#{usuarioLogadoMB.usuario.email}"
+							 	 value="#{usuarioLogadoMB.usuarioCadastro.email}"
 							     required="true"
 							     requiredMessage="E-mail é obrigatório!"
 							     size="25"
@@ -139,7 +139,7 @@
 								   styleClass="negrito">Senha:</p:outputLabel>
 					<div>
 					<p:password id="senha-cadastro" 
-							    value="#{usuarioLogadoMB.usuario.senha}"
+							    value="#{usuarioLogadoMB.usuarioCadastro.senha}"
 							    required="true"
 							    requiredMessage="Senha é obrigatória!"
 							    size="29"
@@ -166,6 +166,41 @@
 						</p:tooltip>
 					</div>
 				</div>
+				
+				<div class="field">	 
+					<p:outputLabel id="label-confirmar-senha-cadastro"
+								   for="senha-confirmar-cadastro"
+								   styleClass="negrito">Confirmar senha:</p:outputLabel>
+					<div>
+					<p:password id="senha-confirmar-cadastro" 
+							    value="#{usuarioLogadoMB.senhaConfirmacao}"
+							    required="true"
+							    requiredMessage="Deve informar a mesma senha para confirmação."
+							    size="29"
+							    autocomplete="true"
+							    toggleMask="true" />
+					<p:tooltip for="senha-confirmar-cadastro" 
+							my="left center" 
+							at="right bottom"
+							showEvent="focus" 
+							hideEvent="blur"
+							showEffect="clip" 
+							hideEffect="fold">
+							<h:outputText value="A senha deve conter: " escape="false" />
+							<br/>
+							<h:outputText value=" * 8 a 20 caracteres; " escape="false" />
+							<br/>
+							<h:outputText value=" * 1 maiusculo;" escape="false" />
+							<br/>
+							<h:outputText value=" * 1 minusculo;" escape="false" />
+							<br/>
+							<h:outputText value=" * 1 número;" escape="false" />
+							<br/>
+							<h:outputText value=" * 1 caracter especial." escape="false" />
+						</p:tooltip>
+					</div>
+				</div>
+				
 				<div class="field">	 
 					<p:outputLabel id="label-nome-exibicao-cadastro"
 								   for="nome-exibicao-cadastro"
@@ -173,7 +208,7 @@
 					
 					<div>
 					<p:inputText id="nome-exibicao-cadastro" 
-							     value="#{usuarioLogadoMB.usuario.nomeExibicao}"
+							     value="#{usuarioLogadoMB.usuarioCadastro.nomeExibicao}"
 							     required="true"
 							     requiredMessage="Deverá inserir um nome de usuário valido!"
 							     size="25"
@@ -270,6 +305,40 @@
 						</p:tooltip>
 					</div>
 					
+				</div>
+				
+				<div class="field">	 
+					<p:outputLabel id="label-confirmar-resetar-senha"
+								   for="senha-confirmar-resetar"
+								   styleClass="negrito">Confirmar nova senha:</p:outputLabel>
+					<div>
+					<p:password id="senha-confirmar-resetar" 
+							    value="#{usuarioLogadoMB.senhaConfirmacao}"
+							    required="true"
+							    requiredMessage="Deve informar a mesma senha para confirmação."
+							    size="29"
+							    autocomplete="true"
+							    toggleMask="true" />
+					<p:tooltip for="senha-confirmar-resetar" 
+							my="left center" 
+							at="right bottom"
+							showEvent="focus" 
+							hideEvent="blur"
+							showEffect="clip" 
+							hideEffect="fold">
+							<h:outputText value="A senha deve conter: " escape="false" />
+							<br/>
+							<h:outputText value=" * 8 a 20 caracteres; " escape="false" />
+							<br/>
+							<h:outputText value=" * 1 maiusculo;" escape="false" />
+							<br/>
+							<h:outputText value=" * 1 minusculo;" escape="false" />
+							<br/>
+							<h:outputText value=" * 1 número;" escape="false" />
+							<br/>
+							<h:outputText value=" * 1 caracter especial." escape="false" />
+						</p:tooltip>
+					</div>
 				</div> 
 			</p:outputPanel>
 			

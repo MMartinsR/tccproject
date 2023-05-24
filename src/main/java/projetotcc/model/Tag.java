@@ -9,11 +9,23 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 
 @Entity
 @Table(name = "tb_tag")
+@NamedQueries(value = {
+		@NamedQuery(name = "Tag.findByNome",
+				query = "SELECT t FROM Tag t "
+				+ "WHERE t.nome = :nome AND t.projeto.id = :projeto_id"),
+		@NamedQuery(name = "Tag.findTagsByProjetoId",
+		query = "SELECT t FROM Tag t "
+				+ "WHERE t.projeto.id = :projetoId")
+})
 public class Tag implements Serializable, Base {
 
 	private static final long serialVersionUID = 1L;
@@ -21,11 +33,21 @@ public class Tag implements Serializable, Base {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-	@Column(length = 50)
+	@Column(length = 20)
 	private String nome;
+	@Column(length = 7)
+	private String cor;
+	
 	
 	@ManyToMany(mappedBy = "tags")
 	private List<Tarefa> tarefas = new ArrayList<Tarefa>();
+	
+	// Cria uma relação entre projeto e tag, que permite o controle de quais tags foram criadas no escopo
+	// de um projeto específico.
+	@ManyToOne
+	@JoinColumn(name = "projeto_id")
+	private Projeto projeto;
+
 
 	public Long getId() {
 		return id;
@@ -43,12 +65,28 @@ public class Tag implements Serializable, Base {
 		this.nome = nome;
 	}
 
+	public String getCor() {
+		return cor;
+	}
+
+	public void setCor(String cor) {
+		this.cor = cor;
+	}
+
 	public List<Tarefa> getTarefas() {
 		return tarefas;
 	}
 
 	public void setTarefas(List<Tarefa> tarefas) {
 		this.tarefas = tarefas;
+	}
+	
+	public Projeto getProjeto() {
+		return projeto;
+	}
+
+	public void setProjeto(Projeto projeto) {
+		this.projeto = projeto;
 	}
 
 	@Override
