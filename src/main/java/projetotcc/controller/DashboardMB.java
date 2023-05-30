@@ -75,7 +75,7 @@ public class DashboardMB implements Serializable {
 	
 	
 	public void abrirNovo() {
-		this.projetoSelecionadoProprio = new Projeto();
+		projetoSelecionadoProprio = new Projeto();
 		projetoSelecionadoProprio.setDataCriacao(new Date());
 		projetoSelecionadoProprio.setCriador(usuario.getNomeExibicao());
 	}
@@ -88,17 +88,26 @@ public class DashboardMB implements Serializable {
 		usuariosEx.add(usuarioEx);
 		
 		try {
+						
+			// Permite garantir que a primeira letra será sempre maiuscula, mesmo que o usuário insira minuscula
+			// e não tenha espaços
+			projetoSelecionadoProprio.setNome(
+					projetoSelecionadoProprio.getNome().substring(0,1).toUpperCase()
+					.concat(projetoSelecionadoProprio.getNome().substring(1).trim()));
+			
+			System.out.println(projetoSelecionadoProprio.getNome());
+			
 			validarNomeProjeto(projetoSelecionadoProprio.getNome());
+			
+			Projeto nomeProjetoExiste = projetoService.buscarProjetoPorNome(projetoSelecionadoProprio.getNome(), this.usuario.getNomeExibicao());		
 
 			if (projetoSelecionadoProprio.getId() == null) {
 				
-				Projeto nomeProjetoExiste = projetoService.buscarProjetoPorNome(projetoSelecionadoProprio.getNome().trim());
-				
-				if(nomeProjetoExiste != null) {
+				if (nomeProjetoExiste != null) {
 					Message.erro("Já existe um projeto com o nome '" + projetoSelecionadoProprio.getNome() + "'."
 							+ " Insira outro nome para prosseguir.");
 					return;
-				}
+				}				
 				
 				String codigo = gerarCodigo();
 				
@@ -109,6 +118,16 @@ public class DashboardMB implements Serializable {
 				Message.info("Projeto '" + projetoSelecionadoProprio.getNome() + "' criado com sucesso!");
 				
 			} else {
+				
+				Projeto projetoBanco = projetoService.buscarPorId(projetoSelecionadoProprio.getId());
+				
+				if (nomeProjetoExiste != null && !projetoBanco.getNome().equals(nomeProjetoExiste.getNome())) {
+					Message.erro("Já existe um projeto com o nome '" + projetoSelecionadoProprio.getNome() + "'."
+							+ " Insira outro nome para prosseguir.");
+					
+					projetoSelecionadoProprio.setNome(projetoBanco.getNome());
+					return;
+				} 				
 				
 				projetoService.atualizar(projetoSelecionadoProprio);
 				Message.info("Projeto '" + projetoSelecionadoProprio.getNome() + "' atualizado com sucesso!");
