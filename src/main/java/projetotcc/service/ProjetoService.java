@@ -117,10 +117,10 @@ public class ProjetoService implements Serializable {
 		
 	}
 	
-	public Projeto buscarProjetoPorNome(String nome) {
+	public Projeto buscarProjetoPorNome(String nome, String nomeExibicao) {
 		try {
 			
-			return projetoDAO.findByNomeProjeto(nome);
+			return projetoDAO.findByNomeProjeto(nome, nomeExibicao);
 			
 		} catch (SemResultadoException e) {
 			System.out.println("Nome de projeto válido");

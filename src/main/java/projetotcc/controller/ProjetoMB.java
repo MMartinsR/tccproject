@@ -260,21 +260,24 @@ public class ProjetoMB implements Serializable {
 		
 		try {
 			
-			if (nomeVazio(tarefa.getNome())) {
-				Message.erro("O nome da tarefa deve estar preenchido.");
-				return;
-			}			
+			// Permite garantir que a primeira letra será maiuscula, mesmo que o usuario insira minuscula
+			// e não tenha espaços
+			tarefa.setNome(
+					tarefa.getNome().substring(0,1).toUpperCase()
+					.concat(tarefa.getNome().substring(1).trim()));
+			
+			System.out.println(tarefa.getNome());						
 		
 			if (RegexUtil.nomeTarefaInvalida(tarefa.getNome())) {
 				Message.erro("O nome escolhido não cumpre as regras estabelecidas.");
 				return;
-			}	
+			}
+			
+			Tarefa nomeTarefaExiste = tarefaService.buscarTarefaPorNome(this.tarefa.getNome(), projetoId);
 
 			if(tarefa.getId() == null) {
 				
-				Tarefa tarefaExiste = tarefaService.buscarTarefaPorNome(this.tarefa.getNome(), projetoId);
-				
-				if(tarefaExiste != null) {
+				if(nomeTarefaExiste != null) {
 					Message.erro("Já existe uma tarefa com o nome '" + tarefa.getNome() + "'."
 							+ " Insira outro nome para prosseguir.");
 					return;
@@ -287,7 +290,16 @@ public class ProjetoMB implements Serializable {
 				tarefaService.salvar(tarefa);
 				
 				Message.info("Tarefa '" + tarefa.getNome() + "' criada com sucesso!");
-			} else {				
+			} else {
+				
+				Tarefa tarefaBanco = tarefaService.buscarPorId(tarefa.getId());
+				
+				if(nomeTarefaExiste != null && !tarefaBanco.getNome().equals(nomeTarefaExiste.getNome())) {
+					Message.erro("Já existe uma tarefa com o nome '" + tarefa.getNome() + "'."
+							+ " Insira outro nome para prosseguir.");
+					tarefa.setNome(tarefaBanco.getNome());
+					return;
+				}
 								
 				tarefaService.atualizar(tarefa);
 				
@@ -363,28 +375,32 @@ public class ProjetoMB implements Serializable {
 		
 		try {
 			
-			if (nomeVazio(tag.getNome())) {
-				Message.erro("O nome da tag deve estar preenchido.");
-				return;
-			}			
+			// Permite garantir que a primeira letra será maiuscula, mesmo que o usuario insira minuscula
+			// e não tenha espaços			
+			tag.setNome(
+					tag.getNome().substring(0,1).toUpperCase()
+					.concat(tag.getNome().substring(1).trim()));
+			
+			System.out.println(tag.getNome());
 		
 			if (RegexUtil.nomeTagInvalida(tag.getNome())) {
 				Message.erro("O nome escolhido não cumpre as regras estabelecidas.");
 				return;
-			}			
+			}
+			
+			Tag nomeTagExiste = tagService.buscarPorNome(this.tag.getNome(), projetoId);
+			
 			
 			if (tag.getId() == null) {
 				
-				Tag tagExiste = tagService.buscarPorNome(this.tag.getNome(), projetoId);
-				
-				if(tagExiste != null) {
-					Message.erro("Já existe uma tag com o nome '" + tag.getNome() + "'."
-							+ " Insira outro nome para prosseguir.");
+				if(this.tag.getCor() == null) {
+					Message.erro("Selecione uma cor para a nova tag");
 					return;
 				}
 				
-				if(this.tag.getCor() == null) {
-					Message.erro("Selecione uma cor para a nova tag");
+				if(nomeTagExiste != null) {
+					Message.erro("Já existe uma tag com o nome '" + tag.getNome() + "'."
+							+ " Insira outro nome para prosseguir.");
 					return;
 				}
 				
@@ -393,7 +409,17 @@ public class ProjetoMB implements Serializable {
 				tagService.salvar(tag);
 				
 				Message.info("Tag '" + tag.getNome() + "' adicionada com sucesso!");
-			} else {				
+			} else {
+				
+				Tag tagBanco = tagService.buscarPorId(tag.getId());
+				
+				if (nomeTagExiste != null && !tagBanco.getNome().equals(nomeTagExiste.getNome())) {
+					Message.erro("Já existe uma tag com o nome '" + tag.getNome() + "'."
+							+ " Insira outro nome para prosseguir.");
+					
+					tag.setNome(tagBanco.getNome());
+					return;
+				}
 				
 				tagService.atualizar(tag);
 				
@@ -415,11 +441,7 @@ public class ProjetoMB implements Serializable {
 		carregaTags();
 		
 		PrimeFaces.current().executeScript("PF('gerenciaCriarTagDialog').hide()");
-		PrimeFaces.current().ajax().update("f-projeto:messages", "f-projetoTarefa-dialog:tags");
-	}
-	
-	private boolean nomeVazio(String nome) {
-		return (nome.trim().isEmpty() || nome == null);
+		PrimeFaces.current().ajax().update("f-projetoTarefa-dialog:tags", "f-projetoTarefa-dialog:pg-tags");
 	}
 	
 	public void redirecionarDashboard() {

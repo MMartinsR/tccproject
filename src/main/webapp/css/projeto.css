@@ -76,7 +76,10 @@ body .ui-fieldset .ui-fieldset-legend {
 body .ui-fieldset-toggleable .ui-fieldset-legend {	 
 	text-align: left;
 	padding: 5px 10px;
-	background: #aed18d;
+}
+
+body .ui-fieldset .ui-fieldset-legend.ui-state-focus {
+	box-shadow: 0 0 0 0.2rem #89c156
 }
 
 body .ui-fieldset-toggleable {
@@ -87,7 +90,7 @@ body .ui-fieldset-toggleable {
 }
 
 body .ui-fieldset .ui-fieldset-legend.ui-state-hover {
-	background: #89c156;
+	background: #b5e38b;
     border-color: #b5e38b;
     color: #fff;	
 }
@@ -455,7 +458,7 @@ body .ui-inplace .ui-inplace-display {
 .pg-tamanho-cell {
 	height: 20px;
 	width: 105px;
-	background: white;
+	background: white !important;
 	display: inline-block;	
 }
 .cor-tag-esq {
@@ -467,11 +470,13 @@ body .ui-inplace .ui-inplace-display {
 
 .pg-column-dois {
 	width: 235px;
+	background: white !important;
 }
 
 .pg-column-tres {
 	height: 20px;
 	width: 10px;
+	background: white !important;
 }
 
 .editar-tag-botao {
@@ -537,6 +542,11 @@ body .ui-scrollpanel {
 	border: none; 
 	height: 600px
 }
+
+
+
+
+
 
 
 

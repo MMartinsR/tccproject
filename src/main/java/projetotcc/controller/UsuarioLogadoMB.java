@@ -367,7 +367,7 @@ public class UsuarioLogadoMB implements Serializable{
 		String htmlCorpo = "<div>";
 			   htmlCorpo += "<div style='display: flex; justify-content: center; margin: 50px 0px 0px 0px;'>";
 			   htmlCorpo += "<h2 style='background-color: #f2fee8; padding: 30px 0px 10px 0px; width: 500px; margin: 0px; "
-			   		+ "border-radius: 10px 10px 0px 0px; font-family: Arial, sans-serif; text-align: center;'>Senha bem-vindo " 
+			   		+ "border-radius: 10px 10px 0px 0px; font-family: Arial, sans-serif; text-align: center;'>Seja bem-vindo " 
 					   + usuario.getNomeExibicao() + "!!"+ "</h2></div>"; 
 			   htmlCorpo += "<div style='display: flex; justify-content: center; margin-bottom: 0px;'>";
 			   htmlCorpo += "<p style='background-color: #f2fee8; padding: 20px 0px 10px 0px; width: 500px; margin: 0px; "

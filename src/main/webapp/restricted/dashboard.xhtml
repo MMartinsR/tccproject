@@ -115,8 +115,7 @@
 	            					update="cb-excluirProjeto-dashboard f-dashboard:messages" />
 							
 							<p:column>
-								<h:outputText value="#{meuProjeto.nome}" 
-											  title="Para limpar a seleção: CTRL + Clique"/>
+								<h:outputText value="#{meuProjeto.nome}" />
 							</p:column>
 							
 							<p:column styleClass="coluna-botoes">
@@ -168,8 +167,7 @@
 							</f:facet>
 							
 							<p:column>
-								<h:outputText value="#{projetosParticipo.nome}" 
-											  title="Para limpar a seleção: CTRL + Clique"/>
+								<h:outputText value="#{projetosParticipo.nome}" />
 							</p:column>
 							
 							<p:column styleClass="coluna-botoes-part">
@@ -203,10 +201,10 @@
                         <p:inputText id="nome" 
                         			 value="#{dashboardMB.projetoSelecionadoProprio.nome}" 
                         			 required="true"
-                        			 maxlength="30" />
-                        <p:tooltip for="nome" 
-							my="left center" 
-							at="right bottom"
+                        			 maxlength="30"
+                        			 requiredMessage="Defina um nome para o projeto" />
+                        <p:tooltip for="nome"
+                        	position="bottom"
 							showEvent="focus" 
 							hideEvent="blur"
 							showEffect="clip" 
@@ -214,8 +212,6 @@
 							<h:outputText value="Nome do projeto deve conter: " escape="false" />
 							<br/>
 							<h:outputText value="* até 30 caracteres; " escape="false" />
-							<br/>
-							<h:outputText value=" * primeira letra maiúscula;" escape="false" />
 							<br/>
 							<h:outputText value="Pode ainda conter: " escape="false" />
 							<br/>

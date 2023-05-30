@@ -66,13 +66,14 @@ public class ProjetoDAO implements Serializable {
 			
 		}
 	
-	public Projeto findByNomeProjeto(String nome) {
+	public Projeto findByNomeProjeto(String nome, String nomeExibicao) {
 		
 		EntityManager manager = ConnectionFactory.getEntityManager();
 		
 		try {
 			Query query = manager.createNamedQuery("Projeto.findByNomeProjeto");
 			query.setParameter("nome", nome);
+			query.setParameter("criador", nomeExibicao);
 			
 			Projeto objeto = (Projeto) query.getSingleResult();
 			return objeto;
