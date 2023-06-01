@@ -1,8 +1,8 @@
 package projetotcc.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
@@ -20,6 +20,7 @@ import org.mockito.MockitoAnnotations;
 import projetotcc.dao.DAO;
 import projetotcc.dao.UsuarioDAO;
 import projetotcc.exception.AutenticacaoException;
+import projetotcc.exception.CadastrarException;
 import projetotcc.exception.DatabaseException;
 import projetotcc.exception.SemResultadoException;
 import projetotcc.model.Projeto;
@@ -49,7 +50,7 @@ class UsuarioServiceTest {
 		
 		MockitoAnnotations.initMocks(this);
 		
-		senhaBase = "Senhamar123@";
+		senhaBase = "Senhamari123@";
 		emailBase = "mariana.martins.rosa.mmr@gmail.com";
 		
 		usuarios = new ArrayList<Usuario>();
@@ -72,8 +73,32 @@ class UsuarioServiceTest {
 	}
 
 	@Test
-	void testSalvar() {
-		fail("Not yet implemented");
+	@DisplayName("Salvar_usuario_sucesso")
+	void testSalvarSucesso() {
+		
+		Usuario usuario = new Usuario();
+		usuario.setEmail("chidori_mari@hotmail.com");
+		usuario.setNomeExibicao("Chidori Martins");
+		usuario.setSenha("791f057c2473dc4409bcf686e495939e");
+		
+		usuarioService.salvar(usuario);
+		
+		Mockito.verify(usuarioDao).salvar(Mockito.anyObject());
+	}
+	
+	@Test
+	@DisplayName("Salvar_usuario_falha")
+	void testSalvarFalha() {
+		
+		Usuario usuario = new Usuario();
+		usuario.setEmail("chidori_mari@hotmail.com");
+		usuario.setNomeExibicao("Chidori Martins");
+		usuario.setSenha("791f057c2473dc4409bcf686e495939e");
+		
+		Mockito.doThrow(new CadastrarException("Ocorreu um erro ao cadastrar o usuário."))
+		.when(usuarioDao).salvar(usuario);
+		
+		assertThrows(CadastrarException.class, () -> usuarioService.salvar(usuario));
 	}
 
 	@Test
@@ -96,8 +121,22 @@ class UsuarioServiceTest {
 	}
 
 	@Test
-	void testBuscarPorId() {
-		fail("Not yet implemented");
+	@DisplayName("buscar_por_id_sucesso")
+	void testBuscarPorIdSucesso() {
+		
+		when(usuarioDao.buscarPorId(Usuario.class, 1L)).thenReturn(usuario1);
+		
+		assertEquals(usuario1, usuarioService.buscarPorId(1L));
+	}
+	
+
+	@Test
+	@DisplayName("buscar_por_id_falha")
+	void testBuscarPorIdFalha() {
+		
+		when(usuarioDao.buscarPorId(Usuario.class, 5L)).thenReturn(null);
+		
+		assertNull(usuarioService.buscarPorId(5L));
 	}
 
 	@Test
@@ -156,7 +195,7 @@ class UsuarioServiceTest {
 	void testUsuarioPodeLogarSucesso() {		
 		
 		when(usuarioDAO.findByEmail(emailBase)).thenReturn(usuario1);
-		when(usuarioDAO.findByNamedQuery(emailBase, "3263f4266599af106d89c4c74a06a9b8")).thenReturn(usuario1);	
+		when(usuarioDAO.findByNamedQuery(emailBase, "b509cbc018f40bf5dbff5deb1394935a")).thenReturn(usuario1);	
 		
 		Assertions.assertEquals(usuario1, usuarioService.usuarioPodeLogar(emailBase, senhaBase));
 		
@@ -198,16 +237,6 @@ class UsuarioServiceTest {
 		Assertions.assertNotSame(senhaBase, usuarioService.converteStringParaMd5(senhaBase));
 	}
 	
-//	@Test
-//	@DisplayName("Senha_convertidaMD5_falha")
-//	void testConverteStringParaMd5Falha() throws NoSuchAlgorithmException, UnsupportedEncodingException {
-//		
-//		MessageDigest mDigest = Mockito.mock(MessageDigest.getInstance("MD5").getClass());
-//		
-//		when(mDigest.digest(senhaBase.getBytes("UTF-8"))).thenReturn(mDigest.digest(senhaBase.getBytes("UTF")));
-//		
-//		Assertions.assertNull(usuarioService.converteStringParaMd5(senhaBase));
-//	}
 
 	@Test
 	@DisplayName("Gerar_nova_senha_sucesso")
